@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSE Puglia - Portale della Salute e Prenotazioni FSE (Wireframe v2)</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23A23847'/><text y='70' x='50' font-size='60' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>F</text></svg>">
+</head>
+<body>
+
+  <!-- Top Red Bar with Breadcrumb and Font Resizer (Matching media_1794782458951_fc4d4c90.png) -->
+  <div class="top-window-bar">
+    <div class="top-bar-left">
+      <span>REGIONE PUGLIA &gt; SALUTE, SPORT E BUONA VITA &gt; PUGLIASALUTE</span>
+    </div>
+    <div class="top-bar-accessibility">
+      <button type="button" class="btn-font-size-v2" id="btnFontSm" onclick="setFontSize('sm')" title="Carattere più piccolo">A-</button>
+      <button type="button" class="btn-font-size-v2 bold" id="btnFontLg" onclick="setFontSize('lg')" title="Carattere più grande">A+</button>
+    </div>
+  </div>
+
+  <!-- Header Istituzionale con Logo PugliaSalute, Cerca e User Pill -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <!-- Brand Logo PugliaSalute con Icona Albero (Home e Login) -->
+        <div id="brandPublic" class="brand-logo" onclick="handleBrandClick()" role="button" tabindex="0" title="PugliaSalute">
+          <svg class="brand-tree-icon" width="34" height="34" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <!-- Stylized Tree Logo -->
+            <circle cx="50" cy="24" r="9" fill="#AE7173"/>
+            <circle cx="34" cy="36" r="8" fill="#AE7173"/>
+            <circle cx="66" cy="36" r="8" fill="#AE7173"/>
+            <circle cx="22" cy="50" r="7.5" fill="#AE7173"/>
+            <circle cx="78" cy="50" r="7.5" fill="#AE7173"/>
+            <circle cx="36" cy="54" r="8" fill="#AE7173"/>
+            <circle cx="64" cy="54" r="8" fill="#AE7173"/>
+            <circle cx="50" cy="42" r="9" fill="#AE7173"/>
+            <!-- Trunk & Branches -->
+            <path d="M50 78 V52 M50 62 L38 48 M50 62 L62 48 M50 54 L34 40 M50 54 L66 40" stroke="#AE7173" stroke-width="4.5" stroke-linecap="round"/>
+          </svg>
+          <div class="brand-logo-text-ps">
+            <span class="ps-brand-bold">Puglia</span><span class="ps-brand-light">Salute</span>
+          </div>
+        </div>
+
+        <!-- Brand FSE Puglia (Schermate FSE / Prenotazioni - Wireframe 1-8) -->
+        <div id="brandFSE" class="brand-logo-fse" onclick="goToScreen('screen-fse')" role="button" tabindex="0" title="FSE Puglia" style="display: none;">
+          <span class="fse-header-title">FSE Puglia</span>
+        </div>
+
+        <!-- Link Navigazione FSE nel Header (Matching Wireframe 1-8) -->
+        <ul class="header-fse-links" id="headerFseLinks" style="display: none;">
+          <li><a class="nav-fse-header-link" id="navLinkFsePrenotazioni" onclick="goToScreen('screen-bookings')">Prenotazioni</a></li>
+          <li><a class="nav-fse-header-link" id="navLinkFseDocumenti" onclick="alert('Archivio Documenti Sanitari: referti ed esami FSE')">Documenti</a></li>
+          <li><a class="nav-fse-header-link" id="navLinkFseDashboard" onclick="goToScreen('screen-fse')">Scelta Medico</a></li>
+          <li><a class="nav-fse-header-link" id="navLinkFseContatti" onclick="alert('Altri servizi FSE Puglia')">Altri servizi</a></li>
+        </ul>
+      </div>
+
+      <div class="header-right">
+        <!-- Bottone Cerca [ 🔍 ] (Visibile su Home e Login) -->
+        <button type="button" class="btn-header-search" id="btnHeaderSearch" onclick="alert('Cerca nel Portale della Salute')" title="Cerca nel portale" aria-label="Cerca">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25619A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Sessione Utente Autenticato FSE [ M P ▾ ] -->
+        <div id="authFSEAction" class="user-session-pill-v2">
+          <button type="button" class="user-pill-btn-v2" onclick="toggleUserMenu()" aria-expanded="false" aria-haspopup="true">
+            <svg class="user-pill-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="10" r="3"></circle>
+              <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path>
+            </svg>
+            <span class="user-pill-initials">M P</span>
+            <svg class="user-pill-caret-v2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div id="userDropdownMenu" class="user-dropdown-menu">
+            <div class="user-dropdown-name">Miriana Pinto</div>
+            <div class="user-dropdown-cf">PNTMRN90A41A662K</div>
+            <hr class="user-dropdown-divider">
+            <button class="user-dropdown-item" onclick="goToScreen('screen-fse'); closeUserMenu();">Area Personale</button>
+            <button class="user-dropdown-item" onclick="goToScreen('screen-bookings'); closeUserMenu();">Le mie prenotazioni</button>
+            <button class="user-dropdown-item user-dropdown-logout" onclick="logoutToHome()">Esci</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub-Navbar: visibile su Portale Pubblico (Home e Login) -->
+  <nav class="sub-navbar-bar" id="subNavbarBar" aria-label="Navigazione principale">
+    <div class="sub-navbar-inner">
+      <ul class="nav-menu-links-ps" id="navPublic">
+        <li><a class="nav-menu-link-ps" onclick="goToScreen('screen-login')">Fascicolo Sanitario Elettronico <span class="nav-caret">&#9662;</span></a></li>
+        <li><a class="nav-menu-link-ps" onclick="alert('Sezione Aziende Sanitarie della Regione Puglia')">Aziende Sanitarie <span class="nav-caret">&#9662;</span></a></li>
+        <li><a class="nav-menu-link-ps" onclick="alert('Campagne e iniziative di prevenzione sanitaria')">Prevenzione <span class="nav-caret">&#9662;</span></a></li>
+        <li><a class="nav-menu-link-ps" onclick="alert('Servizi di assistenza e cura regionale')">Assistenza e Cura <span class="nav-caret">&#9662;</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ======================================================================
+       PAGE TOP ZONE (Sfondo Blush #FBF7F6 per Intestazione, Titolo e Stepper)
+       ====================================================================== -->
+  <div class="page-top-zone" id="pageTopZone">
+    <div class="page-top-inner">
+      <div class="breadcrumb-text" id="breadcrumbText" style="display: none;">PugliaSalute &gt; Home</div>
+
+      <div class="page-header-title-row">
+        <h1 class="page-main-title" id="pageMainHeading">Portale della salute</h1>
+        <div id="stepSubtitleContainer" style="display: none;">
+          <div class="step-subtitle-badge">
+            <span class="step-subtitle-bar"></span>
+            <span id="stepSubtitleText">Beneficiario</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- "Torna indietro" button — shown when wizard stepper is active -->
+      <div id="tornaIndietroContainer" style="display: none; margin: 12px 0 16px 0;">
+        <button id="btnTornaIndietro" class="btn-torna-indietro" onclick="tornaIndietro()">Torna indietro</button>
+      </div>
+
+      <!-- Stepper Orizzontale a Segmenti Rettangolari (Non cliccabile) -->
+      <nav class="stepper-wireframe-bar" id="wizardStepper" style="display: none;" aria-label="Passi di prenotazione">
+        <div class="stepper-tab-item active" id="stepperStep1" data-base-name="1. Accedi">1. Accedi</div>
+        <div class="stepper-tab-item" id="stepperStep2" data-base-name="2. Tipo Prenotazione">2. Tipo Prenotazione</div>
+        <div class="stepper-tab-item" id="stepperStep3" data-base-name="3. Inserimento Dati">3. Inserimento Dati</div>
+        <div class="stepper-tab-item" id="stepperStep4" data-base-name="4. Data e struttura">4. Data e struttura</div>
+        <div class="stepper-tab-item" id="stepperStep5" data-base-name="5. Conferma">5. Conferma</div>
+        <div class="stepper-tab-item" id="stepperStep6" data-base-name="6. Riepilogo">6. Riepilogo</div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       PAGE CONTENT ZONE (Sfondo Ice Blue #F2F5FB per area form/wizard)
+       ====================================================================== -->
+  <main class="page-content-zone">
+    <div class="page-content-inner">
+
+      <!-- ==================================================================
+           SCREEN 1: PORTALE DELLA SALUTE (HOME) - Matching media_1794782458951_fc4d4c90.png
+           ================================================================== -->
+      <section id="screen-home" class="wireframe-screen active">
+        <!-- Breadcrumb e Titolo Principale Home -->
+        <div class="home-title-block">
+          <div class="home-breadcrumb-row">
+            <span class="home-bc-brand">PugliaSalute</span> <span class="home-bc-sep">/</span> <span class="home-bc-page">Home</span>
+          </div>
+          <h1 class="home-main-title">Portale della salute</h1>
+        </div>
+
+        <hr class="home-red-divider">
+
+        <!-- Hero Box Centrata Bianca: Fascicolo Sanitario Elettronico (FSE) -->
+        <div class="home-hero-card">
+          <h2 class="home-hero-title">Fascicolo Sanitario Elettronico (FSE)</h2>
+          <p class="home-hero-lead">Il Fascicolo Sanitario Elettronico (FSE) &egrave; il punto di accesso digitale ai servizi sanitari.</p>
+          <p class="home-hero-lead">Accedi per consultare e scaricare i tuoi documenti, prenotare visite ed esami ed esplorare gli altri servizi a tua disposizione.</p>
+          <div class="home-hero-action">
+            <button class="btn-hero-accedi" onclick="goToScreen('screen-login')">
+              Accedi al FSE
+            </button>
+          </div>
+        </div>
+
+        <hr class="home-red-divider">
+
+        <!-- Sezione News con 3 Card e Frecce (Maintain Fake Content) -->
+        <div class="home-news-section">
+          <h2 class="home-section-title">News</h2>
+          <div class="carousel-wireframe-row">
+            <button class="carousel-arrow-btn" onclick="shiftNews('prev')" aria-label="Notizia precedente">‹</button>
+
+            <div class="carousel-wireframe-cards" id="newsCardsRow">
+              <div class="card-wireframe-rect" onclick="alert('Notizia: Campagna Vaccinale 2026/2027')">
+                <div class="news-card-heading">Campagna Vaccinale 2026/2027</div>
+                <div class="news-card-body">Disponibili le somministrazioni antinfluenzali su tutto il territorio regionale pugliese.</div>
+              </div>
+
+              <div class="card-wireframe-rect" onclick="alert('Notizia: Nuovo Portale CUP Online')">
+                <div class="news-card-heading">Nuovo Portale Prenotazioni CUP</div>
+                <div class="news-card-body">Percorso guidato per prenotare in pochi passaggi con scelta della struttura e promemoria.</div>
+              </div>
+
+              <div class="card-wireframe-rect" onclick="alert('Notizia: Ritiro Referti FSE')">
+                <div class="news-card-heading">Ritiro Referti Online nel FSE</div>
+                <div class="news-card-body">Consulta e scarica i tuoi esami di laboratorio in formato PDF firmato digitalmente.</div>
+              </div>
+            </div>
+
+            <button class="carousel-arrow-btn" onclick="shiftNews('next')" aria-label="Notizia successiva">›</button>
+          </div>
+        </div>
+
+        <hr class="home-red-divider">
+
+        <!-- Sezione Servizi di emergenza con 4 Box Rettangolari -->
+        <div class="home-emergency-section">
+          <h2 class="home-section-title">Servizi di emergenza</h2>
+          <div class="emergency-intro-text">
+            Consulta informazioni relative a
+          </div>
+
+          <div class="emergency-cards-grid-4">
+            <div class="emergency-box-card" onclick="alert('Pronto Soccorso: presidi ospedalieri e tempi d\'attesa regionali')">
+              <span class="emergency-box-text">pronto soccorso</span>
+            </div>
+            <div class="emergency-box-card" onclick="alert('Continuità assistenziale notturna e festiva')">
+              <span class="emergency-box-text">assistenza notturna<br>e festiva</span>
+            </div>
+            <div class="emergency-box-card" onclick="alert('Servizio Chiamata 118 e 118 per persone sorde')">
+              <span class="emergency-box-text">118 e 118 sordi</span>
+            </div>
+            <div class="emergency-box-card" onclick="alert('Centro Antiveleni Regione Puglia')">
+              <span class="emergency-box-text">centro antiveleni</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN LOGIN: ACCESSO AI SERVIZI FSE (Leading to Personal Area)
+           ================================================================== -->
+      <section id="screen-login" class="wireframe-screen">
+        <div class="login-screen-wrap">
+          <div class="home-breadcrumb-row" style="margin-bottom: 8px;">
+            <span class="home-bc-brand">PugliaSalute</span> <span class="home-bc-sep">&gt;</span> <span>Fascicolo Sanitario Elettronico</span> <span class="home-bc-sep">&gt;</span> <span class="home-bc-page">Accesso</span>
+          </div>
+
+          <h1 class="page-main-title" style="margin-bottom: 8px;">Accesso al Fascicolo Sanitario Elettronico</h1>
+          <p style="color: var(--ps-text-muted); font-size: 0.95rem; margin-bottom: 28px;">
+            Scegli la tua modalit&agrave; di autenticazione digitale per accedere alla tua Area Personale.
+          </p>
+
+          <div class="login-methods-grid">
+            <!-- SPID -->
+            <div class="login-method-card" onclick="loginToFSE('SPID')">
+              <div class="login-method-badge">SPID</div>
+              <div class="login-method-title">Sistema Pubblico di Identit&agrave; Digitale</div>
+              <div class="login-method-desc">Accedi in modo rapido e sicuro con le tue credenziali SPID di livello 2 (PosteID, Aruba, InfoCert, Sielte, etc.).</div>
+              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;" onclick="event.stopPropagation(); loginToFSE('SPID');">Entra con SPID</button>
+            </div>
+
+            <!-- CIE -->
+            <div class="login-method-card" onclick="loginToFSE('CIE')">
+              <div class="login-method-badge" style="background: #1D5C96;">CIE</div>
+              <div class="login-method-title">Carta d'Identit&agrave; Elettronica</div>
+              <div class="login-method-desc">Accedi con la tua CIE 3.0 mediante smartphone abilitato NFC con app CieID o lettore smart card da PC.</div>
+              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;" onclick="event.stopPropagation(); loginToFSE('CIE');">Entra con CIE</button>
+            </div>
+
+            <!-- CNS -->
+            <div class="login-method-card" onclick="loginToFSE('CNS')">
+              <div class="login-method-badge" style="background: #475569;">CNS</div>
+              <div class="login-method-title">Tessera Sanitaria / CNS</div>
+              <div class="login-method-desc">Accedi inserendo la tua Smart Card Tessera Sanitaria attivata nel lettore collegato al computer.</div>
+              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;" onclick="event.stopPropagation(); loginToFSE('CNS');">Entra con CNS</button>
+            </div>
+          </div>
+
+          <div class="login-actions-footer">
+            <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-home')">&larr; Torna alla Home</button>
+            <button class="btn-nav-wireframe-primary" onclick="loginToFSE('Direct')">Accedi direttamente all'Area Personale (Miriana Pinto) &rarr;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 2: FSE DASHBOARD — AREA PERSONALE
+           ================================================================== -->
+      <section id="screen-fse" class="wireframe-screen">
+        <!-- Person icon SVG + "Area Personale" title -->
+        <div class="area-personale-header">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="area-personale-icon" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <h1 class="area-personale-title">Area Personale</h1>
+        </div>
+        <hr class="page-title-divider" style="margin-bottom: 28px;">
+
+        <!-- 2 cards: Prenotazioni (default = white/unselected), Documenti (always white) -->
+        <div class="fse-two-cards-grid">
+          <!-- Card PRENOTAZIONI -->
+          <div class="card-fse-box" onclick="goToScreen('screen-bookings')" id="fseBtnPrenotazioni" role="button" tabindex="0">
+            <div class="fse-card-header">
+              <svg class="fse-line-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <circle cx="12" cy="16" r="2"></circle>
+                <line x1="12" y1="14" x2="12" y2="12"></line>
+              </svg>
+              <div class="fse-bigcard-title">Prenotazioni</div>
+            </div>
+            <div class="fse-bigcard-sub">Gestisci le tue prenotazioni o prenota una nuova visita.</div>
+          </div>
+
+          <!-- Card DOCUMENTI -->
+          <div class="card-fse-box card-fse-box--white" onclick="alert('Archivio Documenti Sanitari: referti e prescrizioni')" role="button" tabindex="0">
+            <div class="fse-card-header">
+              <svg class="fse-line-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <div class="fse-bigcard-title fse-bigcard-title--red">Documenti</div>
+            </div>
+            <div class="fse-bigcard-sub">Consulta i tuoi dati e documenti sanitari</div>
+          </div>
+        </div>
+
+        <!-- Documenti recenti carousel with realistic fake info per user request -->
+        <div class="documenti-recenti-section">
+          <h2 class="section-title-wireframe">Documenti recenti</h2>
+          <div class="carousel-wireframe-row">
+            <button class="carousel-arrow-btn" onclick="shiftDocs('prev')" aria-label="Documenti precedenti">‹</button>
+            <div class="carousel-wireframe-cards" id="docsCardsRow">
+              <!-- Document 1: Laboratorio Analisi -->
+              <div class="card-wireframe-rect card-doc-item" onclick="alert('Apertura referto: Esami Ematochimici e Profilo Glicemico (PDF)')" role="button" tabindex="0">
+                <div>
+                  <div class="doc-badge-pill">Laboratorio Analisi</div>
+                  <div class="doc-card-title">Esami Ematochimici e Profilo Glicemico</div>
+                  <div class="doc-card-meta">
+                    <div>Data: <strong>24/10/2026</strong></div>
+                    <div>Struttura: <strong>Policlinico di Bari</strong></div>
+                    <div>Medico: Dr. Roberto Santoro</div>
+                  </div>
+                </div>
+                <div class="doc-card-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <span>Visualizza referto PDF &rarr;</span>
+                </div>
+              </div>
+
+              <!-- Document 2: Radiologia -->
+              <div class="card-wireframe-rect card-doc-item" onclick="alert('Apertura referto: Radiografia Torace 2 Proiezioni (PDF)')" role="button" tabindex="0">
+                <div>
+                  <div class="doc-badge-pill">Diagnostica per Immagini</div>
+                  <div class="doc-card-title">Radiografia Torace (RX 2P)</div>
+                  <div class="doc-card-meta">
+                    <div>Data: <strong>15/09/2026</strong></div>
+                    <div>Struttura: <strong>Ospedale Di Venere - Carbonara</strong></div>
+                    <div>Medico: Dr.ssa Elena Moretti</div>
+                  </div>
+                </div>
+                <div class="doc-card-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <span>Visualizza referto PDF &rarr;</span>
+                </div>
+              </div>
+
+              <!-- Document 3: Piano Terapeutico -->
+              <div class="card-wireframe-rect card-doc-item" onclick="alert('Apertura piano terapeutico: Trattamento Diabetologico Specialistico (PDF)')" role="button" tabindex="0">
+                <div>
+                  <div class="doc-badge-pill">Prescrizione Specialistica</div>
+                  <div class="doc-card-title">Piano Terapeutico Diabetologico</div>
+                  <div class="doc-card-meta">
+                    <div>Data: <strong>02/08/2026</strong></div>
+                    <div>Struttura: <strong>Ospedale Ostuni</strong></div>
+                    <div>Medico: Dr. Marco De Luca</div>
+                  </div>
+                </div>
+                <div class="doc-card-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <span>Scarica documento PDF &rarr;</span>
+                </div>
+              </div>
+
+              <!-- Document 4: Certificato Vaccinale -->
+              <div class="card-wireframe-rect card-doc-item" onclick="alert('Apertura certificato: Vaccinazione Antinfluenzale 2026/27 (PDF)')" role="button" tabindex="0">
+                <div>
+                  <div class="doc-badge-pill">Dipartimento Prevenzione</div>
+                  <div class="doc-card-title">Certificato Vaccinale Regionale</div>
+                  <div class="doc-card-meta">
+                    <div>Data: <strong>18/06/2026</strong></div>
+                    <div>Struttura: <strong>ASL Bari - Distretto 1</strong></div>
+                    <div>Stato: Registrato in Anagrafe</div>
+                  </div>
+                </div>
+                <div class="doc-card-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <span>Scarica certificato PDF &rarr;</span>
+                </div>
+              </div>
+
+              <!-- Document 5: Cardiologia -->
+              <div class="card-wireframe-rect card-doc-item" onclick="alert('Apertura referto: Visita ed Elettrocardiogramma (PDF)')" role="button" tabindex="0">
+                <div>
+                  <div class="doc-badge-pill">Cardiologia</div>
+                  <div class="doc-card-title">Elettrocardiogramma (ECG)</div>
+                  <div class="doc-card-meta">
+                    <div>Data: <strong>12/03/2026</strong></div>
+                    <div>Struttura: <strong>Ospedale Civile - Martina Franca</strong></div>
+                    <div>Medico: Dr.ssa Francesca Leone</div>
+                  </div>
+                </div>
+                <div class="doc-card-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <span>Visualizza referto PDF &rarr;</span>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-arrow-btn" onclick="shiftDocs('next')" aria-label="Documenti successivi">›</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 3: LE MIE PRENOTAZIONI
+           ================================================================== -->
+      <section id="screen-bookings" class="wireframe-screen">
+        <p class="bookings-subtitle">Gestisci le prenotazioni effettuate.</p>
+        <div class="bookings-toolbar">
+          <button class="btn-filtra-nav" onclick="alert('Filtri prenotazioni')">Filtra</button>
+          <button class="btn-wireframe-navy" onclick="goToScreen('screen-step-beneficiary')">Nuova prenotazione</button>
+        </div>
+        <div class="bookings-wireframe-list" id="bookingsWireframeList">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 4: STEP 1 - ACCEDI / BENEFICIARIO
+           ================================================================== -->
+      <section id="screen-step-beneficiary" class="wireframe-screen">
+        <div class="choice-cards-wireframe-grid">
+          <!-- Card Me stesso / Delegante (Unselected by default) -->
+          <div class="wireframe-choice-card" id="choiceBeneficiaryMe" onclick="setBeneficiaryChoice('me')" role="radio" aria-checked="false" tabindex="0">
+            <div class="choice-checkmark-circle">✓</div>
+            <div>
+              <div class="choice-title">Prenota per te stesso o per un delegante</div>
+              <div class="choice-desc">Scegliendo questa opzione visualizzerai in automatico i tuoi dati.</div>
+            </div>
+          </div>
+
+          <!-- Card Accesso Libero (Unselected by default) -->
+          <div class="wireframe-choice-card" id="choiceBeneficiaryOther" onclick="setBeneficiaryChoice('other')" role="radio" aria-checked="false" tabindex="0">
+            <div class="choice-checkmark-circle">✓</div>
+            <div>
+              <div class="choice-title">Prenota per te stesso o per altri con Accesso Libero</div>
+              <div class="choice-desc">
+                Mediante questa scelta avrai bisogno solo di due dati:
+                <ul class="choice-bullet-list">
+                  <li>il Codice Fiscale di chi deve effettuare la prenotazione;</li>
+                  <li>il numero della Tessera Sanitaria di chi deve effettuare la prenotazione.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione dati delega condizionale -->
+        <div id="delegationBox" class="form-panel-white" style="display: none;">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; color: var(--ps-wireframe-navy);">
+            Inserisci i dati della persona per cui stai prenotando:
+          </div>
+          <div class="form-inputs-row-2col">
+            <div class="form-field-group">
+              <label class="form-field-label">Nome e Cognome Assistito</label>
+              <input type="text" id="inputDelegateName" class="form-field-input" placeholder="Es. Anna Rossi">
+            </div>
+            <div class="form-field-group">
+              <label class="form-field-label">Codice Fiscale</label>
+              <input type="text" id="inputDelegateCF" class="form-field-input" placeholder="Es. RSSNNA85M41A662Y">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar: Indietro & Prosegui -->
+        <div class="wizard-nav-bottom-bar">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-bookings')">Indietro</button>
+          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep1()">Prosegui</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 5: STEP 2 - TIPO PRENOTAZIONE
+           ================================================================== -->
+      <section id="screen-step-regime" class="wireframe-screen">
+        <div class="choice-cards-wireframe-grid">
+          <!-- Card Ricetta Dematerializzata (Unselected by default) -->
+          <div class="wireframe-choice-card" id="choiceRegimeSSN" onclick="setRegimeChoice('ssn')" role="radio" aria-checked="false" tabindex="0">
+            <div class="choice-checkmark-circle">✓</div>
+            <div>
+              <div class="choice-title">Prenotazione con Ricetta Dematerializzata</div>
+              <div class="choice-desc">La ricetta dematerializzata è la versione elettronica della tradizionale ricetta rossa cartacea. È un documento digitale ed il codice ricetta è chiamato il Numero Ricetta Elettronica (NRE).</div>
+            </div>
+          </div>
+
+          <!-- Card Ricetta Rossa o ALPI (Unselected by default) -->
+          <div class="wireframe-choice-card" id="choiceRegimeALPI" onclick="setRegimeChoice('alpi')" role="radio" aria-checked="false" tabindex="0">
+            <div class="choice-checkmark-circle">✓</div>
+            <div>
+              <div class="choice-title">Prenotazione con Ricetta Rossa o ALPI</div>
+              <div class="choice-desc">
+                <ul class="choice-bullet-list">
+                  <li>Ricetta Rossa è la tipologia che viene compilata sul ricettario regionale;</li>
+                  <li>ALPI , ovvero Attività Libero-Professionale Intramuraria</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar: Indietro & Prosegui -->
+        <div class="wizard-nav-bottom-bar">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-beneficiary')">Indietro</button>
+          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep2()">Prosegui</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 6: STEP 3 - INSERIMENTO DATI
+           ================================================================== -->
+      <section id="screen-step-prescription" class="wireframe-screen">
+        <p class="form-intro-text">Visualizza i tuoi dati ed inserisci quelli necessari per essere contatto</p>
+
+        <!-- Dati anagrafici -->
+        <div class="form-panel-white">
+          <div class="form-panel-label">Dati Anagrafici Recuperati</div>
+          <div class="dati-anagrafici-grid">
+            <div class="dati-label">Nome</div>
+            <div class="dati-value">MIRIANA</div>
+            <div class="dati-label">Cognome</div>
+            <div class="dati-value">PINTO</div>
+          </div>
+          <div class="dati-anagrafici-grid-cf">
+            <div class="dati-label">Codice Fiscale</div>
+            <div class="dati-value" style="font-family: monospace;">PNTMRN90A41A662K</div>
+          </div>
+        </div>
+
+        <!-- Contatti -->
+        <div class="form-inputs-row-2col" style="margin-bottom: 24px;">
+          <div class="form-field-group">
+            <label class="form-field-label">Recapito Telefonico*</label>
+            <input type="tel" id="inputPhone" class="form-field-input" value="+1234567890">
+          </div>
+          <div class="form-field-group">
+            <label class="form-field-label">E-mail invio promemoria*</label>
+            <input type="email" id="inputEmail" class="form-field-input" placeholder="Inserisci la tua email">
+          </div>
+        </div>
+
+        <!-- Scegli la ricetta -->
+        <div class="prescription-section-title">Scegli la ricetta</div>
+        <div class="prescription-cards-col">
+          <!-- Card 1 (Unselected by default) -->
+          <div class="prescription-card-wireframe" id="prescCard1" onclick="setPrescriptionCard('cardio')">
+            <div class="prescription-side-block">
+              <div class="prescription-side-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+            <div class="prescription-card-main">
+              <div class="prescription-nre-label">NUMERO RICETTA: &nbsp;<strong>160A37295673820</strong></div>
+              <div class="prescription-card-details-grid">
+                <div>
+                  <div class="prescription-detail-label">Data ricetta</div>
+                  <div class="prescription-detail-value">2026-10-19</div>
+                </div>
+                <div>
+                  <div class="prescription-detail-label">Medico:</div>
+                  <div class="prescription-detail-value">Mario Rossi</div>
+                </div>
+              </div>
+              <div class="prescription-detail-label" style="margin-top: 10px;">Prestazioni</div>
+              <ul class="prescription-items-list">
+                <li>INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)</li>
+                <li>GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)</li>
+              </ul>
+              <a class="prescription-info-link" onclick="event.stopPropagation(); alert('Vedi tutte le prestazioni della ricetta.');">Vedi tutte le prestazioni</a>
+            </div>
+          </div>
+
+          <!-- Card 2 (Unselected by default) -->
+          <div class="prescription-card-wireframe" id="prescCard2" onclick="setPrescriptionCard('ecg')">
+            <div class="prescription-side-block">
+              <div class="prescription-side-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+            <div class="prescription-card-main">
+              <div class="prescription-nre-label">NUMERO RICETTA: &nbsp;<strong>160A37295673820</strong></div>
+              <div class="prescription-card-details-grid">
+                <div>
+                  <div class="prescription-detail-label">Data ricetta</div>
+                  <div class="prescription-detail-value">2026-10-19</div>
+                </div>
+                <div>
+                  <div class="prescription-detail-label">Medico:</div>
+                  <div class="prescription-detail-value">Mario Rossi</div>
+                </div>
+              </div>
+              <div class="prescription-detail-label" style="margin-top: 10px;">Prestazioni</div>
+              <div class="prescription-items-text">
+                -INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)<br>
+                -GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)
+              </div>
+              <a class="prescription-info-link" onclick="event.stopPropagation(); alert('Vedi tutte le prestazioni della ricetta.');">Vedi tutte le prestazioni</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-nav-bottom-bar">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-regime')">Indietro</button>
+          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep3()">Prosegui</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 7: STEP 4 - DATA E STRUTTURA
+           ================================================================== -->
+      <section id="screen-step-slots" class="wireframe-screen">
+        <!-- Ricette inserite summary -->
+        <div class="ricette-summary-bar">
+          <div class="ricette-summary-label">Ricette inserite</div>
+          <div class="ricette-summary-row">
+            <div>NUMERO RICETTA: &nbsp;<strong id="step4RecipeNumber">160A37295673820</strong></div>
+            <a class="link-dettagli-blue" onclick="goToScreen('screen-step-prescription')">Vedi Dettagli</a>
+          </div>
+        </div>
+
+        <!-- Filtri azienda sanitaria -->
+        <div class="form-panel-white">
+          <div class="form-section-label">Scegli l'Azienda Sanitaria</div>
+          <div class="checkbox-asl-grid">
+            <div class="asl-col">
+              <label class="checkbox-item-label"><input type="checkbox" id="aslTutto" onchange="toggleAllASL(this)"> Seleziona Tutto</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> A.O.U. Policlinico Riuniti di Foggia</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" checked> Asl Barletta-Andria-Trani</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Lecce</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> IRCCS Istituto Tumori Giovanni Paolo II</label>
+            </div>
+            <div class="asl-col">
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" checked> Asl Brindisi</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Taranto</label>
+            </div>
+            <div class="asl-col">
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Bari</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Foggia</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> IRCCS de Bellis Castellana Grotte</label>
+            </div>
+          </div>
+
+          <div class="form-field-group" style="margin-top: 20px; max-width: 320px;">
+            <label class="form-field-label">Scegli la struttura</label>
+            <select class="form-field-select" id="selectStruttura">
+              <option value=""></option>
+              <option>Ospedale Ostuni</option>
+              <option>Pol. Margherita di Savoia</option>
+              <option>Ospedale Civile - Martina Franca</option>
+              <option>Policlinico di Bari</option>
+            </select>
+          </div>
+
+          <div class="form-field-group" style="margin-top: 16px; max-width: 260px;">
+            <label class="form-field-label">Cerca a partire da:</label>
+            <input type="date" id="inputDateFrom" class="form-field-input">
+          </div>
+        </div>
+
+        <!-- Disponibilità table -->
+        <div class="disponibilita-section">
+          <div class="disponibilita-label">DISPONIBILIT&Agrave;</div>
+          <div class="disponibilita-table-wrap">
+            <div id="slotsWireframeList">
+              <!-- Popolato dinamicamente da app.js -->
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-nav-bottom-bar">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-prescription')">Indietro</button>
+          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep4()">Prosegui</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 8: STEP 5 - CONFERMA
+           ================================================================== -->
+      <section id="screen-step-recap" class="wireframe-screen">
+        <p class="form-intro-text" style="font-weight: 600; margin-bottom: 20px;">Controlla che tutte le informazioni siano corrette e conferma la prenotazione</p>
+
+        <!-- Details table -->
+        <div class="form-panel-white" id="recapDetailsPanel">
+          <div class="recap-details-grid">
+            <div class="recap-detail-label">NRE</div>
+            <div class="recap-detail-value" id="recapNRE">160A24680453583</div>
+            <div class="recap-detail-label">Prestazioni</div>
+            <div class="recap-detail-value" id="recapPrestazioni">3</div>
+
+            <div class="recap-detail-label">Data</div>
+            <div class="recap-detail-value" id="recapData">13/11/2026</div>
+            <div class="recap-detail-label">Ora</div>
+            <div class="recap-detail-value" id="recapOra">7:55</div>
+
+            <div class="recap-detail-label">Azienda Sanitaria</div>
+            <div class="recap-detail-value" id="recapAzienda">ASL Brindisi</div>
+            <div class="recap-detail-label">Struttura</div>
+            <div class="recap-detail-value" id="recapStruttura">OSPEDALE OSTUNI</div>
+
+            <div class="recap-detail-label">Ambulatorio</div>
+            <div class="recap-detail-value" id="recapAmbulatorio">VIA LUIGI MICOLI - OSTUNI (BR)</div>
+            <div class="recap-detail-label">Struttura</div>
+            <div class="recap-detail-value" id="recapStrutturaAlt">SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)</div>
+          </div>
+        </div>
+
+        <!-- Dichiarazioni / Note Operatore -->
+        <div class="form-panel-white dichiarazioni-panel">
+          <p class="dichiarazioni-title">Accetta le seguenti Dichiarazioni qui riportate per procedere</p>
+          <p class="note-operatore-label">NOTE OPERATORE</p>
+          <div class="note-operatore-text" id="noteOperatoreText">
+            <p style="margin-bottom: 8px;"><strong>INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5):</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE IN QUESTA AGENDA SOLO SE NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO; (cod. 67001,cod. 90.28.5,cod. 90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I CODICI INDICATI LA PRESTAZIONE NON VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE PRENOTATI IL SABATO E I GIORNI PREFESTIVI.</p>
+            <p style="margin-bottom: 8px;"><strong>GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI):</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE IN QUESTA AGENDA SOLO SE NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO; (cod. 67001,cod. 90.28.5,cod. 90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I CODICI INDICATI LA PRESTAZIONE NON VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE PRENOTATI IL SABATO E I GIORNI PREFESTIVI.</p>
+            <p><strong>HB - EMOGLOBINA GLICATA:</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE IN QUESTA AGENDA SOLO SE NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO; (cod. 67001,cod. 90.28.5,cod. 90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I CODICI INDICATI LA PRESTAZIONE NON VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE PRENOTATI IL SABATO E I GIORNI PREFESTIVI.</p>
+          </div>
+          <div class="consent-row-wireframe" style="margin-top: 14px;">
+            <input type="checkbox" id="checkNoteOperatore" style="margin-top: 2px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
+            <label for="checkNoteOperatore" style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 500;">
+              Dichiaro di aver preso visione della Note Operatore di questa prestazione
+            </label>
+          </div>
+        </div>
+
+        <!-- Privacy -->
+        <div style="padding: 16px 0; font-size: 0.88rem; color: var(--ps-text-muted);">
+          I tuoi dati sanitari vengono usati solo per gestire la prenotazione. Qui puoi consultare l'<a class="link-privacy-underline" onclick="openPrivacyModal()" style="color: var(--ps-text-main); font-weight: 600;">Informativa Privacy</a>
+          <svg style="display:inline; margin-left:4px; vertical-align:middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </div>
+        <div class="consent-row-wireframe" style="margin-bottom: 20px;">
+          <input type="checkbox" id="checkPrivacyConsent" style="margin-top: 2px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
+          <label for="checkPrivacyConsent" style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 500;">
+            Dichiaro di accettare l'Informativa Privacy
+          </label>
+        </div>
+
+        <div class="wizard-nav-bottom-bar">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-slots')">Indietro</button>
+          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep5()">Conferma</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SCREEN 9: MODAL INFORMATIVA PRIVACY (GDPR)
+           ================================================================== -->
+      <div class="wireframe-modal-overlay" id="wireframeModalOverlay" role="dialog" aria-modal="true">
+        <div class="wireframe-modal-card">
+          <div class="wireframe-modal-header">
+            <h3 class="wireframe-modal-title">
+              Informativa al trattamento dei dati personali - Servizi di Prenotazione e Gestione Prenotazioni
+            </h3>
+            <button class="btn-close-x" onclick="closePrivacyModal()">&times;</button>
+          </div>
+
+          <div class="wireframe-modal-body">
+            <p style="color: var(--ps-text-muted); font-size: 0.82rem; margin-bottom: 12px;">
+              I dati personali raccolti per l'erogazione del servizio di prenotazione CUP saranno trattati in conformità al Regolamento Generale sulla Protezione dei Dati (Regolamento UE 2016/679 - GDPR) e al D.Lgs. 196/2003.
+            </p>
+
+            <h4>1. Finalità del trattamento dei dati personali</h4>
+            <p>I dati personali e sanitari inseriti sono utilizzati per la gestione, prenotazione, erogazione e rendicontazione delle prestazioni specialistiche ed esami diagnostici nel Servizio Sanitario della Regione Puglia.</p>
+
+            <h4>2. Base giuridica</h4>
+            <p>Il trattamento trova base giuridica nell'adempimento di obblighi di legge in materia sanitaria e per motivi di interesse pubblico rilevante nel settore della sanità pubblica (art. 9, par. 2, lett. h e i del GDPR).</p>
+
+            <h4>3. Destinatari dei dati personali</h4>
+            <p>I dati saranno comunicati esclusivamente alle Aziende Sanitarie Locali (ASL), Ospedali e personale medico debitamente autorizzato ad erogare la prestazione sanitaria richiesta.</p>
+
+            <h4>4. Diritti dell'interessato</h4>
+            <p>L'interessato ha il diritto di chiedere l'accesso ai propri dati, la rettifica, la cancellazione o la limitazione del trattamento rivolgendosi al Responsabile della Protezione dei Dati (DPO) della Regione Puglia.</p>
+          </div>
+
+          <div class="wireframe-modal-footer">
+            <button class="btn-nav-wireframe-secondary" onclick="closePrivacyModal()">Chiudi</button>
+            <button class="btn-nav-wireframe-primary" onclick="acceptPrivacyFromModal()">Accetto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           SCREEN 10: STEP 6 - RIEPILOGO
+           ================================================================== -->
+      <section id="screen-step-success" class="wireframe-screen">
+        <!-- Success banner -->
+        <div class="success-banner-wireframe">
+          <div class="success-check-badge">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <div class="success-banner-text">Prenotazione effettuata con successo!</div>
+        </div>
+
+        <!-- Booking details card -->
+        <div class="success-booking-card">
+          <div class="success-booking-id" id="successBookingId">NUMERO PRENOTAZIONE: 2026649029</div>
+          <hr class="success-booking-divider">
+          <div class="success-booking-row">
+            <div>
+              <span class="success-booking-label">Sede appuntamento</span>
+              <span class="success-booking-value" id="successHospital">OSPEDALE OSTUNI</span>
+            </div>
+            <div>
+              <span class="success-booking-label">Data e ora</span>
+              <span class="success-booking-value" id="successDateTime">13/11/2026 ore 07:55</span>
+            </div>
+          </div>
+          <div class="success-booking-actions">
+            <a class="success-action-link" onclick="alert('Download promemoria PDF')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Scarica promemoria
+            </a>
+            <a class="success-action-link" onclick="alert('Vai al pagamento pagoPA')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+              Paga
+            </a>
+          </div>
+        </div>
+
+        <!-- Bottom buttons -->
+        <div class="success-bottom-buttons">
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-bookings')">Torna a Prenotazioni</button>
+          <button class="btn-nav-wireframe-secondary" onclick="startNewBooking()">Prenota altro</button>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SPECIFICHE COMPONENTI & DESIGN SYSTEM
+           ================================================================== -->
+      <section id="screen-spec-guide" class="wireframe-screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 class="section-title-wireframe" style="margin-bottom: 0;">Specifiche Componenti &amp; Design System (Wireframe v2)</h2>
+          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-home')">← Torna alla Home</button>
+        </div>
+
+        <!-- 1. Card Scelta Stati -->
+        <div class="form-panel-white">
+          <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 12px; color: var(--ps-wireframe-red);">
+            1. Card Scelta: Stati Interattivi
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                Stato: Default / Base
+              </div>
+              <div class="wireframe-choice-card" style="pointer-events: none;">
+                <div class="choice-checkmark-circle"></div>
+                <div>
+                  <div class="choice-title" style="font-size: 1rem;">Prenotazione per me stesso</div>
+                  <div class="choice-desc">Sfondo bianco, bordo neutro #D1D5DB.</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                Stato: Hover
+              </div>
+              <div class="wireframe-choice-card" style="background: var(--ps-wireframe-navy-light); border-color: #94A3B8; pointer-events: none;">
+                <div class="choice-checkmark-circle"></div>
+                <div>
+                  <div class="choice-title" style="font-size: 1rem;">Prenotazione per me stesso</div>
+                  <div class="choice-desc">Sfondo grigio/azzurro #CBD5E1.</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                Stato: Selezionato
+              </div>
+              <div class="wireframe-choice-card selected" style="pointer-events: none;">
+                <div class="choice-checkmark-circle">✓</div>
+                <div>
+                  <div class="choice-title" style="font-size: 1rem;">Prenotazione per me stesso</div>
+                  <div class="choice-desc">Sfondo Dark Navy #162F45 e testo bianco.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Schede Prestazione Stati -->
+        <div class="form-panel-white">
+          <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 12px; color: var(--ps-wireframe-red);">
+            2. Schede Prestazione con Blocco Laterale Colorato
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 4px;">
+                Default (Blocco rosa tenue #DFC4C7)
+              </div>
+              <div class="prescription-card-wireframe" style="pointer-events: none;">
+                <div class="prescription-side-block"><div class="prescription-side-icon"></div></div>
+                <div class="prescription-card-main">
+                  <div class="prescription-exam-title">VISITA CARDIOLOGICA DI CONTROLLO</div>
+                  <div class="prescription-exam-meta">Codice: 89.7 | Priorità: P</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 4px;">
+                Hover (Blocco rosa medio #AE7173)
+              </div>
+              <div class="prescription-card-wireframe" style="pointer-events: none;">
+                <div class="prescription-side-block" style="background: var(--ps-wireframe-rose-hover);"><div class="prescription-side-icon"></div></div>
+                <div class="prescription-card-main">
+                  <div class="prescription-exam-title">VISITA CARDIOLOGICA DI CONTROLLO</div>
+                  <div class="prescription-exam-meta">Codice: 89.7 | Priorità: P</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--ps-text-muted); text-transform: uppercase; margin-bottom: 4px;">
+                Selected (Blocco bordeaux pieno #A23847 con spunta bianca)
+              </div>
+              <div class="prescription-card-wireframe selected" style="pointer-events: none;">
+                <div class="prescription-side-block"><div class="prescription-side-icon">✓</div></div>
+                <div class="prescription-card-main">
+                  <div class="prescription-exam-title">VISITA CARDIOLOGICA DI CONTROLLO</div>
+                  <div class="prescription-exam-meta">Codice: 89.7 | Priorità: P</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Discreet Quick-Nav Dock per saltare alle schermate durante le presentazioni -->
+  <div class="wireframe-quick-nav-dock">
+    <span style="font-weight: 700; color: #E2E8F0;">Wireframe v2:</span>
+    <select class="dock-select" id="dockScreenSelect" onchange="goToScreen(this.value)">
+      <option value="screen-home">Home Portale (media_fc4d4c90)</option>
+      <option value="screen-login">Accesso FSE (Login)</option>
+      <option value="screen-fse">Area Personale (FSE)</option>
+      <option value="screen-bookings">Le mie prenotazioni</option>
+      <option value="screen-step-beneficiary">Step 1 Accedi / Beneficiario</option>
+      <option value="screen-step-regime">Step 2 Tipo Prenotazione</option>
+      <option value="screen-step-prescription">Step 3 Inserimento Dati</option>
+      <option value="screen-step-slots">Step 4 Data e struttura</option>
+      <option value="screen-step-recap">Step 5 Conferma</option>
+      <option value="screen-step-success">Step 6 Riepilogo</option>
+      <option value="screen-spec-guide">Design System &amp; Componenti</option>
+    </select>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
