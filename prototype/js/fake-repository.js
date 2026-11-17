@@ -1,0 +1,371 @@
+/**
+ * ==============================================================================
+ * FSE Regione Puglia - Fake Repository Disponibilità (Step 4: Data e struttura)
+ * ==============================================================================
+ * Questo documento funge da archivio/repository separato per le disponibilità
+ * (visite, esami, orari e strutture sanitarie).
+ * 
+ * COME INSERIRE / MODIFICARE NUOVE DISPONIBILITÀ:
+ * 1. Puoi aggiungere nuovi oggetti all'interno dell'array `window.fakeAvailabilities`.
+ * 2. Assicurati che il valore del campo `azienda` corrisponda esattamente al nome
+ *    di una delle Aziende Sanitarie presenti nei filtri a checkbox della schermata:
+ *    - "A.O.U. Policlinico Riuniti di Foggia"
+ *    - "Asl Barletta-Andria-Trani"
+ *    - "Asl Lecce"
+ *    - "IRCCS Istituto Tumori Giovanni Paolo II"
+ *    - "A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII"
+ *    - "Asl Brindisi"
+ *    - "Asl Taranto"
+ *    - "Asl Bari"
+ *    - "Asl Foggia"
+ *    - "IRCCS de Bellis Castellana Grotte"
+ * 
+ * SCHEMA DI OGNI DISPONIBILITÀ:
+ * {
+ *   id: "stringa_univoca",                 // Es. "slot-1", "slot-bari-2"
+ *   azienda: "Nome Azienda Sanitaria",      // Es. "Asl Brindisi"
+ *   struttura: "NOME STRUTTURA O OSPEDALE", // Es. "OSPEDALE OSTUNI"
+ *   address: "Indirizzo completo",          // Es. "VIA LUIGI MICCOLI - OSTUNI (BR)"
+ *   date: "DD/MM/YYYY",                     // Data visualizzata (es. "13/11/2026")
+ *   dateISO: "YYYY-MM-DD",                  // Data ISO per i filtri (es. "2026-11-13")
+ *   time: "HH:MM",                          // Ora (es. "07:55")
+ *   dateTime: "DD/MM/YYYY ore HH:MM",       // Stringa completa data e ora
+ *   ambulatorio: "Nome ambulatorio",        // Es. "VIA LUIGI MICCOLI - OSTUNI (BR)"
+ *   sedeUnita: "Dettaglio sede e unità",    // Es. "SEDE: VIA VILLAFRANCA UNITA: OSTUNI (BR)"
+ *   firstAvailable: true | false            // true se è la prima data utile
+ * }
+ */
+
+window.fakeAvailabilities = [
+  // ============================================================================
+  // ASL BRINDISI
+  // ============================================================================
+  {
+    id: 'slot-br-1',
+    azienda: 'Asl Brindisi',
+    struttura: 'OSPEDALE OSTUNI',
+    address: 'VIA LUIGI MICCOLI - OSTUNI (BR)',
+    date: '13/11/2026',
+    dateISO: '2026-11-13',
+    time: '07:55',
+    dateTime: '13/11/2026 ore 07:55',
+    ambulatorio: 'VIA LUIGI MICCOLI - OSTUNI (BR)',
+    sedeUnita: 'SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)',
+    firstAvailable: true
+  },
+  {
+    id: 'slot-br-2',
+    azienda: 'Asl Brindisi',
+    struttura: 'OSPEDALE PERRINO - BRINDISI',
+    address: 'Strada Statale 7 per Mesagne - Brindisi (BR)',
+    date: '20/11/2026',
+    dateISO: '2026-11-20',
+    time: '09:15',
+    dateTime: '20/11/2026 ore 09:15',
+    ambulatorio: 'AMBULATORIO CARDIOLOGIA PAD. B',
+    sedeUnita: 'SEDE: STRADA STATALE 7 UNITA: CARDIOLOGIA BRINDISI (BR)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-br-3',
+    azienda: 'Asl Brindisi',
+    struttura: 'PRESIDIO DI FRANCAVILLA FONTANA',
+    address: 'Via Madonna delle Grazie - Francavilla Fontana (BR)',
+    date: '27/11/2026',
+    dateISO: '2026-11-27',
+    time: '10:30',
+    dateTime: '27/11/2026 ore 10:30',
+    ambulatorio: 'POLIAMBULATORIO PIANO TERRA STANZA 3',
+    sedeUnita: 'SEDE: VIA MADONNA DELLE GRAZIE UNITA: POLIAMBULATORIO FRANCAVILLA (BR)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // ASL BARLETTA-ANDRIA-TRANI (BAT)
+  // ============================================================================
+  {
+    id: 'slot-bat-1',
+    azienda: 'Asl Barletta-Andria-Trani',
+    struttura: 'POL. MARGHERITA DI SAVOIA',
+    address: 'Via Ospedale 3 - Margherita di Savoia (BT)',
+    date: '03/12/2026',
+    dateISO: '2026-12-03',
+    time: '08:30',
+    dateTime: '03/12/2026 ore 08:30',
+    ambulatorio: 'VIA OSPEDALE 3 - MARGHERITA DI SAVOIA (BT)',
+    sedeUnita: 'SEDE: VIA OSPEDALE 3 - MARGHERITA DI SAVOIA (BT)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-bat-2',
+    azienda: 'Asl Barletta-Andria-Trani',
+    struttura: 'OSPEDALE LORENZO BONOMO - ANDRIA',
+    address: 'Viale Istria 1 - Andria (BT)',
+    date: '10/12/2026',
+    dateISO: '2026-12-10',
+    time: '11:00',
+    dateTime: '10/12/2026 ore 11:00',
+    ambulatorio: 'CORPO CENTRALE PIANO TERRA STANZA 12',
+    sedeUnita: 'SEDE: VIALE ISTRIA UNITA: POLIAMBULATORIO ANDRIA (BT)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-bat-3',
+    azienda: 'Asl Barletta-Andria-Trani',
+    struttura: 'OSPEDALE DIMICCOLI - BARLETTA',
+    address: 'Viale Ippocrate 15 - Barletta (BT)',
+    date: '15/12/2026',
+    dateISO: '2026-12-15',
+    time: '09:40',
+    dateTime: '15/12/2026 ore 09:40',
+    ambulatorio: 'PADIGLIONE POLICLINICO PIANO 1',
+    sedeUnita: 'SEDE: VIALE IPPOCRATE UNITA: AMBULATORIO BARLETTA (BT)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // ASL BARI
+  // ============================================================================
+  {
+    id: 'slot-ba-1',
+    azienda: 'Asl Bari',
+    struttura: 'OSPEDALE DI VENERE - BARI',
+    address: 'Via Ospedale Di Venere 1 - Carbonara di Bari (BA)',
+    date: '18/11/2026',
+    dateISO: '2026-11-18',
+    time: '10:15',
+    dateTime: '18/11/2026 ore 10:15',
+    ambulatorio: 'PADIGLIONE A - AMBULATORIO 4',
+    sedeUnita: 'SEDE: VIA DI VENERE UNITA: POLIAMBULATORIO CARBONARA (BA)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-ba-2',
+    azienda: 'Asl Bari',
+    struttura: 'OSPEDALE SAN PAOLO - BARI',
+    address: 'Via Caposcardicchio - Bari (BA)',
+    date: '25/11/2026',
+    dateISO: '2026-11-25',
+    time: '08:45',
+    dateTime: '25/11/2026 ore 08:45',
+    ambulatorio: 'PIANO TERRA - ALA OVEST',
+    sedeUnita: 'SEDE: VIA CAPOSCARDICCHIO UNITA: MEDICINA BARI (BA)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-ba-3',
+    azienda: 'Asl Bari',
+    struttura: 'OSPEDALE SAN GIACOMO - MONOPOLI',
+    address: 'Largo Ospedale 1 - Monopoli (BA)',
+    date: '02/12/2026',
+    dateISO: '2026-12-02',
+    time: '11:20',
+    dateTime: '02/12/2026 ore 11:20',
+    ambulatorio: 'PIANO 1 POLIAMBULATORIO',
+    sedeUnita: 'SEDE: LARGO OSPEDALE UNITA: POLIAMBULATORIO MONOPOLI (BA)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // A.O.U. POLICLINICO DI BARI - OSPEDALE GIOVANNI XXIII
+  // ============================================================================
+  {
+    id: 'slot-poliba-1',
+    azienda: 'A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII',
+    struttura: 'POLICLINICO DI BARI',
+    address: 'Piazza Giulio Cesare 11 - Bari (BA)',
+    date: '15/11/2026',
+    dateISO: '2026-11-15',
+    time: '09:00',
+    dateTime: '15/11/2026 ore 09:00',
+    ambulatorio: 'PADIGLIONE CHINI - PIANO 1',
+    sedeUnita: 'SEDE: PIAZZA GIULIO CESARE UNITA: AMB. SPECIALISTICO BARI (BA)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-poliba-2',
+    azienda: 'A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII',
+    struttura: 'OSPEDALE PEDIATRICO GIOVANNI XXIII',
+    address: 'Via Giovanni Amendola 207 - Bari (BA)',
+    date: '21/11/2026',
+    dateISO: '2026-11-21',
+    time: '11:15',
+    dateTime: '21/11/2026 ore 11:15',
+    ambulatorio: 'PADIGLIONE ESTERNO - PIANO TERRA',
+    sedeUnita: 'SEDE: VIA AMENDOLA UNITA: PEDIATRIA SPECIALISTICA BARI (BA)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // ASL TARANTO
+  // ============================================================================
+  {
+    id: 'slot-ta-1',
+    azienda: 'Asl Taranto',
+    struttura: 'OSPEDALE CIVILE - MARTINA FRANCA',
+    address: 'Piazza San Francesco da Paola - Martina Franca (TA)',
+    date: '17/11/2026',
+    dateISO: '2026-11-17',
+    time: '08:15',
+    dateTime: '17/11/2026 ore 08:15',
+    ambulatorio: 'POLIAMBULATORIO PIANO TERRA',
+    sedeUnita: 'SEDE: PIAZZA SAN FRANCESCO UNITA: POLIAMBULATORIO MARTINA FRANCA (TA)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-ta-2',
+    azienda: 'Asl Taranto',
+    struttura: 'OSPEDALE SS. ANNUNZIATA - TARANTO',
+    address: 'Via Francesco Bruno 1 - Taranto (TA)',
+    date: '22/11/2026',
+    dateISO: '2026-11-22',
+    time: '11:30',
+    dateTime: '22/11/2026 ore 11:30',
+    ambulatorio: 'PADIGLIONE CENTRALE - PIANO 2',
+    sedeUnita: 'SEDE: VIA BRUNO UNITA: CARDIOLOGIA TARANTO (TA)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-ta-3',
+    azienda: 'Asl Taranto',
+    struttura: 'OSPEDALE SAN MARCO - GROTTAGLIE',
+    address: 'Via Cavour - Grottaglie (TA)',
+    date: '29/11/2026',
+    dateISO: '2026-11-29',
+    time: '10:00',
+    dateTime: '29/11/2026 ore 10:00',
+    ambulatorio: 'PIANO TERRA STANZA 8',
+    sedeUnita: 'SEDE: VIA CAVOUR UNITA: GROTTAGLIE (TA)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // ASL LECCE
+  // ============================================================================
+  {
+    id: 'slot-le-1',
+    azienda: 'Asl Lecce',
+    struttura: 'OSPEDALE VITO FAZZI - LECCE',
+    address: 'Piazzetta Filippo Muratore - Lecce (LE)',
+    date: '19/11/2026',
+    dateISO: '2026-11-19',
+    time: '10:00',
+    dateTime: '19/11/2026 ore 10:00',
+    ambulatorio: 'POLO ONCOLOGICO - PIANO 1',
+    sedeUnita: 'SEDE: PIAZZETTA MURATORE UNITA: POLIAMBULATORIO LECCE (LE)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-le-2',
+    azienda: 'Asl Lecce',
+    struttura: 'PRESIDIO OSPEDALIERO GALLIPOLI',
+    address: 'Strada Provinciale per Alezio - Gallipoli (LE)',
+    date: '01/12/2026',
+    dateISO: '2026-12-01',
+    time: '09:15',
+    dateTime: '01/12/2026 ore 09:15',
+    ambulatorio: 'AMBULATORIO CARDIOLOGIA PIANO 2',
+    sedeUnita: 'SEDE: SP PER ALEZIO UNITA: GALLIPOLI (LE)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // ASL FOGGIA
+  // ============================================================================
+  {
+    id: 'slot-fg-1',
+    azienda: 'Asl Foggia',
+    struttura: 'OSPEDALE TATERELLA - CERIGNOLA',
+    address: 'Contrada San Matteo - Cerignola (FG)',
+    date: '26/11/2026',
+    dateISO: '2026-11-26',
+    time: '08:30',
+    dateTime: '26/11/2026 ore 08:30',
+    ambulatorio: 'PIANO TERRA STANZA 4',
+    sedeUnita: 'SEDE: C.DA SAN MATTEO UNITA: AMBULATORIO CERIGNOLA (FG)',
+    firstAvailable: false
+  },
+  {
+    id: 'slot-fg-2',
+    azienda: 'Asl Foggia',
+    struttura: 'PRESIDIO OSPEDALIERO SAN SEVERO',
+    address: 'Via Teresa Masselli Mascia - San Severo (FG)',
+    date: '04/12/2026',
+    dateISO: '2026-12-04',
+    time: '10:45',
+    dateTime: '04/12/2026 ore 10:45',
+    ambulatorio: 'PIANO 1 STANZA 16',
+    sedeUnita: 'SEDE: VIA MASSELLI MASCIA UNITA: SAN SEVERO (FG)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // A.O.U. POLICLINICO RIUNITI DI FOGGIA
+  // ============================================================================
+  {
+    id: 'slot-fg-pol-1',
+    azienda: 'A.O.U. Policlinico Riuniti di Foggia',
+    struttura: 'POLICLINICO RIUNITI DI FOGGIA',
+    address: 'Viale Luigi Pinto 1 - Foggia (FG)',
+    date: '16/11/2026',
+    dateISO: '2026-11-16',
+    time: '09:45',
+    dateTime: '16/11/2026 ore 09:45',
+    ambulatorio: 'PALAZZINA POLIAMBULATORI - PIANO 2',
+    sedeUnita: 'SEDE: VIALE PINTO UNITA: POLIAMBULATORIO FOGGIA (FG)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // IRCCS ISTITUTO TUMORI GIOVANNI PAOLO II
+  // ============================================================================
+  {
+    id: 'slot-irccs-tumori-1',
+    azienda: 'IRCCS Istituto Tumori Giovanni Paolo II',
+    struttura: 'IRCCS GIOVANNI PAOLO II - BARI',
+    address: 'Viale Orazio Flacco 65 - Bari (BA)',
+    date: '24/11/2026',
+    dateISO: '2026-11-24',
+    time: '09:20',
+    dateTime: '24/11/2026 ore 09:20',
+    ambulatorio: 'AMBULATORIO DIAGNOSTICA INTEGRATA',
+    sedeUnita: 'SEDE: VIALE ORAZIO FLACCO UNITA: IRCCS BARI (BA)',
+    firstAvailable: false
+  },
+
+  // ============================================================================
+  // IRCCS DE BELLIS CASTELLANA GROTTE
+  // ============================================================================
+  {
+    id: 'slot-irccs-debellis-1',
+    azienda: 'IRCCS de Bellis Castellana Grotte',
+    struttura: 'IRCCS SAVERIO DE BELLIS',
+    address: 'Via Turi 27 - Castellana Grotte (BA)',
+    date: '27/11/2026',
+    dateISO: '2026-11-27',
+    time: '10:30',
+    dateTime: '27/11/2026 ore 10:30',
+    ambulatorio: 'CORPO DEGENTI - PIANO 1',
+    sedeUnita: 'SEDE: VIA TURI UNITA: GASTROENTEROLOGIA CASTELLANA (BA)',
+    firstAvailable: false
+  }
+];
+
+/**
+ * Funzione helper per aggiungere rapidamente una nuova disponibilità fittizia
+ * da codice o console browser.
+ */
+window.addFakeAvailability = function(item) {
+  if (!item || !item.azienda || !item.struttura) {
+    console.error('Oggetto disponibilità non valido:', item);
+    return false;
+  }
+  if (!item.id) {
+    item.id = 'slot-custom-' + Date.now();
+  }
+  window.fakeAvailabilities.push(item);
+  if (typeof renderSlots === 'function') {
+    renderSlots();
+  }
+  return item;
+};

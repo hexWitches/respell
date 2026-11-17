@@ -10,6 +10,7 @@
 
 // Application State
 const state = {
+  version: 'v1', // 'v1' (Base Wireframe) or 'v2' (Redesign Disponibilità & Calendario)
   currentScreen: 'screen-home',
   user: {
     name: 'MIRIANA PINTO',
@@ -53,8 +54,8 @@ const state = {
   ]
 };
 
-// Available appointment slots for Step 4 (matching reference wireframe Image 1)
-const availableSlots = [
+// Version 1 Available appointment slots (original reference wireframe)
+const v1AvailableSlots = [
   {
     id: 'slot-1',
     azienda: 'Asl Brindisi',
@@ -80,6 +81,14 @@ const availableSlots = [
     firstAvailable: false
   }
 ];
+
+// Version 2 appointment slots from the fake repository (prototype/js/fake-repository.js)
+function getRepositorySlots() {
+  if (typeof window !== 'undefined' && Array.isArray(window.fakeAvailabilities) && window.fakeAvailabilities.length > 0) {
+    return window.fakeAvailabilities;
+  }
+  return [];
+}
 
 // Accessibility Font Resizer (Wireframe Top Red Bar: A-, A+)
 function setFontSize(size) {
@@ -155,6 +164,8 @@ function startNewBooking() {
   const chkPriv = document.getElementById('checkPrivacyConsent');
   if (chkNote) chkNote.checked = false;
   if (chkPriv) chkPriv.checked = false;
+
+  resetStep4Filters();
 
   goToScreen('screen-step-beneficiary');
 }
@@ -444,8 +455,12 @@ function setPrescriptionCard(examType) {
   if (c1) c1.classList.toggle('selected', isCardio);
   if (c2) c2.classList.toggle('selected', !isCardio);
 
-  state.wizard.exam = 'INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)';
-  state.wizard.examCode = '67001';
+  state.wizard.selectedExamCode = isCardio ? '160A37295673820' : '160A24680453583';
+  const recEl = document.getElementById('step4RecipeNumber');
+  if (recEl) recEl.innerText = state.wizard.selectedExamCode;
+
+  state.wizard.exam = isCardio ? 'INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)' : 'VISITA SPECIALISTICA CARDIOLOGICA';
+  state.wizard.examCode = isCardio ? '67001' : '89700';
 }
 
 function proceedFromStep3() {
@@ -456,10 +471,192 @@ function proceedFromStep3() {
   goToScreen('screen-step-slots');
 }
 
-// Step 4: Render Slots as Table (Matching Image 1)
+// Helper: Parse DD/MM/YYYY or YYYY-MM-DD
+function parseSlotDate(dateStr, dateISO) {
+  if (dateISO) {
+    const d = new Date(dateISO);
+    if (!isNaN(d.getTime())) return d;
+  }
+  if (!dateStr) return null;
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+  }
+  return new Date(dateStr);
+}
+
+// Switch prototype version ('v1' or 'v2')
+function setPrototypeVersion(ver) {
+  const targetVer = (ver === 'v2') ? 'v2' : 'v1';
+  state.version = targetVer;
+  try {
+    localStorage.setItem('fse_prototype_version', targetVer);
+  } catch (e) {
+    // Ignore storage restriction
+  }
+
+  const dockSel = document.getElementById('dockVersionSelect');
+  if (dockSel && dockSel.value !== targetVer) {
+    dockSel.value = targetVer;
+  }
+
+  setupStep4ForVersion(targetVer);
+
+  if (state.currentScreen === 'screen-step-slots') {
+    renderSlots();
+  } else if (state.currentScreen === 'screen-step-recap') {
+    updateRecapStep();
+  } else if (state.currentScreen === 'screen-step-success') {
+    updateSuccessStep();
+  }
+}
+
+// Setup Step 4 initial filters and dropdowns based on version
+function setupStep4ForVersion(ver) {
+  state.version = ver;
+  state.wizard.selectedSlot = null;
+
+  const master = document.getElementById('aslTutto');
+  if (master) master.checked = false;
+
+  const checks = document.querySelectorAll('.asl-check');
+  const selectStruttura = document.getElementById('selectStruttura');
+  const inputDate = document.getElementById('inputDateFrom');
+  if (inputDate) inputDate.value = '';
+
+  const countBadge = document.getElementById('slotsCountBadge');
+
+  if (ver === 'v1') {
+    // Versione 1: Wireframe iniziale con 2 ASL pre-selezionate e strutture statiche
+    checks.forEach(c => {
+      const val = (c.value || c.parentElement.textContent || '').trim();
+      if (val === 'Asl Barletta-Andria-Trani' || val === 'Asl Brindisi') {
+        c.checked = true;
+      } else {
+        c.checked = false;
+      }
+    });
+
+    if (selectStruttura) {
+      selectStruttura.disabled = false;
+      selectStruttura.innerHTML = `
+        <option value="">Tutte le strutture</option>
+        <option value="OSPEDALE OSTUNI">OSPEDALE OSTUNI</option>
+        <option value="POL. MARGHERITA DI SAVOIA">POL. MARGHERITA DI SAVOIA</option>
+        <option value="OSPEDALE CIVILE - MARTINA FRANCA">OSPEDALE CIVILE - MARTINA FRANCA</option>
+        <option value="POLICLINICO DI BARI">POLICLINICO DI BARI</option>
+      `;
+      selectStruttura.value = '';
+    }
+
+    if (countBadge) countBadge.style.display = 'none';
+  } else {
+    // Versione 2: Nessuna ASL preselezionata, filtro dinamico e guida alla selezione
+    checks.forEach(c => c.checked = false);
+
+    if (selectStruttura) {
+      selectStruttura.innerHTML = '<option value="">-- Seleziona prima un\'Azienda Sanitaria --</option>';
+      selectStruttura.value = '';
+      selectStruttura.disabled = true;
+    }
+
+    if (countBadge) countBadge.style.display = 'none';
+  }
+}
+
+// Reset Step 4 filters and inputs
+function resetStep4Filters() {
+  setupStep4ForVersion(state.version || 'v1');
+}
+
+// Dynamically populate structure select dropdown based on selected ASLs (used in v2)
+function updateStrutturaDropdown(checkedAsls, allSlots) {
+  const selectStruttura = document.getElementById('selectStruttura');
+  if (!selectStruttura) return;
+
+  const currentVal = selectStruttura.value;
+
+  if (checkedAsls.length === 0) {
+    selectStruttura.innerHTML = '<option value="">-- Seleziona prima un\'Azienda Sanitaria --</option>';
+    selectStruttura.disabled = true;
+    return;
+  }
+
+  selectStruttura.disabled = false;
+
+  // Collect unique strutture for selected ASLs
+  const availableStrutture = [];
+  allSlots.forEach(s => {
+    if (checkedAsls.includes(s.azienda) && !availableStrutture.includes(s.struttura)) {
+      availableStrutture.push(s.struttura);
+    }
+  });
+
+  availableStrutture.sort();
+
+  let optionsHtml = '<option value="">Tutte le strutture</option>';
+  availableStrutture.forEach(str => {
+    const isSelected = (str === currentVal);
+    optionsHtml += `<option value="${str}" ${isSelected ? 'selected' : ''}>${str}</option>`;
+  });
+
+  selectStruttura.innerHTML = optionsHtml;
+}
+
+// Step 4: Render Slots (Version Dispatcher)
 function renderSlots() {
+  if (state.version === 'v1') {
+    renderSlotsV1();
+  } else {
+    renderSlotsV2();
+  }
+}
+
+// Step 4 Version 1: Static Wireframe Render
+function renderSlotsV1() {
   const container = document.getElementById('slotsWireframeList');
+  const countBadge = document.getElementById('slotsCountBadge');
+  const selectStruttura = document.getElementById('selectStruttura');
+  const inputDateFrom = document.getElementById('inputDateFrom');
   if (!container) return;
+
+  if (countBadge) countBadge.style.display = 'none';
+
+  const checkedBoxes = Array.from(document.querySelectorAll('.asl-check:checked'));
+  const checkedAsls = checkedBoxes.map(cb => (cb.value || cb.parentElement.textContent).trim());
+
+  let filtered = v1AvailableSlots.slice();
+
+  if (checkedAsls.length > 0) {
+    filtered = filtered.filter(slot => checkedAsls.includes(slot.azienda));
+  } else {
+    filtered = [];
+  }
+
+  const selectedStruttura = selectStruttura ? selectStruttura.value : '';
+  if (selectedStruttura) {
+    filtered = filtered.filter(slot => slot.struttura.toUpperCase() === selectedStruttura.toUpperCase());
+  }
+
+  const dateFromVal = inputDateFrom ? inputDateFrom.value : '';
+  if (dateFromVal) {
+    const fromDate = new Date(dateFromVal);
+    fromDate.setHours(0, 0, 0, 0);
+    filtered = filtered.filter(slot => {
+      const slotDate = parseSlotDate(slot.date, slot.dateISO);
+      return slotDate ? slotDate >= fromDate : true;
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="slots-empty-state">
+        <div class="slots-empty-title">Nessuna disponibilità trovata</div>
+        <p class="slots-empty-desc">Non sono state trovate disponibilità per le selezioni correnti.</p>
+      </div>
+    `;
+    return;
+  }
 
   let html = `
     <div class="slot-table-header">
@@ -471,7 +668,7 @@ function renderSlots() {
     </div>
   `;
 
-  html += availableSlots.map(slot => {
+  html += filtered.map(slot => {
     const isSelected = state.wizard.selectedSlot && state.wizard.selectedSlot.id === slot.id;
     return `
       <div class="slot-table-row ${isSelected ? 'selected' : ''}" onclick="selectSlot('${slot.id}')">
@@ -485,13 +682,14 @@ function renderSlots() {
         </div>
         <div class="slot-cell-struttura">
           ${slot.struttura}
+          ${slot.firstAvailable ? '<span class="slot-first-badge">Prima data utile</span>' : ''}
         </div>
         <div class="slot-cell-datetime">
           <div class="slot-date-line">${slot.date}</div>
           <div class="slot-time-line">${slot.time}</div>
         </div>
         <div class="slot-cell-action">
-          <button class="btn-scegli-altra-data" onclick="event.stopPropagation(); alert('Ricerca altre date disponibili per ${slot.struttura}');">Scegli altra data</button>
+          <button class="btn-scegli-altra-data" type="button" onclick="event.stopPropagation(); handleScegliAltraData('${slot.id}');">Scegli altra data</button>
         </div>
       </div>
     `;
@@ -500,15 +698,172 @@ function renderSlots() {
   container.innerHTML = html;
 }
 
+// Step 4 Version 2: Dynamic Fake Repository Render with Empty Guidance State
+function renderSlotsV2() {
+  const container = document.getElementById('slotsWireframeList');
+  const countBadge = document.getElementById('slotsCountBadge');
+  const selectStruttura = document.getElementById('selectStruttura');
+  const inputDateFrom = document.getElementById('inputDateFrom');
+  if (!container) return;
+
+  const allSlots = getRepositorySlots();
+
+  // Get all checked ASL checkboxes
+  const checkedBoxes = Array.from(document.querySelectorAll('.asl-check:checked'));
+  const checkedAsls = checkedBoxes.map(cb => (cb.value || cb.parentElement.textContent).trim());
+
+  // Update dropdown options
+  updateStrutturaDropdown(checkedAsls, allSlots);
+
+  // If NO Azienda Sanitaria is selected, do NOT show availabilities
+  if (checkedAsls.length === 0) {
+    state.wizard.selectedSlot = null;
+    if (countBadge) countBadge.style.display = 'none';
+
+    container.innerHTML = `
+      <div class="slots-empty-state">
+        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h7"></path>
+          <circle cx="18" cy="18" r="3"></circle>
+          <path d="m20.5 20.5 2 2"></path>
+        </svg>
+        <div class="slots-empty-title">Nessuna Azienda Sanitaria selezionata</div>
+        <p class="slots-empty-desc">
+          Per visualizzare le date e le strutture disponibili è necessario selezionare almeno un'<strong>Azienda Sanitaria</strong> dall'elenco sovrastante.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  // Filter slots by selected ASLs
+  let filtered = allSlots.filter(slot => checkedAsls.includes(slot.azienda));
+
+  // Filter by structure if chosen
+  const selectedStruttura = selectStruttura ? selectStruttura.value : '';
+  if (selectedStruttura) {
+    filtered = filtered.filter(slot => slot.struttura.toUpperCase() === selectedStruttura.toUpperCase());
+  }
+
+  // Filter by starting date if chosen
+  const dateFromVal = inputDateFrom ? inputDateFrom.value : '';
+  if (dateFromVal) {
+    const fromDate = new Date(dateFromVal);
+    fromDate.setHours(0, 0, 0, 0);
+
+    filtered = filtered.filter(slot => {
+      const slotDate = parseSlotDate(slot.date, slot.dateISO);
+      return slotDate ? slotDate >= fromDate : true;
+    });
+  }
+
+  // Update badge count
+  if (countBadge) {
+    countBadge.style.display = 'inline-block';
+    countBadge.innerText = `${filtered.length} ${filtered.length === 1 ? 'disponibilità' : 'disponibilità'}`;
+  }
+
+  // If no slots match the criteria
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="slots-empty-state">
+        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        <div class="slots-empty-title">Nessuna disponibilità trovata</div>
+        <p class="slots-empty-desc">
+          Non sono state trovate disponibilità per le selezioni correnti. Prova a selezionare un'altra struttura o ad ampliare le Aziende Sanitarie scelte.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  // Deselect if previously selected slot is no longer in filtered list
+  if (state.wizard.selectedSlot && !filtered.some(s => s.id === state.wizard.selectedSlot.id)) {
+    state.wizard.selectedSlot = null;
+  }
+
+  // Render Table
+  let html = `
+    <div class="slot-table-header">
+      <div style="width: 36px;"></div>
+      <div>Azienda sanitaria</div>
+      <div>Struttura</div>
+      <div>Data e ora</div>
+      <div style="width: 140px; text-align: right;"></div>
+    </div>
+  `;
+
+  html += filtered.map(slot => {
+    const isSelected = state.wizard.selectedSlot && state.wizard.selectedSlot.id === slot.id;
+    return `
+      <div class="slot-table-row ${isSelected ? 'selected' : ''}" onclick="selectSlot('${slot.id}')">
+        <div class="slot-radio-cell">
+          <div class="slot-radio-btn ${isSelected ? 'checked' : ''}">
+            ${isSelected ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+          </div>
+        </div>
+        <div class="slot-cell-azienda">
+          ${slot.azienda}
+        </div>
+        <div class="slot-cell-struttura">
+          ${slot.struttura}
+          ${slot.firstAvailable ? '<span class="slot-first-badge">Prima data utile</span>' : ''}
+        </div>
+        <div class="slot-cell-datetime">
+          <div class="slot-date-line">${slot.date}</div>
+          <div class="slot-time-line">${slot.time}</div>
+        </div>
+        <div class="slot-cell-action">
+          <button class="btn-scegli-altra-data" type="button" onclick="event.stopPropagation(); handleScegliAltraData('${slot.id}');">Scegli altra data</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+}
+
+// Action for 'Scegli altra data' button
+function handleScegliAltraData(slotId) {
+  if (state.version === 'v2') {
+    openAvailModal(slotId);
+  } else {
+    const slotsList = v1AvailableSlots;
+    const slot = slotsList.find(s => s.id === slotId) || {};
+    alert('Ricerca altre date disponibili per ' + (slot.struttura || 'la struttura selezionata'));
+  }
+}
+
 function selectSlot(slotId) {
-  const found = availableSlots.find(s => s.id === slotId);
+  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  const found = allSlots.find(s => s.id === slotId);
   if (found) {
     state.wizard.selectedSlot = found;
     renderSlots();
   }
 }
 
+function handleASLCheckChange() {
+  const master = document.getElementById('aslTutto');
+  const checks = Array.from(document.querySelectorAll('.asl-check'));
+  if (master) {
+    master.checked = checks.length > 0 && checks.every(c => c.checked);
+  }
+  renderSlots();
+}
+
 function proceedFromStep4() {
+  if (state.version === 'v2') {
+    const checkedBoxes = document.querySelectorAll('.asl-check:checked');
+    if (checkedBoxes.length === 0) {
+      alert('Seleziona almeno un\'Azienda Sanitaria per visualizzare e scegliere una disponibilità.');
+      return;
+    }
+  }
+
   if (!state.wizard.selectedSlot) {
     alert('Seleziona una delle disponibilità per proseguire.');
     return;
@@ -516,23 +871,334 @@ function proceedFromStep4() {
   goToScreen('screen-step-recap');
 }
 
+// ==============================================================================
+// MODALE CALENDARIO DISPONIBILITÀ (Scegli altra data - Matching Wireframe)
+// ==============================================================================
+const availModalState = {
+  slotId: null,
+  view: 'lista', // 'lista' or 'calendario'
+  selectedDate: '16/11/2026',
+  selectedDateObj: new Date(2026, 10, 16),
+  selectedTime: '7:42',
+  calYear: 2026,
+  calMonth: 10, // 0-based: 10 = Novembre
+  datesPool: [
+    '14/11/2026',
+    '15/11/2026',
+    '16/11/2026',
+    '17/11/2026',
+    '18/11/2026',
+    '19/11/2026',
+    '20/11/2026',
+    '21/11/2026',
+    '22/11/2026'
+  ],
+  visibleDatesCount: 6,
+  timesPool: [
+    '7:30', '7:42', '7:54', '8:18',
+    '8:30', '9:06', '9:18', '9:30',
+    '9:48', '10:06', '10:18', '10:30'
+  ]
+};
+
+function openAvailModal(slotId) {
+  availModalState.slotId = slotId;
+  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  const slot = allSlots.find(s => s.id === slotId) || state.wizard.selectedSlot;
+
+  if (slot) {
+    if (slot.date) {
+      availModalState.selectedDate = slot.date;
+      const parts = slot.date.split('/');
+      if (parts.length === 3) {
+        availModalState.selectedDateObj = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        availModalState.calYear = availModalState.selectedDateObj.getFullYear();
+        availModalState.calMonth = availModalState.selectedDateObj.getMonth();
+      }
+    }
+    if (slot.time) {
+      availModalState.selectedTime = slot.time;
+    }
+  }
+
+  // Ensure selectedDate is in datesPool
+  if (availModalState.selectedDate && !availModalState.datesPool.includes(availModalState.selectedDate)) {
+    availModalState.datesPool.unshift(availModalState.selectedDate);
+  }
+
+  renderAvailModal();
+
+  const modal = document.getElementById('availModalOverlay');
+  if (modal) {
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
+}
+
+function closeAvailModal() {
+  const modal = document.getElementById('availModalOverlay');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function handleAvailBackdropClick(e) {
+  if (e.target && e.target.id === 'availModalOverlay') {
+    closeAvailModal();
+  }
+}
+
+function switchAvailView(viewType) {
+  availModalState.view = viewType;
+
+  const btnCal = document.getElementById('btnToggleCalendario');
+  const btnLista = document.getElementById('btnToggleLista');
+  const viewLista = document.getElementById('availViewLista');
+  const viewCal = document.getElementById('availViewCalendario');
+
+  if (viewType === 'calendario') {
+    if (btnCal) btnCal.classList.add('active');
+    if (btnLista) btnLista.classList.remove('active');
+    if (viewLista) viewLista.style.display = 'none';
+    if (viewCal) viewCal.style.display = 'block';
+    renderCalendarGrid();
+  } else {
+    if (btnCal) btnCal.classList.remove('active');
+    if (btnLista) btnLista.classList.add('active');
+    if (viewLista) viewLista.style.display = 'block';
+    if (viewCal) viewCal.style.display = 'none';
+    renderDatesList();
+  }
+}
+
+function renderAvailModal() {
+  switchAvailView(availModalState.view || 'lista');
+  renderDatesList();
+  renderCalendarGrid();
+  renderTimePills();
+  updateAvailSummary();
+}
+
+function renderDatesList() {
+  const container = document.getElementById('availDatesListContainer');
+  if (!container) return;
+
+  const datesToShow = availModalState.datesPool.slice(0, availModalState.visibleDatesCount);
+
+  container.innerHTML = datesToShow.map(dateStr => {
+    const isSelected = (dateStr === availModalState.selectedDate);
+    return `
+      <div class="avail-date-row ${isSelected ? 'selected' : ''}" onclick="selectAvailDate('${dateStr}')">
+        <span class="avail-date-pill">${dateStr}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function showMoreAvailDates() {
+  if (availModalState.visibleDatesCount < availModalState.datesPool.length) {
+    availModalState.visibleDatesCount += 3;
+  } else {
+    const lastDateStr = availModalState.datesPool[availModalState.datesPool.length - 1];
+    const parts = lastDateStr.split('/');
+    const d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    for (let i = 1; i <= 3; i++) {
+      d.setDate(d.getDate() + 1);
+      const day = String(d.getDate()).padStart(2, '0');
+      const mon = String(d.getMonth() + 1).padStart(2, '0');
+      availModalState.datesPool.push(`${day}/${mon}/${d.getFullYear()}`);
+    }
+    availModalState.visibleDatesCount = availModalState.datesPool.length;
+  }
+  renderDatesList();
+}
+
+function selectAvailDate(dateStr) {
+  availModalState.selectedDate = dateStr;
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    availModalState.selectedDateObj = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    availModalState.calYear = availModalState.selectedDateObj.getFullYear();
+    availModalState.calMonth = availModalState.selectedDateObj.getMonth();
+  }
+
+  renderDatesList();
+  renderCalendarGrid();
+  updateAvailSummary();
+}
+
+function renderCalendarGrid() {
+  const grid = document.getElementById('availCalDaysGrid');
+  const monthSelect = document.getElementById('availCalMonthSelect');
+  const yearSelect = document.getElementById('availCalYearSelect');
+  if (!grid) return;
+
+  if (monthSelect) monthSelect.value = availModalState.calMonth;
+  if (yearSelect) yearSelect.value = availModalState.calYear;
+
+  const year = availModalState.calYear;
+  const month = availModalState.calMonth;
+
+  // Day 1 of current month
+  const firstDayObj = new Date(year, month, 1);
+  let startingDay = firstDayObj.getDay(); // 0 is Sunday
+  if (startingDay === 0) startingDay = 7; // Convert to Mon=1, Sun=7
+
+  const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  let html = '';
+
+  // Previous month trailing days
+  const prevDaysCount = startingDay - 1;
+  for (let i = prevDaysCount; i > 0; i--) {
+    const dayNum = daysInPrevMonth - i + 1;
+    html += `<div class="avail-cal-day muted" onclick="selectCalendarPrevMonthDay(${dayNum})">${dayNum}</div>`;
+  }
+
+  // Current month days
+  for (let day = 1; day <= daysInCurrentMonth; day++) {
+    const dateStr = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+    const isSelected = (dateStr === availModalState.selectedDate);
+    html += `
+      <div class="avail-cal-day ${isSelected ? 'selected' : ''}" onclick="selectAvailCalendarDay(${year}, ${month}, ${day})">
+        ${day}
+      </div>
+    `;
+  }
+
+  // Next month leading days to complete grid
+  const totalCells = prevDaysCount + daysInCurrentMonth;
+  const nextDaysCount = (totalCells > 35) ? (42 - totalCells) : (35 - totalCells);
+  for (let day = 1; day <= nextDaysCount; day++) {
+    html += `<div class="avail-cal-day muted" onclick="selectCalendarNextMonthDay(${day})">${day}</div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function changeCalendarMonth(val) {
+  availModalState.calMonth = parseInt(val, 10);
+  renderCalendarGrid();
+}
+
+function changeCalendarYear(val) {
+  availModalState.calYear = parseInt(val, 10);
+  renderCalendarGrid();
+}
+
+function selectAvailCalendarDay(year, month, day) {
+  const dateStr = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+  availModalState.selectedDate = dateStr;
+  availModalState.selectedDateObj = new Date(year, month, day);
+
+  if (!availModalState.datesPool.includes(dateStr)) {
+    availModalState.datesPool.unshift(dateStr);
+  }
+
+  renderCalendarGrid();
+  renderDatesList();
+  updateAvailSummary();
+}
+
+function selectCalendarPrevMonthDay(day) {
+  let m = availModalState.calMonth - 1;
+  let y = availModalState.calYear;
+  if (m < 0) {
+    m = 11;
+    y -= 1;
+  }
+  availModalState.calMonth = m;
+  availModalState.calYear = y;
+  selectAvailCalendarDay(y, m, day);
+}
+
+function selectCalendarNextMonthDay(day) {
+  let m = availModalState.calMonth + 1;
+  let y = availModalState.calYear;
+  if (m > 11) {
+    m = 0;
+    y += 1;
+  }
+  availModalState.calMonth = m;
+  availModalState.calYear = y;
+  selectAvailCalendarDay(y, m, day);
+}
+
+function renderTimePills() {
+  const container = document.getElementById('availTimePillsGrid');
+  if (!container) return;
+
+  container.innerHTML = availModalState.timesPool.map(timeStr => {
+    const isSelected = (timeStr === availModalState.selectedTime);
+    return `
+      <button type="button" class="avail-time-pill ${isSelected ? 'selected' : ''}" onclick="selectAvailTime('${timeStr}')">
+        ${timeStr}
+      </button>
+    `;
+  }).join('');
+}
+
+function selectAvailTime(timeStr) {
+  availModalState.selectedTime = timeStr;
+  renderTimePills();
+  updateAvailSummary();
+}
+
+function updateAvailSummary() {
+  const summaryEl = document.getElementById('availModalSummaryValue');
+  if (!summaryEl) return;
+
+  const d = availModalState.selectedDateObj || new Date(2026, 10, 16);
+  const days = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+  const months = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+
+  const dayName = days[d.getDay()];
+  const dayNum = d.getDate();
+  const monthName = months[d.getMonth()];
+  const yearNum = d.getFullYear();
+
+  summaryEl.innerText = `${dayName} ${dayNum} ${monthName} ${yearNum} - ${availModalState.selectedTime}`;
+}
+
+function confirmAvailModal() {
+  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  let targetSlot = allSlots.find(s => s.id === availModalState.slotId);
+
+  if (!targetSlot) {
+    targetSlot = state.wizard.selectedSlot || allSlots[0];
+  }
+
+  if (targetSlot) {
+    targetSlot.date = availModalState.selectedDate;
+    targetSlot.time = availModalState.selectedTime;
+    targetSlot.dateTime = `${availModalState.selectedDate} ore ${availModalState.selectedTime}`;
+    state.wizard.selectedSlot = targetSlot;
+  }
+
+  closeAvailModal();
+  renderSlots();
+}
+
 // Step 5: Update Recap with slot details (Matching Image 8)
 function updateRecapStep() {
-  const slot = state.wizard.selectedSlot || availableSlots[0];
+  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const slot = state.wizard.selectedSlot || defaultSlot;
 
   const setVal = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.innerText = val;
   };
 
-  setVal('recapNRE', '160A24680453583');
-  setVal('recapPrestazioni', '3');
+  setVal('recapNRE', state.wizard.selectedExamCode || '160A37295673820');
+  setVal('recapPrestazioni', '1');
   setVal('recapData', slot.date || '13/11/2026');
-  setVal('recapOra', slot.time || '7:55');
-  setVal('recapAzienda', slot.azienda || 'ASL Brindisi');
+  setVal('recapOra', slot.time || '07:55');
+  setVal('recapAzienda', slot.azienda || 'Asl Brindisi');
   setVal('recapStruttura', slot.struttura || 'OSPEDALE OSTUNI');
-  setVal('recapAmbulatorio', slot.ambulatorio || 'VIA LUIGI MICOLI - OSTUNI (BR)');
-  setVal('recapStrutturaAlt', slot.sedeUnita || 'SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)');
+  setVal('recapAmbulatorio', slot.ambulatorio || slot.address || 'VIA LUIGI MICCOLI - OSTUNI (BR)');
+  setVal('recapStrutturaAlt', slot.sedeUnita || slot.address || 'SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)');
 }
 
 function proceedFromStep5() {
@@ -552,13 +1218,14 @@ function proceedFromStep5() {
   state.wizard.cupCode = '2026649029';
 
   // Aggiunge la prenotazione alla lista personale
-  const slot = state.wizard.selectedSlot || availableSlots[0];
+  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const slot = state.wizard.selectedSlot || defaultSlot;
   const newBooking = {
     id: state.wizard.cupCode,
     date: slot.date || '13/11/2026',
     time: slot.time || '07:55',
     dateTime: (slot.date || '13/11/2026') + ' Ore ' + (slot.time || '07:55'),
-    exam: 'INSULINA (CURVA DA CARICO)',
+    exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'VISITA SPECIALISTICA'),
     hospital: slot.struttura || 'OSPEDALE OSTUNI',
     bookingType: 'SSN con Ricetta Dematerializzata',
     cancelDeadline: '11/11/2026',
@@ -576,7 +1243,8 @@ function proceedFromStep5() {
 
 // Step 6: Update Success (Riepilogo - Matching Image 2)
 function updateSuccessStep() {
-  const slot = state.wizard.selectedSlot || availableSlots[0];
+  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const slot = state.wizard.selectedSlot || defaultSlot;
   const setVal = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.innerText = val;
@@ -668,39 +1336,10 @@ function updateTornaIndietro(screenId) {
 function toggleAllASL(masterCheckbox) {
   const checks = document.querySelectorAll('.asl-check');
   checks.forEach(c => c.checked = masterCheckbox.checked);
+  renderSlots();
 }
 
-// Start a new booking from the success screen
-function startNewBooking() {
-  // Reset wizard state to defaults shown in wireframes
-  state.wizard.beneficiary = 'me';
-  state.wizard.regime = 'ssn';
-  state.wizard.selectedExam = 'cardio';
-  state.wizard.selectedSlot = availableSlots[0];
-  state.wizard.cupCode = '2026649029';
 
-  const bMe = document.getElementById('choiceBeneficiaryMe');
-  if (bMe) bMe.classList.add('selected');
-  const bOther = document.getElementById('choiceBeneficiaryOther');
-  if (bOther) bOther.classList.remove('selected');
-
-  const rSSN = document.getElementById('choiceRegimeSSN');
-  if (rSSN) rSSN.classList.add('selected');
-  const rALPI = document.getElementById('choiceRegimeALPI');
-  if (rALPI) rALPI.classList.remove('selected');
-
-  const p1 = document.getElementById('prescCard1');
-  if (p1) p1.classList.add('selected');
-  const p2 = document.getElementById('prescCard2');
-  if (p2) p2.classList.remove('selected');
-
-  const check1 = document.getElementById('checkNoteOperatore');
-  if (check1) check1.checked = true;
-  const check2 = document.getElementById('checkPrivacyConsent');
-  if (check2) check2.checked = true;
-
-  goToScreen('screen-step-beneficiary');
-}
 
 // User pill dropdown menu
 function toggleUserMenu() {
@@ -724,5 +1363,10 @@ document.addEventListener('click', (e) => {
 
 // Initial Setup
 document.addEventListener('DOMContentLoaded', () => {
+  let savedVersion = 'v1';
+  try {
+    savedVersion = localStorage.getItem('fse_prototype_version') || 'v1';
+  } catch (e) {}
+  setPrototypeVersion(savedVersion);
   goToScreen('screen-home');
 });

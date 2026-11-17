@@ -638,43 +638,39 @@
           <div class="checkbox-asl-grid">
             <div class="asl-col">
               <label class="checkbox-item-label"><input type="checkbox" id="aslTutto" onchange="toggleAllASL(this)"> Seleziona Tutto</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> A.O.U. Policlinico Riuniti di Foggia</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" checked> Asl Barletta-Andria-Trani</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Lecce</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> IRCCS Istituto Tumori Giovanni Paolo II</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="A.O.U. Policlinico Riuniti di Foggia" onchange="handleASLCheckChange()"> A.O.U. Policlinico Riuniti di Foggia</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Barletta-Andria-Trani" onchange="handleASLCheckChange()"> Asl Barletta-Andria-Trani</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Lecce" onchange="handleASLCheckChange()"> Asl Lecce</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="IRCCS Istituto Tumori Giovanni Paolo II" onchange="handleASLCheckChange()"> IRCCS Istituto Tumori Giovanni Paolo II</label>
             </div>
             <div class="asl-col">
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" checked> Asl Brindisi</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Taranto</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII" onchange="handleASLCheckChange()"> A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Brindisi" onchange="handleASLCheckChange()"> Asl Brindisi</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Taranto" onchange="handleASLCheckChange()"> Asl Taranto</label>
             </div>
             <div class="asl-col">
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Bari</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> Asl Foggia</label>
-              <label class="checkbox-item-label"><input type="checkbox" class="asl-check"> IRCCS de Bellis Castellana Grotte</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Bari" onchange="handleASLCheckChange()"> Asl Bari</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Foggia" onchange="handleASLCheckChange()"> Asl Foggia</label>
+              <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="IRCCS de Bellis Castellana Grotte" onchange="handleASLCheckChange()"> IRCCS de Bellis Castellana Grotte</label>
             </div>
           </div>
 
           <div class="form-field-group" style="margin-top: 20px; max-width: 320px;">
             <label class="form-field-label">Scegli la struttura</label>
-            <select class="form-field-select" id="selectStruttura">
-              <option value=""></option>
-              <option>Ospedale Ostuni</option>
-              <option>Pol. Margherita di Savoia</option>
-              <option>Ospedale Civile - Martina Franca</option>
-              <option>Policlinico di Bari</option>
+            <select class="form-field-select" id="selectStruttura" onchange="renderSlots()">
+              <option value="">-- Seleziona prima un'Azienda Sanitaria --</option>
             </select>
           </div>
 
           <div class="form-field-group" style="margin-top: 16px; max-width: 260px;">
             <label class="form-field-label">Cerca a partire da:</label>
-            <input type="date" id="inputDateFrom" class="form-field-input">
+            <input type="date" id="inputDateFrom" class="form-field-input" onchange="renderSlots()">
           </div>
         </div>
 
         <!-- Disponibilità table -->
         <div class="disponibilita-section">
-          <div class="disponibilita-label">DISPONIBILIT&Agrave;</div>
+          <div class="disponibilita-label">DISPONIBILIT&Agrave; <span id="slotsCountBadge" class="slots-count-badge" style="display: none;"></span></div>
           <div class="disponibilita-table-wrap">
             <div id="slotsWireframeList">
               <!-- Popolato dinamicamente da app.js -->
@@ -787,6 +783,121 @@
           <div class="wireframe-modal-footer">
             <button class="btn-nav-wireframe-secondary" onclick="closePrivacyModal()">Chiudi</button>
             <button class="btn-nav-wireframe-primary" onclick="acceptPrivacyFromModal()">Accetto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           MODAL: CALENDARIO DISPONIBILITÀ (Scegli altra data)
+           ================================================================== -->
+      <div class="wireframe-modal-overlay" id="availModalOverlay" role="dialog" aria-modal="true" onclick="handleAvailBackdropClick(event)">
+        <div class="avail-modal-card" onclick="event.stopPropagation()">
+          <!-- Header -->
+          <div class="avail-modal-header">
+            <div>
+              <h2 class="avail-modal-title">Calendario disponibilit&agrave;</h2>
+              <p class="avail-modal-subtitle">Qui puoi consultare le altre date disponibili per l'appuntamento che hai precedentemente selezionato.</p>
+            </div>
+            <button class="avail-modal-close" type="button" onclick="closeAvailModal()" aria-label="Chiudi finestra">&times;</button>
+          </div>
+
+          <!-- Divider -->
+          <div class="avail-modal-divider"></div>
+
+          <!-- Top Controls: Toggle Calendario / Lista -->
+          <div class="avail-modal-top-bar">
+            <div class="avail-view-toggle" role="group" aria-label="Modalità di visualizzazione">
+              <button type="button" class="avail-toggle-btn" id="btnToggleCalendario" onclick="switchAvailView('calendario')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Calendario</span>
+              </button>
+              <button type="button" class="avail-toggle-btn active" id="btnToggleLista" onclick="switchAvailView('lista')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span>Lista</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Body 2-Column Grid -->
+          <div class="avail-modal-body-grid">
+            <!-- Left Column: Data -->
+            <div class="avail-col-data">
+              <div class="avail-col-title">Data</div>
+
+              <!-- VIEW A: Lista -->
+              <div id="availViewLista" class="avail-view-container">
+                <div class="avail-dates-list" id="availDatesListContainer">
+                  <!-- Generated by JS -->
+                </div>
+                <div class="avail-list-actions">
+                  <button type="button" class="btn-avail-secondary" onclick="showMoreAvailDates()">Mostra altre date</button>
+                  <button type="button" class="btn-avail-primary" onclick="confirmAvailModal()">Conferma</button>
+                </div>
+              </div>
+
+              <!-- VIEW B: Calendario -->
+              <div id="availViewCalendario" class="avail-view-container" style="display: none;">
+                <div class="avail-calendar-selectors">
+                  <select id="availCalMonthSelect" class="avail-select-picker" onchange="changeCalendarMonth(this.value)">
+                    <option value="9">OTTOBRE</option>
+                    <option value="10" selected>NOVEMBRE</option>
+                    <option value="11">DICEMBRE</option>
+                    <option value="0">GENNAIO</option>
+                  </select>
+                  <select id="availCalYearSelect" class="avail-select-picker" onchange="changeCalendarYear(this.value)">
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                  </select>
+                </div>
+
+                <div class="avail-calendar-grid-wrap">
+                  <div class="avail-cal-weekdays">
+                    <span>Lun</span>
+                    <span>Mar</span>
+                    <span>Mer</span>
+                    <span>Gio</span>
+                    <span>Ven</span>
+                    <span>Sab</span>
+                    <span>Dom</span>
+                  </div>
+                  <div class="avail-cal-days" id="availCalDaysGrid">
+                    <!-- Generated by JS -->
+                  </div>
+                </div>
+
+                <div class="avail-cal-actions">
+                  <button type="button" class="btn-avail-primary" onclick="confirmAvailModal()">Conferma</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="avail-col-divider"></div>
+
+            <!-- Right Column: Ora & Summary -->
+            <div class="avail-col-ora">
+              <div class="avail-col-title">Ora</div>
+              <div class="avail-time-pills-grid" id="availTimePillsGrid">
+                <!-- Generated by JS -->
+              </div>
+
+              <div class="avail-summary-section">
+                <div class="avail-summary-heading">Data appuntamento:</div>
+                <div class="avail-summary-value" id="availModalSummaryValue">luned&igrave; 16 novembre 2026 - 7:42</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -945,24 +1056,35 @@
     </div>
   </main>
 
-  <!-- Discreet Quick-Nav Dock per saltare alle schermate durante le presentazioni -->
+  <!-- Discreet Quick-Nav Dock per saltare alle schermate e commutare Versione 1 / Versione 2 -->
   <div class="wireframe-quick-nav-dock">
-    <span style="font-weight: 700; color: #E2E8F0;">Wireframe v2:</span>
-    <select class="dock-select" id="dockScreenSelect" onchange="goToScreen(this.value)">
-      <option value="screen-home">Home Portale (media_fc4d4c90)</option>
-      <option value="screen-login">Accesso FSE (Login)</option>
-      <option value="screen-fse">Area Personale (FSE)</option>
-      <option value="screen-bookings">Le mie prenotazioni</option>
-      <option value="screen-step-beneficiary">Step 1 Accedi / Beneficiario</option>
-      <option value="screen-step-regime">Step 2 Tipo Prenotazione</option>
-      <option value="screen-step-prescription">Step 3 Inserimento Dati</option>
-      <option value="screen-step-slots">Step 4 Data e struttura</option>
-      <option value="screen-step-recap">Step 5 Conferma</option>
-      <option value="screen-step-success">Step 6 Riepilogo</option>
-      <option value="screen-spec-guide">Design System &amp; Componenti</option>
-    </select>
+    <div class="dock-version-group">
+      <span class="dock-label">Versione:</span>
+      <select class="dock-select dock-ver-select" id="dockVersionSelect" onchange="setPrototypeVersion(this.value)">
+        <option value="v1">v1 (Wireframe base)</option>
+        <option value="v2">v2 (Disponibilità &amp; Calendario)</option>
+      </select>
+    </div>
+    <span class="dock-sep">|</span>
+    <div class="dock-screen-group">
+      <span class="dock-label">Schermata:</span>
+      <select class="dock-select" id="dockScreenSelect" onchange="goToScreen(this.value)">
+        <option value="screen-home">Home Portale (media_fc4d4c90)</option>
+        <option value="screen-login">Accesso FSE (Login)</option>
+        <option value="screen-fse">Area Personale (FSE)</option>
+        <option value="screen-bookings">Le mie prenotazioni</option>
+        <option value="screen-step-beneficiary">Step 1 Accedi / Beneficiario</option>
+        <option value="screen-step-regime">Step 2 Tipo Prenotazione</option>
+        <option value="screen-step-prescription">Step 3 Inserimento Dati</option>
+        <option value="screen-step-slots">Step 4 Data e struttura</option>
+        <option value="screen-step-recap">Step 5 Conferma</option>
+        <option value="screen-step-success">Step 6 Riepilogo</option>
+        <option value="screen-spec-guide">Design System &amp; Componenti</option>
+      </select>
+    </div>
   </div>
 
+  <script src="js/fake-repository.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
