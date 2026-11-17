@@ -26,7 +26,9 @@ const state = {
     selectedExam: null,
     selectedExamCode: '',
     selectedSlot: null,
-    cupCode: '2026649029'
+    cupCode: '2026649029',
+    privacyAccepted: false,
+    privacyScrolled: false
   },
   bookings: [
     {
@@ -163,7 +165,12 @@ function startNewBooking() {
   const chkNote = document.getElementById('checkNoteOperatore');
   const chkPriv = document.getElementById('checkPrivacyConsent');
   if (chkNote) chkNote.checked = false;
-  if (chkPriv) chkPriv.checked = false;
+  if (chkPriv) {
+    chkPriv.checked = false;
+    chkPriv.disabled = false;
+    chkPriv.style.cursor = 'pointer';
+  }
+  clearStep5ConsentErrors();
 
   resetStep4Filters();
 
@@ -519,49 +526,22 @@ function setupStep4ForVersion(ver) {
   const master = document.getElementById('aslTutto');
   if (master) master.checked = false;
 
+  // In entrambe le versioni nessun filtro ASL è attivo di default
   const checks = document.querySelectorAll('.asl-check');
+  checks.forEach(c => c.checked = false);
+
   const selectStruttura = document.getElementById('selectStruttura');
+  if (selectStruttura) {
+    selectStruttura.innerHTML = '<option value="">-- Seleziona prima un\'Azienda Sanitaria --</option>';
+    selectStruttura.value = '';
+    selectStruttura.disabled = true;
+  }
+
   const inputDate = document.getElementById('inputDateFrom');
   if (inputDate) inputDate.value = '';
 
   const countBadge = document.getElementById('slotsCountBadge');
-
-  if (ver === 'v1') {
-    // Versione 1: Wireframe iniziale con 2 ASL pre-selezionate e strutture statiche
-    checks.forEach(c => {
-      const val = (c.value || c.parentElement.textContent || '').trim();
-      if (val === 'Asl Barletta-Andria-Trani' || val === 'Asl Brindisi') {
-        c.checked = true;
-      } else {
-        c.checked = false;
-      }
-    });
-
-    if (selectStruttura) {
-      selectStruttura.disabled = false;
-      selectStruttura.innerHTML = `
-        <option value="">Tutte le strutture</option>
-        <option value="OSPEDALE OSTUNI">OSPEDALE OSTUNI</option>
-        <option value="POL. MARGHERITA DI SAVOIA">POL. MARGHERITA DI SAVOIA</option>
-        <option value="OSPEDALE CIVILE - MARTINA FRANCA">OSPEDALE CIVILE - MARTINA FRANCA</option>
-        <option value="POLICLINICO DI BARI">POLICLINICO DI BARI</option>
-      `;
-      selectStruttura.value = '';
-    }
-
-    if (countBadge) countBadge.style.display = 'none';
-  } else {
-    // Versione 2: Nessuna ASL preselezionata, filtro dinamico e guida alla selezione
-    checks.forEach(c => c.checked = false);
-
-    if (selectStruttura) {
-      selectStruttura.innerHTML = '<option value="">-- Seleziona prima un\'Azienda Sanitaria --</option>';
-      selectStruttura.value = '';
-      selectStruttura.disabled = true;
-    }
-
-    if (countBadge) countBadge.style.display = 'none';
-  }
+  if (countBadge) countBadge.style.display = 'none';
 }
 
 // Reset Step 4 filters and inputs
@@ -612,7 +592,7 @@ function renderSlots() {
   }
 }
 
-// Step 4 Version 1: Static Wireframe Render
+// Step 4 Version 1: Dynamic Slots from fake-repository.js with empty guidance state
 function renderSlotsV1() {
   const container = document.getElementById('slotsWireframeList');
   const countBadge = document.getElementById('slotsCountBadge');
@@ -620,44 +600,86 @@ function renderSlotsV1() {
   const inputDateFrom = document.getElementById('inputDateFrom');
   if (!container) return;
 
-  if (countBadge) countBadge.style.display = 'none';
+  const allSlots = getRepositorySlots();
 
+  // Get all checked ASL checkboxes
   const checkedBoxes = Array.from(document.querySelectorAll('.asl-check:checked'));
   const checkedAsls = checkedBoxes.map(cb => (cb.value || cb.parentElement.textContent).trim());
 
-  let filtered = v1AvailableSlots.slice();
+  // Update structure select options dynamically
+  updateStrutturaDropdown(checkedAsls, allSlots);
 
-  if (checkedAsls.length > 0) {
-    filtered = filtered.filter(slot => checkedAsls.includes(slot.azienda));
-  } else {
-    filtered = [];
+  // If NO Azienda Sanitaria is selected, do NOT show availabilities
+  if (checkedAsls.length === 0) {
+    state.wizard.selectedSlot = null;
+    if (countBadge) countBadge.style.display = 'none';
+
+    container.innerHTML = `
+      <div class="slots-empty-state">
+        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h7"></path>
+          <circle cx="18" cy="18" r="3"></circle>
+          <path d="m20.5 20.5 2 2"></path>
+        </svg>
+        <div class="slots-empty-title">Nessuna Azienda Sanitaria selezionata</div>
+        <p class="slots-empty-desc">
+          Per visualizzare le date e le strutture disponibili è necessario selezionare almeno un'<strong>Azienda Sanitaria</strong> dall'elenco sovrastante.
+        </p>
+      </div>
+    `;
+    return;
   }
 
+  // Filter slots by selected ASLs
+  let filtered = allSlots.filter(slot => checkedAsls.includes(slot.azienda));
+
+  // Filter by structure if chosen
   const selectedStruttura = selectStruttura ? selectStruttura.value : '';
   if (selectedStruttura) {
     filtered = filtered.filter(slot => slot.struttura.toUpperCase() === selectedStruttura.toUpperCase());
   }
 
+  // Filter by starting date if chosen
   const dateFromVal = inputDateFrom ? inputDateFrom.value : '';
   if (dateFromVal) {
     const fromDate = new Date(dateFromVal);
     fromDate.setHours(0, 0, 0, 0);
+
     filtered = filtered.filter(slot => {
       const slotDate = parseSlotDate(slot.date, slot.dateISO);
       return slotDate ? slotDate >= fromDate : true;
     });
   }
 
+  // Update badge count
+  if (countBadge) {
+    countBadge.style.display = 'inline-block';
+    countBadge.innerText = `${filtered.length} ${filtered.length === 1 ? 'disponibilità' : 'disponibilità'}`;
+  }
+
+  // If no slots match the criteria
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="slots-empty-state">
+        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
         <div class="slots-empty-title">Nessuna disponibilità trovata</div>
-        <p class="slots-empty-desc">Non sono state trovate disponibilità per le selezioni correnti.</p>
+        <p class="slots-empty-desc">
+          Non sono state trovate disponibilità per le selezioni correnti. Prova a selezionare un'altra struttura o ad ampliare le Aziende Sanitarie scelte.
+        </p>
       </div>
     `;
     return;
   }
 
+  // Deselect if previously selected slot is no longer in filtered list
+  if (state.wizard.selectedSlot && !filtered.some(s => s.id === state.wizard.selectedSlot.id)) {
+    state.wizard.selectedSlot = null;
+  }
+
+  // Render Table
   let html = `
     <div class="slot-table-header">
       <div style="width: 36px;"></div>
@@ -831,9 +853,7 @@ function handleScegliAltraData(slotId) {
   if (state.version === 'v2') {
     openAvailModal(slotId);
   } else {
-    const slotsList = v1AvailableSlots;
-    const slot = slotsList.find(s => s.id === slotId) || {};
-    alert('Ricerca altre date disponibili per ' + (slot.struttura || 'la struttura selezionata'));
+    openAvailV1Modal(slotId);
   }
 }
 
@@ -869,6 +889,173 @@ function proceedFromStep4() {
     return;
   }
   goToScreen('screen-step-recap');
+}
+
+// ==============================================================================
+// MODALE CALENDARIO DISPONIBILITÀ - VERSIONE 1 (Matching media_3745fb8f)
+// ==============================================================================
+const availModalV1State = {
+  slotId: null,
+  selectedDateTime: '',
+  options: []
+};
+
+function openAvailV1Modal(slotId) {
+  availModalV1State.slotId = slotId;
+  const allSlots = getRepositorySlots();
+  const slot = allSlots.find(s => s.id === slotId) || state.wizard.selectedSlot;
+
+  // Recipe & performance details
+  const nreEl = document.getElementById('availV1ModalNRE');
+  const prestEl = document.getElementById('availV1ModalPrestazioni');
+  if (nreEl) {
+    nreEl.innerText = state.wizard.selectedExamCode || '160A24680453583';
+  }
+  if (prestEl) {
+    prestEl.innerText = (state.wizard.selectedExam === 'cardio' ? '1 di 1' : '3 di 3');
+  }
+
+  // Determine current slot date/time
+  const currentDateTime = slot ? (slot.dateTime || `${slot.date} ore ${slot.time}`) : '09/12/2026 ore 08:30';
+  availModalV1State.selectedDateTime = currentDateTime;
+
+  // Generate 10 alternative date options (5 on left, 5 on right)
+  availModalV1State.options = generateV1DateOptions(slot, currentDateTime);
+
+  // Render modal table rows
+  renderAvailV1Table();
+
+  // Show modal
+  const modal = document.getElementById('availModalV1Overlay');
+  if (modal) {
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
+}
+
+function generateV1DateOptions(slot, currentDateTime) {
+  let baseDate = null;
+  let baseTime = '08:30';
+
+  if (slot && slot.date) {
+    baseDate = parseSlotDate(slot.date, slot.dateISO);
+  }
+  if (slot && slot.time) {
+    baseTime = slot.time;
+  }
+  if (!baseDate || isNaN(baseDate.getTime())) {
+    baseDate = new Date(2026, 11, 9); // 09/12/2026
+  }
+
+  const options = [];
+  const cur = new Date(baseDate);
+
+  // Collect 10 working days (Mon-Fri)
+  let count = 0;
+  while (count < 10) {
+    const dayOfWeek = cur.getDay(); // 0 is Sunday, 6 is Saturday
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      const day = String(cur.getDate()).padStart(2, '0');
+      const month = String(cur.getMonth() + 1).padStart(2, '0');
+      const year = cur.getFullYear();
+      const dtStr = `${day}/${month}/${year} ore ${baseTime}`;
+      options.push(dtStr);
+      count++;
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  // Ensure currentDateTime is included in options
+  if (currentDateTime && !options.includes(currentDateTime)) {
+    options[0] = currentDateTime;
+  }
+
+  return options;
+}
+
+function renderAvailV1Table() {
+  const container = document.getElementById('availV1TableBody');
+  if (!container) return;
+
+  const options = availModalV1State.options || [];
+  // 5 rows, each with 2 columns: left is index i, right is index i + 5
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const optLeft = options[i] || '';
+    const optRight = options[i + 5] || '';
+
+    const isLeftSelected = (optLeft === availModalV1State.selectedDateTime);
+    const isRightSelected = (optRight === availModalV1State.selectedDateTime);
+
+    html += `
+      <div class="avail-v1-table-row">
+        <div class="avail-v1-cell ${optLeft ? '' : 'avail-v1-cell-empty'}">
+          <span class="avail-v1-cell-date">${optLeft}</span>
+          ${optLeft ? `
+            <button type="button" class="avail-v1-check-btn ${isLeftSelected ? 'selected' : ''}" onclick="selectAvailV1DateTime('${optLeft}')" aria-label="Seleziona data ${optLeft}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+        <div class="avail-v1-cell ${optRight ? '' : 'avail-v1-cell-empty'}">
+          <span class="avail-v1-cell-date">${optRight}</span>
+          ${optRight ? `
+            <button type="button" class="avail-v1-check-btn ${isRightSelected ? 'selected' : ''}" onclick="selectAvailV1DateTime('${optRight}')" aria-label="Seleziona data ${optRight}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+function selectAvailV1DateTime(dateTimeStr) {
+  availModalV1State.selectedDateTime = dateTimeStr;
+  renderAvailV1Table();
+}
+
+function confirmAvailV1Modal() {
+  const allSlots = getRepositorySlots();
+  let targetSlot = allSlots.find(s => s.id === availModalV1State.slotId);
+  if (!targetSlot) {
+    targetSlot = state.wizard.selectedSlot || allSlots[0];
+  }
+
+  if (targetSlot && availModalV1State.selectedDateTime) {
+    const parts = availModalV1State.selectedDateTime.split(' ore ');
+    if (parts.length === 2) {
+      targetSlot.date = parts[0].trim();
+      targetSlot.time = parts[1].trim();
+      targetSlot.dateTime = availModalV1State.selectedDateTime;
+    } else {
+      targetSlot.dateTime = availModalV1State.selectedDateTime;
+    }
+    state.wizard.selectedSlot = targetSlot;
+  }
+
+  closeAvailV1Modal();
+  renderSlots();
+}
+
+function closeAvailV1Modal() {
+  const modal = document.getElementById('availModalV1Overlay');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function handleAvailV1BackdropClick(e) {
+  if (e.target && e.target.id === 'availModalV1Overlay') {
+    closeAvailV1Modal();
+  }
 }
 
 // ==============================================================================
@@ -1199,20 +1386,82 @@ function updateRecapStep() {
   setVal('recapStruttura', slot.struttura || 'OSPEDALE OSTUNI');
   setVal('recapAmbulatorio', slot.ambulatorio || slot.address || 'VIA LUIGI MICCOLI - OSTUNI (BR)');
   setVal('recapStrutturaAlt', slot.sedeUnita || slot.address || 'SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)');
+
+  // Assicura che la checkbox privacy sia abilitata e resetta eventuali errori precedenti
+  const chkPriv = document.getElementById('checkPrivacyConsent');
+  if (chkPriv) {
+    chkPriv.disabled = false;
+    chkPriv.style.cursor = 'pointer';
+  }
+  clearStep5ConsentErrors();
+}
+
+// Gestione checkbox Step 5 e rimozione evidenziazione errore al click
+function handleStep5CheckboxChange() {
+  const checkNote = document.getElementById('checkNoteOperatore');
+  const checkPrivacy = document.getElementById('checkPrivacyConsent');
+  const rowNote = document.getElementById('consentRowNote');
+  const rowPrivacy = document.getElementById('consentRowPrivacy');
+  const errorBanner = document.getElementById('step5ErrorBanner');
+
+  if (checkNote && checkNote.checked && rowNote) {
+    rowNote.classList.remove('consent-error');
+  }
+  if (checkPrivacy && checkPrivacy.checked && rowPrivacy) {
+    rowPrivacy.classList.remove('consent-error');
+  }
+
+  const allChecked = (!checkNote || checkNote.checked) && (!checkPrivacy || checkPrivacy.checked);
+  if (allChecked && errorBanner) {
+    errorBanner.style.display = 'none';
+  }
+}
+
+function clearStep5ConsentErrors() {
+  const rowNote = document.getElementById('consentRowNote');
+  const rowPrivacy = document.getElementById('consentRowPrivacy');
+  const errorBanner = document.getElementById('step5ErrorBanner');
+
+  if (rowNote) rowNote.classList.remove('consent-error');
+  if (rowPrivacy) rowPrivacy.classList.remove('consent-error');
+  if (errorBanner) errorBanner.style.display = 'none';
 }
 
 function proceedFromStep5() {
   const checkNote = document.getElementById('checkNoteOperatore');
   const checkPrivacy = document.getElementById('checkPrivacyConsent');
+  const rowNote = document.getElementById('consentRowNote');
+  const rowPrivacy = document.getElementById('consentRowPrivacy');
+  const errorBanner = document.getElementById('step5ErrorBanner');
 
+  let hasError = false;
+
+  // Evidenzia in rosso la casella Note Operatore se non spuntata
   if (checkNote && !checkNote.checked) {
-    alert('Per proseguire è necessario dichiarare di aver preso visione delle Note Operatore.');
-    return;
+    hasError = true;
+    if (rowNote) rowNote.classList.add('consent-error');
+  } else {
+    if (rowNote) rowNote.classList.remove('consent-error');
   }
+
+  // Evidenzia in rosso la casella Informativa Privacy se non spuntata
   if (checkPrivacy && !checkPrivacy.checked) {
-    alert('Per proseguire è necessario dichiarare di aver preso visione dell\'informativa sul trattamento dei dati personali.');
+    hasError = true;
+    if (rowPrivacy) rowPrivacy.classList.add('consent-error');
+  } else {
+    if (rowPrivacy) rowPrivacy.classList.remove('consent-error');
+  }
+
+  // Mostra messaggio di errore inline sopra i pulsanti (Matching media_2d90cf8d)
+  if (hasError) {
+    if (errorBanner) {
+      errorBanner.style.display = 'flex';
+      errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     return;
   }
+
+  if (errorBanner) errorBanner.style.display = 'none';
 
   // Genera o conferma codice prenotazione (Matching Image 2: 2026649029)
   state.wizard.cupCode = '2026649029';
@@ -1255,21 +1504,36 @@ function updateSuccessStep() {
   setVal('successDateTime', (slot.date || '13/11/2026') + ' ore ' + (slot.time || '07:55'));
 }
 
-// Privacy Modal Controls (Wireframe r3_c1)
+// Privacy Modal Controls (Wireframe r3_c1 - Consultazione facoltativa)
 function openPrivacyModal() {
   const modal = document.getElementById('wireframeModalOverlay');
-  if (modal) modal.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
 }
 
 function closePrivacyModal() {
   const modal = document.getElementById('wireframeModalOverlay');
-  if (modal) modal.classList.remove('active');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function handlePrivacyBackdropClick(e) {
+  if (e.target && e.target.id === 'wireframeModalOverlay') {
+    closePrivacyModal();
+  }
 }
 
 function acceptPrivacyFromModal() {
   closePrivacyModal();
   const check = document.getElementById('checkPrivacyConsent');
-  if (check) check.checked = true;
+  if (check) {
+    check.checked = true;
+    handleStep5CheckboxChange();
+  }
 }
 
 // Carousels
@@ -1283,7 +1547,7 @@ function shiftNews(direction) {
 function shiftDocs(direction) {
   const row = document.getElementById('docsCardsRow');
   if (row) {
-    row.scrollBy({ left: direction === 'next' ? 280 : -280, behavior: 'smooth' });
+    row.scrollBy({ left: direction === 'next' ? 350 : -350, behavior: 'smooth' });
   }
 }
 

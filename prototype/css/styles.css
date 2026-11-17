@@ -12,7 +12,8 @@
   --ps-wireframe-red: #A23847;
   /* Titoli principali bordeaux/terracotta */
   --ps-wireframe-red-dark: #8E2F3D;
-  --ps-wireframe-topbar: #9B5E66;       /* Barra superiore bordeaux */
+  --ps-wireframe-topbar: #9B5E66;
+  /* Barra superiore bordeaux */
 
   --ps-wireframe-rose-block: #AE7173;
   /* Blocco colonna laterale ricetta selezionata */
@@ -336,7 +337,8 @@ body {
   border-radius: 4px;
   margin-top: 16px;
   overflow: hidden;
-  pointer-events: none; /* NON CLICCABILE come da specifica */
+  pointer-events: none;
+  /* NON CLICCABILE come da specifica */
   user-select: none;
 }
 
@@ -474,10 +476,19 @@ body {
 }
 
 .carousel-wireframe-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   gap: 20px;
   flex: 1;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.carousel-wireframe-cards::-webkit-scrollbar {
+  display: none;
 }
 
 .card-wireframe-rect {
@@ -486,6 +497,9 @@ body {
   border-radius: 4px;
   padding: 20px;
   min-height: 170px;
+  flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 270px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -538,7 +552,7 @@ body {
 .fse-two-cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 28px;
+  gap: 80px;
   margin-bottom: 36px;
 }
 
@@ -547,8 +561,8 @@ body {
   color: var(--ps-text-main);
   border: 1px solid var(--ps-border-color);
   border-radius: 4px;
-  padding: 28px;
-  min-height: 160px;
+  padding: 34px 28px;
+  min-height: 210px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1010,6 +1024,54 @@ body {
   gap: 10px;
   margin-bottom: 24px;
   font-size: 0.88rem;
+  padding: 4px 6px;
+  border: 1.5px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Evidenziazione in rosso per le checkbox obbligatorie non selezionate (Matching media_2d90cf8d) */
+.consent-row-wireframe.consent-error {
+  border: 1.5px solid #D32F2F !important;
+  background-color: #FEF2F2 !important;
+  background-clip: padding-box !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.consent-row-wireframe.consent-error label {
+  color: #B91C1C !important;
+  font-weight: 600 !important;
+}
+
+.consent-row-wireframe.consent-error input[type="checkbox"] {
+  outline: 2px solid #D32F2F;
+  outline-offset: 1px;
+}
+
+/* Messaggio di errore inline sopra i pulsanti (Matching media_2d90cf8d) */
+.step5-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #D32F2F;
+}
+
+.step5-error-icon {
+  flex-shrink: 0;
+  color: #D32F2F;
+}
+
+.step5-error-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #D32F2F;
+  line-height: 1.4;
 }
 
 .link-privacy-underline {
@@ -1225,7 +1287,6 @@ body {
 
 @media (max-width: 800px) {
 
-  .carousel-wireframe-cards,
   .emergency-pills-grid,
   .fse-two-cards-grid,
   .choice-cards-wireframe-grid,
@@ -1238,6 +1299,11 @@ body {
   .recap-details-grid,
   .checkbox-asl-grid {
     grid-template-columns: 1fr;
+  }
+
+  .carousel-wireframe-cards .card-wireframe-rect {
+    flex: 0 0 85%;
+    min-width: 240px;
   }
 
   .slot-table-header,
@@ -1261,6 +1327,7 @@ body {
   display: flex;
   align-items: center;
 }
+
 .user-pill-btn-v2 {
   display: inline-flex;
   align-items: center;
@@ -1276,10 +1343,23 @@ body {
   letter-spacing: 0.3px;
   transition: background 0.15s;
 }
-.user-pill-btn-v2:hover { background: var(--ps-wireframe-btn-blue-hover); }
-.user-pill-icon { flex-shrink: 0; }
-.user-pill-initials { font-weight: 700; letter-spacing: 0.5px; }
-.user-pill-caret-v2 { flex-shrink: 0; }
+
+.user-pill-btn-v2:hover {
+  background: var(--ps-wireframe-btn-blue-hover);
+}
+
+.user-pill-icon {
+  flex-shrink: 0;
+}
+
+.user-pill-initials {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.user-pill-caret-v2 {
+  flex-shrink: 0;
+}
 
 /* Dropdown menu for user pill */
 .user-dropdown-menu {
@@ -1290,29 +1370,36 @@ body {
   background: white;
   border: 1px solid var(--ps-border-color);
   border-radius: 6px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   min-width: 200px;
   z-index: 1000;
   padding: 12px 0;
 }
-.user-dropdown-menu.active { display: block; }
+
+.user-dropdown-menu.active {
+  display: block;
+}
+
 .user-dropdown-name {
   padding: 4px 16px;
   font-weight: 700;
   font-size: 0.92rem;
   color: var(--ps-text-main);
 }
+
 .user-dropdown-cf {
   padding: 2px 16px 8px 16px;
   font-size: 0.78rem;
   color: var(--ps-text-muted);
   font-family: monospace;
 }
+
 .user-dropdown-divider {
   border: none;
   border-top: 1px solid var(--ps-border-subtle);
   margin: 4px 0;
 }
+
 .user-dropdown-item {
   display: block;
   width: 100%;
@@ -1325,8 +1412,14 @@ body {
   color: var(--ps-text-main);
   cursor: pointer;
 }
-.user-dropdown-item:hover { background: var(--ps-bg-top-blush); }
-.user-dropdown-logout { color: var(--ps-wireframe-red); }
+
+.user-dropdown-item:hover {
+  background: var(--ps-bg-top-blush);
+}
+
+.user-dropdown-logout {
+  color: var(--ps-wireframe-red);
+}
 
 /* --- Stepper Checkmark SVG --- */
 .stepper-check-svg {
@@ -1342,9 +1435,11 @@ body {
   gap: 14px;
   margin-bottom: 8px;
 }
+
 .area-personale-icon {
   color: var(--ps-wireframe-red);
 }
+
 .area-personale-title {
   font-size: 2rem;
   font-weight: 700;
@@ -1358,71 +1453,98 @@ body {
   border-color: var(--ps-wireframe-rose-block);
   color: white;
 }
-.card-fse-box.selected .fse-line-icon { color: white; }
-.card-fse-box.selected .fse-bigcard-title { color: white; }
-.card-fse-box.selected .fse-bigcard-sub { color: rgba(255,255,255,0.9); }
+
+.card-fse-box.selected .fse-line-icon {
+  color: white;
+}
+
+.card-fse-box.selected .fse-bigcard-title {
+  color: white;
+}
+
+.card-fse-box.selected .fse-bigcard-sub {
+  color: rgba(255, 255, 255, 0.9);
+}
 
 /* Documenti card: title stays red on white */
-.fse-bigcard-title--red { color: var(--ps-wireframe-red); }
+.fse-bigcard-title--red {
+  color: var(--ps-wireframe-red);
+}
+
 /* When prenotazioni is unselected, its title is red too */
-.card-fse-box:not(.selected) .fse-bigcard-title { color: var(--ps-wireframe-red); }
+.card-fse-box:not(.selected) .fse-bigcard-title {
+  color: var(--ps-wireframe-red);
+}
 
 /* Document cards in Area Personale carousel */
 .card-doc-item {
-  min-height: 200px;
+  min-height: 235px;
+  flex: 0 0 330px;
+  min-width: 330px;
   background: white;
   border: 1px solid var(--ps-border-color);
-  border-radius: 4px;
-  padding: 18px 20px;
+  border-radius: 6px;
+  padding: 24px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.15s ease;
+  box-sizing: border-box;
 }
+
 .card-doc-item:hover {
   border-color: var(--ps-wireframe-red);
-  box-shadow: 0 4px 12px rgba(162, 56, 71, 0.08);
+  box-shadow: 0 6px 16px rgba(162, 56, 71, 0.10);
+  transform: translateY(-2px);
 }
+
 .doc-badge-pill {
   display: inline-block;
   background: #F7EAEC;
   color: var(--ps-wireframe-red);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
+
 .doc-card-title {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--ps-text-main);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   line-height: 1.35;
 }
+
 .doc-card-meta {
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   color: var(--ps-text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
 }
+
 .doc-card-action {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
+  gap: 8px;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--ps-wireframe-btn-blue);
-  margin-top: 14px;
-  padding-top: 8px;
+  margin-top: 18px;
+  padding-top: 12px;
   border-top: 1px solid var(--ps-border-subtle);
 }
+
 .card-doc-skeleton {
   min-height: 160px;
   background: white;
   cursor: default;
 }
-.card-doc-skeleton:hover { border-color: var(--ps-border-color); }
+
+.card-doc-skeleton:hover {
+  border-color: var(--ps-border-color);
+}
 
 /* --- Torna indietro button --- */
 .btn-torna-indietro {
@@ -1438,6 +1560,7 @@ body {
   display: inline-block;
   text-decoration: none;
 }
+
 .btn-torna-indietro:hover {
   background: var(--ps-bg-top-blush);
 }
@@ -1448,6 +1571,7 @@ body {
   color: var(--ps-text-muted);
   margin-bottom: 16px;
 }
+
 .bookings-toolbar {
   display: flex;
   align-items: center;
@@ -1457,6 +1581,7 @@ body {
   padding: 10px 0;
   margin-bottom: 24px;
 }
+
 .btn-filtra-nav {
   background: var(--ps-wireframe-navy);
   color: white;
@@ -1467,6 +1592,7 @@ body {
   font-weight: 700;
   cursor: pointer;
 }
+
 .booking-details-grid-v2 {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -1474,11 +1600,13 @@ body {
   padding-bottom: 16px;
   border-bottom: 1px solid var(--ps-border-subtle);
 }
+
 .booking-grid-col {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .booking-detail-row {
   display: grid;
   grid-template-columns: 160px 1fr;
@@ -1486,24 +1614,29 @@ body {
   align-items: baseline;
   font-size: 0.88rem;
 }
+
 .booking-detail-label {
   color: var(--ps-text-muted);
   font-size: 0.88rem;
 }
+
 .booking-detail-value {
   font-weight: 700;
   color: var(--ps-text-main);
 }
+
 .booking-row-actions-new {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 12px;
 }
+
 .booking-actions-left {
   display: flex;
   gap: 10px;
 }
+
 .btn-booking-action {
   background: white;
   color: var(--ps-text-main);
@@ -1515,9 +1648,11 @@ body {
   cursor: pointer;
   transition: background 0.15s;
 }
+
 .btn-booking-action:hover {
   background: var(--ps-bg-top-blush);
 }
+
 .link-vedi-dettagli {
   color: var(--ps-wireframe-btn-blue);
   font-size: 0.88rem;
@@ -1525,7 +1660,10 @@ body {
   cursor: pointer;
   text-decoration: none;
 }
-.link-vedi-dettagli:hover { text-decoration: underline; }
+
+.link-vedi-dettagli:hover {
+  text-decoration: underline;
+}
 
 /* Choice bullet list (Step 1 & 2) */
 .choice-bullet-list {
@@ -1534,6 +1672,7 @@ body {
   font-size: 0.85rem;
   line-height: 1.5;
 }
+
 .wireframe-choice-card.selected .choice-bullet-list {
   color: #F1F5F9;
 }
@@ -1545,12 +1684,14 @@ body {
   margin-bottom: 16px;
   font-weight: 500;
 }
+
 .form-panel-label {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--ps-text-main);
   margin-bottom: 12px;
 }
+
 .dati-anagrafici-grid {
   display: grid;
   grid-template-columns: 140px 1fr 140px 1fr;
@@ -1558,6 +1699,7 @@ body {
   margin-bottom: 6px;
   font-size: 0.88rem;
 }
+
 .dati-anagrafici-grid-cf {
   display: grid;
   grid-template-columns: 140px 1fr;
@@ -1565,27 +1707,32 @@ body {
   margin-top: 6px;
   font-size: 0.88rem;
 }
+
 .dati-label {
   color: var(--ps-text-muted);
   font-size: 0.88rem;
 }
+
 .dati-value {
   font-weight: 700;
   color: var(--ps-text-main);
   font-size: 0.88rem;
 }
+
 .prescription-section-title {
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--ps-text-main);
   margin-bottom: 14px;
 }
+
 .prescription-nre-label {
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--ps-wireframe-btn-blue);
   margin-bottom: 10px;
 }
+
 .prescription-card-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1593,21 +1740,25 @@ body {
   margin-bottom: 8px;
   font-size: 0.85rem;
 }
+
 .prescription-detail-label {
   font-weight: 700;
   font-size: 0.82rem;
   color: var(--ps-text-main);
 }
+
 .prescription-detail-value {
   font-size: 0.85rem;
   color: var(--ps-text-main);
 }
+
 .prescription-items-list {
   margin: 4px 0 8px 18px;
   font-size: 0.82rem;
   color: var(--ps-text-main);
   line-height: 1.5;
 }
+
 .prescription-items-text {
   font-size: 0.82rem;
   color: var(--ps-text-main);
@@ -1623,6 +1774,7 @@ body {
   padding: 14px 20px;
   margin-bottom: 20px;
 }
+
 .ricette-summary-label {
   font-size: 0.82rem;
   font-weight: 700;
@@ -1630,32 +1782,38 @@ body {
   text-transform: uppercase;
   margin-bottom: 8px;
 }
+
 .ricette-summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 0.88rem;
 }
+
 .form-section-label {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--ps-text-main);
   margin-bottom: 14px;
 }
+
 .checkbox-asl-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px 24px;
   margin-bottom: 4px;
 }
+
 .asl-col {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .disponibilita-section {
   margin-top: 24px;
 }
+
 .disponibilita-label {
   font-size: 0.95rem;
   font-weight: 800;
@@ -1663,12 +1821,14 @@ body {
   letter-spacing: 0.5px;
   margin-bottom: 14px;
 }
+
 .disponibilita-table-wrap {
   background: white;
   border: 1px solid var(--ps-border-color);
   border-radius: 4px;
   overflow: hidden;
 }
+
 .slot-table-header {
   display: grid;
   grid-template-columns: 36px 1.2fr 1.2fr 1fr 140px;
@@ -1679,6 +1839,7 @@ body {
   color: var(--ps-text-main);
   border-bottom: 2px solid var(--ps-text-main);
 }
+
 .slot-table-row {
   display: grid;
   grid-template-columns: 36px 1.2fr 1.2fr 1fr 140px;
@@ -1689,20 +1850,25 @@ body {
   transition: background 0.1s;
   font-size: 0.88rem;
 }
+
 .slot-table-row:last-child {
   border-bottom: none;
 }
+
 .slot-table-row:hover {
   background: var(--ps-bg-top-blush);
 }
+
 .slot-table-row.selected {
   background: #F1F5F9;
   border-left: 4px solid var(--ps-wireframe-navy);
 }
+
 .slot-radio-cell {
   display: flex;
   align-items: center;
 }
+
 .slot-radio-btn {
   width: 24px;
   height: 24px;
@@ -1715,33 +1881,41 @@ body {
   flex-shrink: 0;
   transition: all 0.15s;
 }
+
 .slot-radio-btn.checked {
   background: var(--ps-wireframe-navy);
   color: white;
 }
+
 .slot-cell-azienda {
   font-weight: 700;
   color: var(--ps-text-main);
 }
+
 .slot-cell-struttura {
   font-weight: 700;
   color: var(--ps-text-main);
   text-transform: uppercase;
 }
+
 .slot-cell-datetime {
   font-size: 0.88rem;
   color: var(--ps-text-main);
   line-height: 1.4;
 }
+
 .slot-date-line {
   font-weight: 700;
 }
+
 .slot-time-line {
   color: var(--ps-text-main);
 }
+
 .slot-cell-action {
   text-align: right;
 }
+
 .btn-scegli-altra-data {
   background: var(--ps-wireframe-navy);
   color: white;
@@ -1754,6 +1928,7 @@ body {
   white-space: nowrap;
   transition: background 0.15s;
 }
+
 .btn-scegli-altra-data:hover {
   background: var(--ps-wireframe-navy-hover);
 }
@@ -1824,29 +1999,35 @@ body {
   gap: 14px 24px;
   font-size: 0.88rem;
 }
+
 .recap-detail-label {
   color: var(--ps-text-muted);
   font-size: 0.88rem;
 }
+
 .recap-detail-value {
   font-weight: 700;
   color: var(--ps-text-main);
 }
+
 .dichiarazioni-panel {
   border-left: 3px solid var(--ps-wireframe-red);
 }
+
 .dichiarazioni-title {
   color: var(--ps-wireframe-red);
   font-weight: 700;
   font-size: 0.95rem;
   margin-bottom: 10px;
 }
+
 .note-operatore-label {
   font-weight: 800;
   font-size: 0.88rem;
   color: var(--ps-text-main);
   margin-bottom: 8px;
 }
+
 .note-operatore-text {
   font-size: 0.78rem;
   color: var(--ps-text-muted);
@@ -1864,37 +2045,44 @@ body {
   max-width: 640px;
   overflow: hidden;
 }
+
 .success-booking-id {
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--ps-text-main);
   padding: 16px 24px;
 }
+
 .success-booking-divider {
   border: none;
   border-top: 1px solid var(--ps-border-subtle);
   margin: 0;
 }
+
 .success-booking-row {
   display: flex;
   gap: 40px;
   padding: 14px 24px;
   font-size: 0.88rem;
 }
+
 .success-booking-label {
   color: var(--ps-text-muted);
   margin-right: 10px;
 }
+
 .success-booking-value {
   font-weight: 700;
   color: var(--ps-text-main);
 }
+
 .success-booking-actions {
   display: flex;
   gap: 24px;
   justify-content: flex-end;
   padding: 10px 24px 14px 24px;
 }
+
 .success-action-link {
   color: var(--ps-wireframe-btn-blue);
   font-size: 0.85rem;
@@ -1905,7 +2093,11 @@ body {
   align-items: center;
   gap: 5px;
 }
-.success-action-link:hover { text-decoration: underline; }
+
+.success-action-link:hover {
+  text-decoration: underline;
+}
+
 .success-bottom-buttons {
   display: flex;
   justify-content: center;
@@ -2212,7 +2404,7 @@ body {
   max-width: 820px;
   margin: 0 auto;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .home-hero-title {
@@ -2292,7 +2484,7 @@ body {
   min-height: 72px;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .emergency-box-card:hover {
@@ -2676,7 +2868,7 @@ body {
   max-width: 820px;
   margin: 0 auto;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .home-hero-title {
@@ -2756,7 +2948,7 @@ body {
   min-height: 72px;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .emergency-box-card:hover {
@@ -2838,6 +3030,185 @@ body {
   margin-top: 36px;
   padding-top: 24px;
   border-top: 1px solid var(--ps-border-subtle);
+}
+
+
+/* ==========================================================================
+   VERSIONE 1: MODALE CALENDARIO DISPONIBILITÀ (Matching media_3745fb8f)
+   ========================================================================== */
+.avail-v1-modal-card {
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  width: 92%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  padding: 30px 32px 28px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.avail-v1-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.avail-v1-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #9E3344;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.2;
+}
+
+.avail-v1-modal-close {
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: #0066CC;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: opacity 0.15s ease;
+}
+
+.avail-v1-modal-close:hover {
+  opacity: 0.75;
+}
+
+.avail-v1-modal-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #133857;
+  margin: 0 0 18px 0;
+  line-height: 1.45;
+}
+
+.avail-v1-meta-box {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #133857;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.avail-v1-meta-item strong {
+  color: #133857;
+  font-weight: 700;
+}
+
+.avail-v1-table-wrap {
+  border: 1px solid #D6DFE8;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background-color: #FFFFFF;
+}
+
+.avail-v1-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 2px solid #0066CC;
+  background-color: #FFFFFF;
+}
+
+.avail-v1-th-col {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #133857;
+}
+
+.avail-v1-th-col:first-child {
+  border-right: 1px solid #D6DFE8;
+}
+
+.avail-v1-table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.avail-v1-table-row:last-child {
+  border-bottom: none;
+}
+
+.avail-v1-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  color: #1F2937;
+}
+
+.avail-v1-cell:first-child {
+  border-right: 1px solid #D6DFE8;
+}
+
+.avail-v1-cell-empty {
+  visibility: hidden;
+}
+
+.avail-v1-check-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  border: 1.5px solid #0066CC;
+  color: #0066CC;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.avail-v1-check-btn:hover {
+  background-color: #F0F7FF;
+}
+
+.avail-v1-check-btn.selected {
+  background-color: #00875A;
+  border-color: #00875A;
+  color: #FFFFFF;
+}
+
+.avail-v1-instruction {
+  font-size: 12.5px;
+  color: #4B5563;
+  margin: 16px 0 18px 0;
+  line-height: 1.45;
+}
+
+.avail-v1-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-avail-v1-confirm {
+  background-color: #0066CC;
+  color: #FFFFFF;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-avail-v1-confirm:hover {
+  background-color: #0052A3;
 }
 
 
@@ -3175,9 +3546,11 @@ body {
     grid-template-columns: 1fr;
     gap: 20px;
   }
+
   .avail-col-divider {
     display: none;
   }
+
   .avail-time-pills-grid {
     grid-template-columns: repeat(3, 1fr);
   }
