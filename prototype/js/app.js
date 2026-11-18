@@ -30,6 +30,11 @@ const state = {
     privacyAccepted: false,
     privacyScrolled: false
   },
+  bookingFilters: {
+    year: '',
+    azienda: '',
+    status: ''
+  },
   bookings: [
     {
       id: '2026699059',
@@ -38,9 +43,70 @@ const state = {
       dateTime: '18/08/2026 Ore 08:15',
       exam: 'PROTEINE [S]',
       hospital: 'OSPEDALE CIVILE - MARTINA FRANCA',
+      azienda: 'ASL Taranto',
       bookingType: 'SSN con Ricetta Rossa',
       cancelDeadline: '',
       status: 'Effettuato pagato'
+    },
+    {
+      id: '2026841102',
+      date: '24/11/2026',
+      time: '10:30',
+      dateTime: '24/11/2026 Ore 10:30',
+      exam: 'VISITA CARDIOLOGICA CON ECG',
+      hospital: 'POLICLINICO DI BARI - ASCLEPIOS',
+      azienda: 'ASL Bari',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '22/11/2026',
+      status: 'Pagato da effettuare'
+    },
+    {
+      id: '2026955318',
+      date: '02/12/2026',
+      time: '11:15',
+      dateTime: '02/12/2026 Ore 11:15',
+      exam: 'ECOGRAFIA ADDOME COMPLETO',
+      hospital: 'OSPEDALE ANTONIO PERRINO - BRINDISI',
+      azienda: 'ASL Brindisi',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '30/11/2026',
+      status: 'Pagato da effettuare'
+    },
+    {
+      id: '2026512994',
+      date: '15/10/2026',
+      time: '15:30',
+      dateTime: '15/10/2026 Ore 15:30',
+      exam: 'RISONANZA MAGNETICA (RM) ENCEFALO',
+      hospital: 'OSPEDALE VITO FAZZI - LECCE',
+      azienda: 'ASL Lecce',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '13/10/2026',
+      status: 'Effettuato pagato'
+    },
+    {
+      id: '2026338871',
+      date: '18/12/2026',
+      time: '08:45',
+      dateTime: '18/12/2026 Ore 08:45',
+      exam: 'GLUCOSIO DOSAGGIO SERIALE (CURVA DA CARICO)',
+      hospital: 'OSPEDALE LORENZO BONOMO - ANDRIA',
+      azienda: 'ASL Barletta-Andria-Trani',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '16/12/2026',
+      status: 'Pagato da effettuare'
+    },
+    {
+      id: '2026409823',
+      date: '28/12/2026',
+      time: '09:15',
+      dateTime: '28/12/2026 Ore 09:15',
+      exam: 'VISITA OCULISTICA (PRIMA VISITA)',
+      hospital: 'OSPEDALE SAN PAOLO - BARI',
+      azienda: 'ASL Bari',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '24/12/2026',
+      status: 'Da pagare da effettuare'
     },
     {
       id: '2025730476',
@@ -49,6 +115,19 @@ const state = {
       dateTime: '01/09/2025 Ore 09:30',
       exam: 'ASPARTATO AMINOTRANSFERASI (AST) (GOT) [S]',
       hospital: 'OSPEDALE CIVILE - MARTINA FRANCA',
+      azienda: 'ASL Taranto',
+      bookingType: 'SSN con Ricetta Rossa',
+      cancelDeadline: '-',
+      status: 'Effettuato pagato'
+    },
+    {
+      id: '2025184209',
+      date: '14/05/2025',
+      time: '11:00',
+      dateTime: '14/05/2025 Ore 11:00',
+      exam: 'VISITA DERMATOLOGICA',
+      hospital: 'POLICLINICO RIUNITI - FOGGIA',
+      azienda: 'ASL Foggia',
       bookingType: 'SSN con Ricetta Rossa',
       cancelDeadline: '-',
       status: 'Effettuato pagato'
@@ -226,6 +305,7 @@ function updatePageHeader(screenId) {
 
   // Top Window Bar & Header Elements
   const topWindowBar = document.querySelector('.top-window-bar');
+  const topBarBreadcrumb = document.getElementById('topBarBreadcrumbText');
   const brandPublic = document.getElementById('brandPublic');
   const brandFSE = document.getElementById('brandFSE');
   const headerFseLinks = document.getElementById('headerFseLinks');
@@ -233,12 +313,15 @@ function updatePageHeader(screenId) {
   const subNavbarBar = document.getElementById('subNavbarBar');
 
   const navLinkFsePrenotazioni = document.getElementById('navLinkFsePrenotazioni');
-  const navLinkFseDashboard = document.getElementById('navLinkFseDashboard');
+  const navLinkFseAssistenza = document.getElementById('navLinkFseAssistenza');
 
   // Reset
   if (subtitleContainer) subtitleContainer.style.display = 'none';
   if (stepper) stepper.style.display = 'none';
   if (breadcrumb) breadcrumb.style.display = 'none';
+
+  // Always keep Top Red Window Bar with breadcrumbs and font resizer visible across both Public and FSE
+  if (topWindowBar) topWindowBar.style.display = 'flex';
 
   // Reset torna indietro for non-wizard screens
   if (!screenId.startsWith('screen-step-')) {
@@ -248,9 +331,21 @@ function updatePageHeader(screenId) {
     if (tornaBtn) tornaBtn.style.display = 'none';
   }
 
-  if (screenId === 'screen-home' || screenId === 'screen-login') {
-    // Portale Pubblico / Accesso (Matching media_1794782458951_fc4d4c90.png)
-    if (topWindowBar) topWindowBar.style.display = 'flex';
+  if (screenId === 'screen-home') {
+    // Portale Pubblico (Matching media_1794782458951_fc4d4c90.png)
+    if (topBarBreadcrumb) topBarBreadcrumb.innerHTML = 'REGIONE PUGLIA / SALUTE, SPORT E BUONA VITA / PUGLIASALUTE';
+    if (brandPublic) brandPublic.style.display = 'flex';
+    if (brandFSE) brandFSE.style.display = 'none';
+    if (headerFseLinks) headerFseLinks.style.display = 'none';
+    if (btnHeaderSearch) btnHeaderSearch.style.display = 'flex';
+    if (subNavbarBar) subNavbarBar.style.display = 'block';
+    if (pageTopZone) pageTopZone.style.display = 'none';
+
+    const contentZone = document.querySelector('.page-content-zone');
+    if (contentZone) contentZone.style.backgroundColor = '#FFFFFF';
+  } else if (screenId === 'screen-login') {
+    // Accesso FSE
+    if (topBarBreadcrumb) topBarBreadcrumb.innerHTML = 'REGIONE PUGLIA / SALUTE, SPORT E BUONA VITA / PUGLIASALUTE / FASCICOLO SANITARIO ELETTRONICO';
     if (brandPublic) brandPublic.style.display = 'flex';
     if (brandFSE) brandFSE.style.display = 'none';
     if (headerFseLinks) headerFseLinks.style.display = 'none';
@@ -262,7 +357,7 @@ function updatePageHeader(screenId) {
     if (contentZone) contentZone.style.backgroundColor = '#FFFFFF';
   } else {
     // Area Autenticata FSE (Matching Wireframe Reference 1-8)
-    if (topWindowBar) topWindowBar.style.display = 'none';
+    if (topBarBreadcrumb) topBarBreadcrumb.innerHTML = 'REGIONE PUGLIA / SALUTE, SPORT E BUONA VITA / PUGLIASALUTE / FASCICOLO SANITARIO ELETTRONICO';
     if (brandPublic) brandPublic.style.display = 'none';
     if (brandFSE) brandFSE.style.display = 'flex';
     if (headerFseLinks) headerFseLinks.style.display = 'flex';
@@ -272,16 +367,18 @@ function updatePageHeader(screenId) {
     const contentZone = document.querySelector('.page-content-zone');
     if (contentZone) contentZone.style.backgroundColor = 'var(--ps-bg-bottom-ice)';
 
-    if (navLinkFseDashboard) navLinkFseDashboard.classList.remove('active');
+    if (navLinkFseAssistenza) navLinkFseAssistenza.classList.remove('active');
     if (navLinkFsePrenotazioni) navLinkFsePrenotazioni.classList.remove('active');
 
     if (screenId === 'screen-fse') {
-      if (navLinkFseDashboard) navLinkFseDashboard.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'none'; // Area Personale has its own header
     } else if (screenId === 'screen-bookings') {
       if (navLinkFsePrenotazioni) navLinkFsePrenotazioni.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'none'; // Le mie prenotazioni has its own header
       renderBookings();
+    } else if (screenId === 'screen-assistenza') {
+      if (navLinkFseAssistenza) navLinkFseAssistenza.classList.add('active');
+      if (pageTopZone) pageTopZone.style.display = 'none'; // Assistenza has its own header
     } else if (screenId.startsWith('screen-step-')) {
       if (navLinkFsePrenotazioni) navLinkFsePrenotazioni.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'block';
@@ -291,12 +388,12 @@ function updatePageHeader(screenId) {
       if (breadcrumb) {
         breadcrumb.style.display = 'flex';
         breadcrumb.innerHTML = `
-          <a onclick="goToScreen('screen-home')">Home</a>
-          <span class="breadcrumb-sep">&gt;</span>
-          <a onclick="goToScreen('screen-fse')">FSE</a>
-          <span class="breadcrumb-sep">&gt;</span>
-          <a onclick="goToScreen('screen-bookings')">Prenotazioni</a>
-          <span class="breadcrumb-sep">&gt;</span>
+          <a onclick="goToScreen('screen-home')">PugliaSalute</a>
+          <span class="breadcrumb-sep">/</span>
+          <a onclick="goToScreen('screen-fse')">Fascicolo Sanitario Elettronico</a>
+          <span class="breadcrumb-sep">/</span>
+          <a onclick="goToScreen('screen-bookings')">Le mie prenotazioni</a>
+          <span class="breadcrumb-sep">/</span>
           <span class="breadcrumb-current">Nuova prenotazione</span>
         `;
       }
@@ -333,7 +430,7 @@ function updatePageHeader(screenId) {
         breadcrumb.style.display = 'flex';
         breadcrumb.innerHTML = `
           <a onclick="goToScreen('screen-home')">PugliaSalute</a>
-          <span class="breadcrumb-sep">&gt;</span>
+          <span class="breadcrumb-sep">/</span>
           <span class="breadcrumb-current">Specifiche Componenti</span>
         `;
       }
@@ -371,22 +468,51 @@ function renderBookings() {
   const container = document.getElementById('bookingsWireframeList');
   if (!container) return;
 
-  if (state.bookings.length === 0) {
+  const filters = state.bookingFilters || { year: '', azienda: '', status: '' };
+  const hasActiveFilters = Boolean(filters.year || filters.azienda || filters.status);
+
+  // Aggiorna l'indicatore dei filtri attivi nella toolbar
+  updateActiveFilterIndicator(hasActiveFilters, filters);
+
+  const filteredBookings = state.bookings.filter(b => {
+    // Filtro per Anno
+    if (filters.year) {
+      const matchYear = (b.date && b.date.includes(filters.year)) || (b.dateTime && b.dateTime.includes(filters.year));
+      if (!matchYear) return false;
+    }
+    // Filtro per Azienda
+    if (filters.azienda) {
+      if (b.azienda !== filters.azienda) return false;
+    }
+    // Filtro per Stato
+    if (filters.status) {
+      if (b.status !== filters.status) return false;
+    }
+    return true;
+  });
+
+  if (filteredBookings.length === 0) {
     container.innerHTML = `
-      <div style="background: white; border: 1px dashed var(--ps-border-color); padding: 32px; text-align: center; color: var(--ps-text-muted);">
-        Nessuna prenotazione presente.
+      <div style="background: white; border: 1px dashed var(--ps-border-color); padding: 40px 20px; text-align: center; color: var(--ps-text-muted); border-radius: 4px;">
+        <p style="font-size: 1.05rem; font-weight: 700; color: var(--ps-wireframe-navy); margin-bottom: 8px;">
+          ${hasActiveFilters ? 'Nessuna prenotazione trovata per i filtri selezionati' : 'Nessuna prenotazione presente'}
+        </p>
+        <p style="font-size: 0.88rem; margin-bottom: 16px;">
+          ${hasActiveFilters ? 'Prova a modificare o resettare i filtri impostati per visualizzare le altre prenotazioni.' : 'Non ci sono prenotazioni registrate nel tuo fascicolo.'}
+        </p>
+        ${hasActiveFilters ? '<button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Resetta tutti i filtri</button>' : ''}
       </div>
     `;
     return;
   }
 
-  container.innerHTML = state.bookings.map(b => `
+  container.innerHTML = filteredBookings.map(b => `
     <div class="booking-row-card">
       <div class="booking-details-grid-v2">
         <div class="booking-grid-col">
           <div class="booking-detail-row">
             <span class="booking-detail-label">Sede appuntamento</span>
-            <span class="booking-detail-value">${b.hospital}</span>
+            <span class="booking-detail-value">${b.hospital}${b.azienda ? ` <span style="font-size: 0.8rem; color: #64748B; font-weight: 600;">(${b.azienda})</span>` : ''}</span>
           </div>
           <div class="booking-detail-row">
             <span class="booking-detail-label">Tipo di prenotazione</span>
@@ -398,7 +524,7 @@ function renderBookings() {
           </div>
           <div class="booking-detail-row">
             <span class="booking-detail-label">Data Utile Disdetta</span>
-            <span class="booking-detail-value">${b.cancelDeadline || ''}</span>
+            <span class="booking-detail-value">${b.cancelDeadline || '-'}</span>
           </div>
         </div>
 
@@ -1991,3 +2117,224 @@ document.addEventListener('DOMContentLoaded', () => {
   setPrototypeVersion(savedVersion);
   goToScreen('screen-home');
 });
+
+
+// ==========================================================================
+// ASSISTENZA & SUPPORTO FSE HANDLERS
+// ==========================================================================
+function toggleFaq(faqId) {
+  const item = document.getElementById(faqId);
+  if (!item) return;
+  const wasActive = item.classList.contains('active');
+  document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+  if (!wasActive) {
+    item.classList.add('active');
+  }
+}
+
+function handleAssistenzaInput(fieldId) {
+  const field = document.getElementById(fieldId);
+  const errMap = {
+    'assistenzaEmail': 'errAssistenzaEmail',
+    'assistenzaMotivo': 'errAssistenzaMotivo',
+    'assistenzaOggetto': 'errAssistenzaOggetto',
+    'assistenzaMessaggio': 'errAssistenzaMessaggio'
+  };
+  if (field) {
+    field.classList.remove('assistenza-field-error');
+  }
+  const errEl = document.getElementById(errMap[fieldId]);
+  if (errEl) {
+    errEl.style.display = 'none';
+  }
+}
+
+function submitAssistenzaForm() {
+  const emailInput = document.getElementById('assistenzaEmail');
+  const motivoSelect = document.getElementById('assistenzaMotivo');
+  const oggettoInput = document.getElementById('assistenzaOggetto');
+  const msgInput = document.getElementById('assistenzaMessaggio');
+  const banner = document.getElementById('assistenzaSuccessBanner');
+  const submitBtn = document.getElementById('btnSubmitAssistenza');
+
+  let isValid = true;
+
+  // Validate Email
+  const emailVal = emailInput ? emailInput.value.trim() : '';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailVal || !emailRegex.test(emailVal)) {
+    isValid = false;
+    if (emailInput) emailInput.classList.add('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaEmail');
+    if (err) err.style.display = 'block';
+  } else {
+    if (emailInput) emailInput.classList.remove('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaEmail');
+    if (err) err.style.display = 'none';
+  }
+
+  // Validate Motivo
+  const motivoVal = motivoSelect ? motivoSelect.value.trim() : '';
+  if (!motivoVal) {
+    isValid = false;
+    if (motivoSelect) motivoSelect.classList.add('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaMotivo');
+    if (err) err.style.display = 'block';
+  } else {
+    if (motivoSelect) motivoSelect.classList.remove('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaMotivo');
+    if (err) err.style.display = 'none';
+  }
+
+  // Validate Oggetto
+  const oggettoVal = oggettoInput ? oggettoInput.value.trim() : '';
+  if (!oggettoVal) {
+    isValid = false;
+    if (oggettoInput) oggettoInput.classList.add('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaOggetto');
+    if (err) err.style.display = 'block';
+  } else {
+    if (oggettoInput) oggettoInput.classList.remove('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaOggetto');
+    if (err) err.style.display = 'none';
+  }
+
+  // Validate Messaggio
+  const msgVal = msgInput ? msgInput.value.trim() : '';
+  if (!msgVal) {
+    isValid = false;
+    if (msgInput) msgInput.classList.add('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaMessaggio');
+    if (err) err.style.display = 'block';
+  } else {
+    if (msgInput) msgInput.classList.remove('assistenza-field-error');
+    const err = document.getElementById('errAssistenzaMessaggio');
+    if (err) err.style.display = 'none';
+  }
+
+  if (!isValid) {
+    return;
+  }
+
+  // Simulate submission feedback
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Invio in corso...';
+  }
+
+  setTimeout(() => {
+    if (banner) {
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    if (oggettoInput) oggettoInput.value = '';
+    if (msgInput) msgInput.value = '';
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Invia un altro messaggio';
+    }
+  }, 400);
+}
+
+
+// ==========================================================================
+// FILTRI PRENOTAZIONI & MODAL HANDLERS
+// ==========================================================================
+function updateActiveFilterIndicator(hasActiveFilters, filters) {
+  const btnFiltra = document.getElementById('btnFiltraPrenotazioni');
+  const filterPillBar = document.getElementById('bookingActiveFiltersBar');
+
+  if (btnFiltra) {
+    if (hasActiveFilters) {
+      btnFiltra.innerHTML = 'Filtra <span class="filter-count-badge">•</span>';
+      btnFiltra.classList.add('has-active-filters');
+    } else {
+      btnFiltra.innerHTML = 'Filtra';
+      btnFiltra.classList.remove('has-active-filters');
+    }
+  }
+
+  if (filterPillBar) {
+    if (hasActiveFilters) {
+      const activeLabels = [];
+      if (filters.year) activeLabels.push(`Anno: <strong>${filters.year}</strong>`);
+      if (filters.azienda) activeLabels.push(`Azienda: <strong>${filters.azienda}</strong>`);
+      if (filters.status) activeLabels.push(`Stato: <strong>${filters.status}</strong>`);
+
+      filterPillBar.style.display = 'flex';
+      filterPillBar.innerHTML = `
+        <span class="filter-active-summary-label">Filtri attivi:</span>
+        ${activeLabels.map(l => `<span class="filter-tag-pill">${l}</span>`).join('')}
+        <button type="button" class="btn-clear-filters-link" onclick="resetBookingFilters()">Rimuovi filtri ✕</button>
+      `;
+    } else {
+      filterPillBar.style.display = 'none';
+      filterPillBar.innerHTML = '';
+    }
+  }
+}
+
+function openFilterModal() {
+  const modal = document.getElementById('bookingFilterModalOverlay');
+  if (!modal) return;
+
+  const filters = state.bookingFilters || { year: '', azienda: '', status: '' };
+  const selYear = document.getElementById('filterSelectAnno');
+  const selAzienda = document.getElementById('filterSelectAzienda');
+  const selStatus = document.getElementById('filterSelectStato');
+
+  if (selYear) selYear.value = filters.year || '';
+  if (selAzienda) selAzienda.value = filters.azienda || '';
+  if (selStatus) selStatus.value = filters.status || '';
+
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFilterModal() {
+  const modal = document.getElementById('bookingFilterModalOverlay');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  document.body.style.overflow = '';
+}
+
+function handleFilterBackdropClick(event) {
+  if (event && event.target && event.target.id === 'bookingFilterModalOverlay') {
+    closeFilterModal();
+  }
+}
+
+function applyBookingFilters() {
+  const selYear = document.getElementById('filterSelectAnno');
+  const selAzienda = document.getElementById('filterSelectAzienda');
+  const selStatus = document.getElementById('filterSelectStato');
+
+  state.bookingFilters = {
+    year: selYear ? selYear.value : '',
+    azienda: selAzienda ? selAzienda.value : '',
+    status: selStatus ? selStatus.value : ''
+  };
+
+  closeFilterModal();
+  renderBookings();
+}
+
+function resetBookingFilters() {
+  state.bookingFilters = {
+    year: '',
+    azienda: '',
+    status: ''
+  };
+
+  const selYear = document.getElementById('filterSelectAnno');
+  const selAzienda = document.getElementById('filterSelectAzienda');
+  const selStatus = document.getElementById('filterSelectStato');
+
+  if (selYear) selYear.value = '';
+  if (selAzienda) selAzienda.value = '';
+  if (selStatus) selStatus.value = '';
+
+  closeFilterModal();
+  renderBookings();
+}
