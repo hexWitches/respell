@@ -62,10 +62,10 @@
           <li><a class="nav-fse-header-link" id="navLinkFsePrenotazioni"
               onclick="goToScreen('screen-bookings')">Prenotazioni</a></li>
           <li><a class="nav-fse-header-link" id="navLinkFseDocumenti"
-              onclick="alert('Archivio Documenti Sanitari: referti ed esami FSE')">Documenti</a></li>
+              onclick="showNotImplemented()">Documenti</a></li>
           <li><a class="nav-fse-header-link" id="navLinkFseDashboard" onclick="goToScreen('screen-fse')">Scelta
               Medico</a></li>
-          <li><a class="nav-fse-header-link" id="navLinkFseContatti" onclick="alert('Altri servizi FSE Puglia')">Altri
+          <li><a class="nav-fse-header-link" id="navLinkFseContatti" onclick="showNotImplemented()">Altri
               servizi</a></li>
         </ul>
       </div>
@@ -73,7 +73,7 @@
       <div class="header-right">
         <!-- Bottone Cerca [ 🔍 ] (Visibile su Home e Login) -->
         <button type="button" class="btn-header-search" id="btnHeaderSearch"
-          onclick="alert('Cerca nel Portale della Salute')" title="Cerca nel portale" aria-label="Cerca">
+          onclick="showNotImplemented()" title="Cerca nel portale" aria-label="Cerca">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25619A" stroke-width="2.2"
             stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
@@ -118,11 +118,11 @@
       <ul class="nav-menu-links-ps" id="navPublic">
         <li><a class="nav-menu-link-ps" onclick="goToScreen('screen-login')">Fascicolo Sanitario Elettronico <span
               class="nav-caret">&#9662;</span></a></li>
-        <li><a class="nav-menu-link-ps" onclick="alert('Sezione Aziende Sanitarie della Regione Puglia')">Aziende
+        <li><a class="nav-menu-link-ps" onclick="showNotImplemented()">Aziende
             Sanitarie <span class="nav-caret">&#9662;</span></a></li>
-        <li><a class="nav-menu-link-ps" onclick="alert('Campagne e iniziative di prevenzione sanitaria')">Prevenzione
+        <li><a class="nav-menu-link-ps" onclick="showNotImplemented()">Prevenzione
             <span class="nav-caret">&#9662;</span></a></li>
-        <li><a class="nav-menu-link-ps" onclick="alert('Servizi di assistenza e cura regionale')">Assistenza e Cura
+        <li><a class="nav-menu-link-ps" onclick="showNotImplemented()">Assistenza e Cura
             <span class="nav-caret">&#9662;</span></a></li>
       </ul>
     </div>
@@ -133,7 +133,8 @@
        ====================================================================== -->
   <div class="page-top-zone" id="pageTopZone">
     <div class="page-top-inner">
-      <div class="breadcrumb-text" id="breadcrumbText" style="display: none;">PugliaSalute &gt; Home</div>
+      <nav class="breadcrumb-text breadcrumb-nav" id="breadcrumbText" style="display: none;"
+        aria-label="Percorso di navigazione"></nav>
 
       <div class="page-header-title-row">
         <h1 class="page-main-title" id="pageMainHeading">Portale della salute</h1>
@@ -174,10 +175,11 @@
       <section id="screen-home" class="wireframe-screen active">
         <!-- Breadcrumb e Titolo Principale Home -->
         <div class="home-title-block">
-          <div class="home-breadcrumb-row">
-            <span class="home-bc-brand">PugliaSalute</span> <span class="home-bc-sep">/</span> <span
-              class="home-bc-page">Home</span>
-          </div>
+          <nav class="breadcrumb-nav home-breadcrumb-row" aria-label="Percorso di navigazione">
+            <span class="home-bc-brand" onclick="goToScreen('screen-home')">PugliaSalute</span>
+            <span class="breadcrumb-sep home-bc-sep">/</span>
+            <span class="breadcrumb-current home-bc-page">Home</span>
+          </nav>
           <h1 class="home-main-title">Portale della salute</h1>
         </div>
 
@@ -206,19 +208,19 @@
             <button class="carousel-arrow-btn" onclick="shiftNews('prev')" aria-label="Notizia precedente">‹</button>
 
             <div class="carousel-wireframe-cards" id="newsCardsRow">
-              <div class="card-wireframe-rect" onclick="alert('Notizia: Campagna Vaccinale 2026/2027')">
+              <div class="card-wireframe-rect" onclick="showNotImplemented()">
                 <div class="news-card-heading">Campagna Vaccinale 2026/2027</div>
                 <div class="news-card-body">Disponibili le somministrazioni antinfluenzali su tutto il territorio
                   regionale pugliese.</div>
               </div>
 
-              <div class="card-wireframe-rect" onclick="alert('Notizia: Nuovo Portale CUP Online')">
+              <div class="card-wireframe-rect" onclick="showNotImplemented()">
                 <div class="news-card-heading">Nuovo Portale Prenotazioni CUP</div>
                 <div class="news-card-body">Percorso guidato per prenotare in pochi passaggi con scelta della struttura
                   e promemoria.</div>
               </div>
 
-              <div class="card-wireframe-rect" onclick="alert('Notizia: Ritiro Referti FSE')">
+              <div class="card-wireframe-rect" onclick="showNotImplemented()">
                 <div class="news-card-heading">Ritiro Referti Online nel FSE</div>
                 <div class="news-card-body">Consulta e scarica i tuoi esami di laboratorio in formato PDF firmato
                   digitalmente.</div>
@@ -240,16 +242,16 @@
 
           <div class="emergency-cards-grid-4">
             <div class="emergency-box-card"
-              onclick="alert('Pronto Soccorso: presidi ospedalieri e tempi d\'attesa regionali')">
+              onclick="showNotImplemented()">
               <span class="emergency-box-text">pronto soccorso</span>
             </div>
-            <div class="emergency-box-card" onclick="alert('Continuità assistenziale notturna e festiva')">
+            <div class="emergency-box-card" onclick="showNotImplemented()">
               <span class="emergency-box-text">assistenza notturna<br>e festiva</span>
             </div>
-            <div class="emergency-box-card" onclick="alert('Servizio Chiamata 118 e 118 per persone sorde')">
+            <div class="emergency-box-card" onclick="showNotImplemented()">
               <span class="emergency-box-text">118 e 118 sordi</span>
             </div>
-            <div class="emergency-box-card" onclick="alert('Centro Antiveleni Regione Puglia')">
+            <div class="emergency-box-card" onclick="showNotImplemented()">
               <span class="emergency-box-text">centro antiveleni</span>
             </div>
           </div>
@@ -261,11 +263,13 @@
            ================================================================== -->
       <section id="screen-login" class="wireframe-screen">
         <div class="login-screen-wrap">
-          <div class="home-breadcrumb-row" style="margin-bottom: 8px;">
-            <span class="home-bc-brand">PugliaSalute</span> <span class="home-bc-sep">&gt;</span> <span>Fascicolo
-              Sanitario Elettronico</span> <span class="home-bc-sep">&gt;</span> <span
-              class="home-bc-page">Accesso</span>
-          </div>
+          <nav class="breadcrumb-nav" style="margin-bottom: 12px;" aria-label="Percorso di navigazione">
+            <a onclick="goToScreen('screen-home')">PugliaSalute</a>
+            <span class="breadcrumb-sep">&gt;</span>
+            <span style="color: #64748B;">Fascicolo Sanitario Elettronico</span>
+            <span class="breadcrumb-sep">&gt;</span>
+            <span class="breadcrumb-current">Accesso</span>
+          </nav>
 
           <h1 class="page-main-title" style="margin-bottom: 8px;">Accesso al Fascicolo Sanitario Elettronico</h1>
           <p style="color: var(--ps-text-muted); font-size: 0.95rem; margin-bottom: 28px;">
@@ -317,6 +321,11 @@
            SCREEN 2: FSE DASHBOARD — AREA PERSONALE
            ================================================================== -->
       <section id="screen-fse" class="wireframe-screen">
+        <nav class="breadcrumb-nav" aria-label="Percorso di navigazione">
+          <a onclick="goToScreen('screen-home')">Home</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <span class="breadcrumb-current">Area Personale (FSE)</span>
+        </nav>
         <!-- Person icon SVG + "Area Personale" title -->
         <div class="area-personale-header">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -350,7 +359,7 @@
 
           <!-- Card DOCUMENTI -->
           <div class="card-fse-box card-fse-box--white"
-            onclick="alert('Archivio Documenti Sanitari: referti e prescrizioni')" role="button" tabindex="0">
+            onclick="showNotImplemented()" role="button" tabindex="0">
             <div class="fse-card-header">
               <svg class="fse-line-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -361,7 +370,7 @@
               </svg>
               <div class="fse-bigcard-title fse-bigcard-title--red">Documenti</div>
             </div>
-            <div class="fse-bigcard-sub">Consulta i tuoi dati e documenti sanitari</div>
+            <div class="fse-bigcard-sub">Consulta i tuoi documenti sanitari.</div>
           </div>
         </div>
 
@@ -373,7 +382,7 @@
             <div class="carousel-wireframe-cards" id="docsCardsRow">
               <!-- Document 1: Laboratorio Analisi -->
               <div class="card-wireframe-rect card-doc-item"
-                onclick="alert('Apertura referto: Esami Ematochimici e Profilo Glicemico (PDF)')" role="button"
+                onclick="showNotImplemented()" role="button"
                 tabindex="0">
                 <div>
                   <div class="doc-badge-pill">Laboratorio Analisi</div>
@@ -398,7 +407,7 @@
 
               <!-- Document 2: Radiologia -->
               <div class="card-wireframe-rect card-doc-item"
-                onclick="alert('Apertura referto: Radiografia Torace 2 Proiezioni (PDF)')" role="button" tabindex="0">
+                onclick="showNotImplemented()" role="button" tabindex="0">
                 <div>
                   <div class="doc-badge-pill">Diagnostica per Immagini</div>
                   <div class="doc-card-title">Radiografia Torace (RX 2P)</div>
@@ -422,7 +431,7 @@
 
               <!-- Document 3: Piano Terapeutico -->
               <div class="card-wireframe-rect card-doc-item"
-                onclick="alert('Apertura piano terapeutico: Trattamento Diabetologico Specialistico (PDF)')"
+                onclick="showNotImplemented()"
                 role="button" tabindex="0">
                 <div>
                   <div class="doc-badge-pill">Prescrizione Specialistica</div>
@@ -447,7 +456,7 @@
 
               <!-- Document 4: Certificato Vaccinale -->
               <div class="card-wireframe-rect card-doc-item"
-                onclick="alert('Apertura certificato: Vaccinazione Antinfluenzale 2026/27 (PDF)')" role="button"
+                onclick="showNotImplemented()" role="button"
                 tabindex="0">
                 <div>
                   <div class="doc-badge-pill">Dipartimento Prevenzione</div>
@@ -472,7 +481,7 @@
 
               <!-- Document 5: Cardiologia -->
               <div class="card-wireframe-rect card-doc-item"
-                onclick="alert('Apertura referto: Visita ed Elettrocardiogramma (PDF)')" role="button" tabindex="0">
+                onclick="showNotImplemented()" role="button" tabindex="0">
                 <div>
                   <div class="doc-badge-pill">Cardiologia</div>
                   <div class="doc-card-title">Elettrocardiogramma (ECG)</div>
@@ -503,9 +512,17 @@
            SCREEN 3: LE MIE PRENOTAZIONI
            ================================================================== -->
       <section id="screen-bookings" class="wireframe-screen">
+        <nav class="breadcrumb-nav" aria-label="Percorso di navigazione">
+          <a onclick="goToScreen('screen-home')">Home</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <a onclick="goToScreen('screen-fse')">FSE</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <span class="breadcrumb-current">Le mie prenotazioni</span>
+        </nav>
+        <h1 class="page-main-title" style="margin-bottom: 4px;">Le mie prenotazioni</h1>
         <p class="bookings-subtitle">Gestisci le prenotazioni effettuate.</p>
         <div class="bookings-toolbar">
-          <button class="btn-filtra-nav" onclick="alert('Filtri prenotazioni')">Filtra</button>
+          <button class="btn-filtra-nav" onclick="showNotImplemented()">Filtra</button>
           <button class="btn-wireframe-navy" onclick="goToScreen('screen-step-beneficiary')">Nuova prenotazione</button>
         </div>
         <div class="bookings-wireframe-list" id="bookingsWireframeList">
@@ -552,14 +569,28 @@
           </div>
           <div class="form-inputs-row-2col">
             <div class="form-field-group">
-              <label class="form-field-label">Nome e Cognome Assistito</label>
-              <input type="text" id="inputDelegateName" class="form-field-input" placeholder="Es. Anna Rossi">
+              <label class="form-field-label" id="labelDelegateName">Nome e Cognome Assistito</label>
+              <input type="text" id="inputDelegateName" class="form-field-input" placeholder="Es. Anna Rossi"
+                oninput="handleStep1DelegateChange()">
             </div>
             <div class="form-field-group">
-              <label class="form-field-label">Codice Fiscale</label>
-              <input type="text" id="inputDelegateCF" class="form-field-input" placeholder="Es. RSSNNA85M41A662Y">
+              <label class="form-field-label" id="labelDelegateCF">Codice Fiscale</label>
+              <input type="text" id="inputDelegateCF" class="form-field-input" placeholder="Es. RSSNNA85M41A662Y"
+                oninput="handleStep1DelegateChange()">
             </div>
           </div>
+        </div>
+
+        <!-- Inline Error Banner (Matching media_2d90cf8d) -->
+        <div class="form-error-banner" id="step1ErrorBanner" style="display: none;" role="alert">
+          <svg class="form-error-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D32F2F"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="form-error-text" id="step1ErrorText">Per continuare, assicurati di aver compilato tutti i campi
+            obbligatori.</span>
         </div>
 
         <!-- Bottom Bar: Indietro & Prosegui -->
@@ -602,6 +633,18 @@
           </div>
         </div>
 
+        <!-- Inline Error Banner (Matching media_2d90cf8d) -->
+        <div class="form-error-banner" id="step2ErrorBanner" style="display: none;" role="alert">
+          <svg class="form-error-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D32F2F"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="form-error-text" id="step2ErrorText">Per continuare, assicurati di aver compilato tutti i campi
+            obbligatori.</span>
+        </div>
+
         <!-- Bottom Bar: Indietro & Prosegui -->
         <div class="wizard-nav-bottom-bar">
           <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-beneficiary')">Indietro</button>
@@ -633,12 +676,14 @@
         <!-- Contatti -->
         <div class="form-inputs-row-2col" style="margin-bottom: 24px;">
           <div class="form-field-group">
-            <label class="form-field-label">Recapito Telefonico*</label>
-            <input type="tel" id="inputPhone" class="form-field-input" value="+1234567890">
+            <label class="form-field-label" id="labelInputPhone">Recapito Telefonico*</label>
+            <input type="tel" id="inputPhone" class="form-field-input" value="+1234567890"
+              oninput="handleStep3FieldChange()">
           </div>
           <div class="form-field-group">
-            <label class="form-field-label">E-mail invio promemoria*</label>
-            <input type="email" id="inputEmail" class="form-field-input" placeholder="Inserisci la tua email">
+            <label class="form-field-label" id="labelInputEmail">E-mail invio promemoria*</label>
+            <input type="email" id="inputEmail" class="form-field-input" placeholder="Inserisci la tua email"
+              oninput="handleStep3FieldChange()">
           </div>
         </div>
 
@@ -673,49 +718,63 @@
                 <li>GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)</li>
               </ul>
               <a class="prescription-info-link"
-                onclick="event.stopPropagation(); alert('Vedi tutte le prestazioni della ricetta.');">Vedi tutte le
+                onclick="event.stopPropagation(); showNotImplemented();">Vedi tutte le
                 prestazioni</a>
             </div>
           </div>
 
           <!-- Card 2 (Unselected by default) -->
-          <div class="prescription-card-wireframe" id="prescCard2" onclick="setPrescriptionCard('ecg')">
-            <div class="prescription-side-block">
-              <div class="prescription-side-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
-            <div class="prescription-card-main">
-              <div class="prescription-nre-label">NUMERO RICETTA: &nbsp;<strong>160A37295673820</strong></div>
-              <div class="prescription-card-details-grid">
-                <div>
-                  <div class="prescription-detail-label">Data ricetta</div>
-                  <div class="prescription-detail-value">2026-10-19</div>
-                </div>
-                <div>
-                  <div class="prescription-detail-label">Medico:</div>
-                  <div class="prescription-detail-value">Mario Rossi</div>
+            <div class="prescription-card-wireframe" id="prescCard2" onclick="setPrescriptionCard('lipidi')">
+              <div class="prescription-side-block">
+                <div class="prescription-side-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
                 </div>
               </div>
-              <div class="prescription-detail-label" style="margin-top: 10px;">Prestazioni</div>
-              <div class="prescription-items-text">
-                -INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)<br>
-                -GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)
+              <div class="prescription-card-main">
+                <div class="prescription-nre-label">NUMERO RICETTA: &nbsp;<strong>160A24680453583</strong></div>
+                <div class="prescription-card-details-grid">
+                  <div>
+                    <div class="prescription-detail-label">Data ricetta</div>
+                    <div class="prescription-detail-value">2026-10-19</div>
+                  </div>
+                  <div>
+                    <div class="prescription-detail-label">Medico:</div>
+                    <div class="prescription-detail-value">Mario Rossi</div>
+                  </div>
+                </div>
+                <div class="prescription-detail-label" style="margin-top: 10px;">Prestazioni</div>
+                <ul class="prescription-items-list">
+                  <li>COLESTEROLO TOTALE</li>
+                  <li>TRIGLICERIDI</li>
+                  <li>COLESTEROLO HDL (HDL-C)</li>
+                  <li>COLESTEROLO LDL (LDL-C)</li>
+                </ul>
+                <a class="prescription-info-link"
+                  onclick="event.stopPropagation(); showNotImplemented();">Vedi tutte le
+                  prestazioni</a>
               </div>
-              <a class="prescription-info-link"
-                onclick="event.stopPropagation(); alert('Vedi tutte le prestazioni della ricetta.');">Vedi tutte le
-                prestazioni</a>
             </div>
           </div>
-        </div>
 
-        <div class="wizard-nav-bottom-bar">
-          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-regime')">Indietro</button>
-          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep3()">Prosegui</button>
-        </div>
+          <!-- Inline Error Banner (Matching media_2d90cf8d) -->
+          <div class="form-error-banner" id="step3ErrorBanner" style="display: none;" role="alert">
+            <svg class="form-error-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D32F2F"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span class="form-error-text" id="step3ErrorText">Per continuare, assicurati di aver compilato tutti i campi
+              obbligatori.</span>
+          </div>
+
+          <div class="wizard-nav-bottom-bar">
+            <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-regime')">Indietro</button>
+            <button class="btn-nav-wireframe-primary" onclick="proceedFromStep3()">Prosegui</button>
+          </div>
       </section>
 
       <!-- ==================================================================
@@ -727,12 +786,25 @@
           <div class="ricette-summary-label">Ricette inserite</div>
           <div class="ricette-summary-row">
             <div>NUMERO RICETTA: &nbsp;<strong id="step4RecipeNumber">160A37295673820</strong></div>
-            <a class="link-dettagli-blue" onclick="goToScreen('screen-step-prescription')">Vedi Dettagli</a>
+            <a class="link-dettagli-blue" id="btnToggleRecipeDetails" onclick="toggleRecipeDetails()" role="button"
+              tabindex="0" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              <span id="btnToggleRecipeDetailsText">Vedi Dettagli</span>
+              <span id="recipeDetailsCaret" style="font-size: 0.75rem; transition: transform 0.2s;">&#9662;</span>
+            </a>
+          </div>
+
+          <!-- Dropdown con le informazioni della ricetta scelta al passo 3 -->
+          <div class="recipe-details-dropdown" id="step4RecipeDetailsDropdown" style="display: none;">
+            <div class="recipe-details-header">Prestazioni</div>
+            <div class="recipe-details-list" id="step4RecipeDetailsContent">
+              -INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)<br>
+              -GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)
+            </div>
           </div>
         </div>
 
         <!-- Filtri azienda sanitaria -->
-        <div class="form-panel-white">
+        <div class="form-panel-white" id="step4FiltersPanel">
           <div class="form-section-label">Scegli l'Azienda Sanitaria</div>
           <div class="checkbox-asl-grid">
             <div class="asl-col">
@@ -742,7 +814,8 @@
                   value="A.O.U. Policlinico Riuniti di Foggia" onchange="handleASLCheckChange()"> A.O.U. Policlinico
                 Riuniti di Foggia</label>
               <label class="checkbox-item-label"><input type="checkbox" class="asl-check"
-                  value="Asl Barletta-Andria-Trani" onchange="handleASLCheckChange()"> Asl Barletta-Andria-Trani</label>
+                  value="Asl Barletta-Andria-Trani" onchange="handleASLCheckChange()"> Asl
+                Barletta-Andria-Trani</label>
               <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Lecce"
                   onchange="handleASLCheckChange()"> Asl Lecce</label>
               <label class="checkbox-item-label"><input type="checkbox" class="asl-check"
@@ -751,7 +824,8 @@
             </div>
             <div class="asl-col">
               <label class="checkbox-item-label"><input type="checkbox" class="asl-check"
-                  value="A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII" onchange="handleASLCheckChange()"> A.O.U.
+                  value="A.O.U. Policlinico di Bari - Ospedale Giovanni XXIII" onchange="handleASLCheckChange()">
+                A.O.U.
                 Policlinico di Bari - Ospedale Giovanni XXIII</label>
               <label class="checkbox-item-label"><input type="checkbox" class="asl-check" value="Asl Brindisi"
                   onchange="handleASLCheckChange()"> Asl Brindisi</label>
@@ -791,6 +865,18 @@
               <!-- Popolato dinamicamente da app.js -->
             </div>
           </div>
+        </div>
+
+        <!-- Inline Error Banner (Matching media_2d90cf8d) -->
+        <div class="form-error-banner" id="step4ErrorBanner" style="display: none;" role="alert">
+          <svg class="form-error-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D32F2F"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="form-error-text" id="step4ErrorText">Per continuare, assicurati di aver compilato tutti i campi
+            obbligatori.</span>
         </div>
 
         <div class="wizard-nav-bottom-bar">
@@ -1157,7 +1243,7 @@
             </div>
           </div>
           <div class="success-booking-actions">
-            <a class="success-action-link" onclick="alert('Download promemoria PDF')">
+            <a class="success-action-link" onclick="showNotImplemented()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -1166,7 +1252,7 @@
               </svg>
               Scarica promemoria
             </a>
-            <a class="success-action-link" onclick="alert('Vai al pagamento pagoPA')">
+            <a class="success-action-link" onclick="showNotImplemented()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="5" width="20" height="14" rx="2"></rect>

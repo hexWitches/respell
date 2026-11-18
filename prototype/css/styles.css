@@ -286,10 +286,45 @@ body {
   padding: 0 20px;
 }
 
-.breadcrumb-text {
+.breadcrumb-text,
+.breadcrumb-nav {
+  font-size: 0.84rem;
+  color: #64748B;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.breadcrumb-text a,
+.breadcrumb-nav a {
+  color: var(--ps-wireframe-link-blue, #0066CC);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-text a:hover,
+.breadcrumb-nav a:hover {
+  text-decoration: underline;
+  color: var(--ps-wireframe-navy, #133857);
+}
+
+.breadcrumb-text .breadcrumb-sep,
+.breadcrumb-nav .breadcrumb-sep {
+  color: #94A3B8;
+  user-select: none;
   font-size: 0.8rem;
-  color: var(--ps-wireframe-btn-blue);
-  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+.breadcrumb-text .breadcrumb-current,
+.breadcrumb-nav .breadcrumb-current {
+  color: #1E293B;
+  font-weight: 600;
 }
 
 .page-main-title {
@@ -1052,6 +1087,7 @@ body {
 }
 
 /* Messaggio di errore inline sopra i pulsanti (Matching media_2d90cf8d) */
+.form-error-banner,
 .step5-error-banner {
   display: flex;
   align-items: center;
@@ -1062,16 +1098,52 @@ body {
   color: #D32F2F;
 }
 
+.form-error-icon,
 .step5-error-icon {
   flex-shrink: 0;
   color: #D32F2F;
 }
 
+.form-error-text,
 .step5-error-text {
   font-size: 15px;
   font-weight: 500;
   color: #D32F2F;
   line-height: 1.4;
+}
+
+/* Evidenziazione in rosso per campi input obbligatori non compilati */
+.form-field-input.field-error {
+  border: 1.5px solid #D32F2F !important;
+  background-color: #FEF2F2 !important;
+  color: #1E293B !important;
+  outline: none !important;
+}
+
+.form-field-label.label-error {
+  color: #B91C1C !important;
+  font-weight: 600 !important;
+}
+
+/* Evidenziazione in rosso per schede di scelta obbligatorie non selezionate: solo bordo rosso, nessun colore di sfondo rosso */
+.wireframe-choice-card.choice-card-error,
+.prescription-card-wireframe.card-error {
+  border: 1.5px solid #D32F2F !important;
+  background-color: #FFFFFF !important;
+}
+
+.step4-filters-error {
+  border: 1.5px solid #D32F2F !important;
+  background-color: #FFFFFF !important;
+  border-radius: 6px;
+  padding: 14px !important;
+}
+
+.step4-slots-error {
+  border: 1.5px solid #D32F2F !important;
+  border-radius: 6px;
+  background-color: #FFFFFF !important;
+  padding: 8px !important;
 }
 
 .link-privacy-underline {
@@ -1788,6 +1860,41 @@ body {
   align-items: center;
   justify-content: space-between;
   font-size: 0.88rem;
+}
+
+/* Step 4: Dropdown Dettagli Ricetta Selezionata */
+.recipe-details-dropdown {
+  background: #F8FAFC;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  border: 1px solid var(--ps-border-color, #E2E8F0);
+  animation: fadeInDetails 0.2s ease;
+}
+
+@keyframes fadeInDetails {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recipe-details-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ps-wireframe-navy, #133857);
+  margin-bottom: 6px;
+}
+
+.recipe-details-list {
+  font-size: 0.84rem;
+  color: #334155;
+  line-height: 1.5;
 }
 
 .form-section-label {

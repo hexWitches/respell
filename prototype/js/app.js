@@ -92,6 +92,11 @@ function getRepositorySlots() {
   return [];
 }
 
+// Helper for prototype stub actions
+function showNotImplemented() {
+  alert('Questa funzione non è implementata in questo prototipo.');
+}
+
 // Accessibility Font Resizer (Wireframe Top Red Bar: A-, A+)
 function setFontSize(size) {
   const alreadyActive = document.documentElement.classList.contains('font-' + size);
@@ -170,7 +175,18 @@ function startNewBooking() {
     chkPriv.disabled = false;
     chkPriv.style.cursor = 'pointer';
   }
+  clearStep1Errors();
+  clearStep2Errors();
+  clearStep3Errors();
+  clearStep4Errors();
   clearStep5ConsentErrors();
+
+  const detailsDropdown = document.getElementById('step4RecipeDetailsDropdown');
+  const detailsText = document.getElementById('btnToggleRecipeDetailsText');
+  const detailsCaret = document.getElementById('recipeDetailsCaret');
+  if (detailsDropdown) detailsDropdown.style.display = 'none';
+  if (detailsText) detailsText.innerText = 'Vedi Dettagli';
+  if (detailsCaret) detailsCaret.style.transform = 'rotate(0deg)';
 
   resetStep4Filters();
 
@@ -272,6 +288,19 @@ function updatePageHeader(screenId) {
       if (heading) heading.innerText = 'Nuova prenotazione';
       if (stepper) stepper.style.display = 'flex';
 
+      if (breadcrumb) {
+        breadcrumb.style.display = 'flex';
+        breadcrumb.innerHTML = `
+          <a onclick="goToScreen('screen-home')">Home</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <a onclick="goToScreen('screen-fse')">FSE</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <a onclick="goToScreen('screen-bookings')">Prenotazioni</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <span class="breadcrumb-current">Nuova prenotazione</span>
+        `;
+      }
+
       const stepMap = {
         'screen-step-beneficiary': 1,
         'screen-step-regime': 2,
@@ -290,6 +319,7 @@ function updatePageHeader(screenId) {
       updateTornaIndietro(screenId);
 
       if (screenId === 'screen-step-slots') {
+        updateStep4RecipeDetails();
         renderSlots();
       } else if (screenId === 'screen-step-recap') {
         updateRecapStep();
@@ -300,8 +330,12 @@ function updatePageHeader(screenId) {
       if (topWindowBar) topWindowBar.style.display = 'flex';
       if (pageTopZone) pageTopZone.style.display = 'block';
       if (breadcrumb) {
-        breadcrumb.style.display = 'block';
-        breadcrumb.innerText = 'PugliaSalute > Specifiche Componenti';
+        breadcrumb.style.display = 'flex';
+        breadcrumb.innerHTML = `
+          <a onclick="goToScreen('screen-home')">PugliaSalute</a>
+          <span class="breadcrumb-sep">&gt;</span>
+          <span class="breadcrumb-current">Specifiche Componenti</span>
+        `;
       }
       if (heading) heading.innerText = 'Design System & Componenti';
     }
@@ -386,10 +420,10 @@ function renderBookings() {
 
       <div class="booking-row-actions-new">
         <div class="booking-actions-left">
-          <button class="btn-booking-action" onclick="alert('Modifica prenotazione ${b.id}')">Modifica</button>
+          <button class="btn-booking-action" onclick="showNotImplemented()">Modifica</button>
           <button class="btn-booking-action" onclick="cancelBooking('${b.id}')">Disdici</button>
         </div>
-        <a class="link-vedi-dettagli" onclick="alert('Dettagli appuntamento ${b.id}: promemoria e indicazioni per l\\'accesso.')">Vedi Dettagli &rarr;</a>
+        <a class="link-vedi-dettagli" onclick="showNotImplemented()">Vedi Dettagli &rarr;</a>
       </div>
     </div>
   `).join('');
@@ -404,17 +438,61 @@ function cancelBooking(id) {
   }
 }
 
-// Choice Card Selections
+// ==============================================================================
+// STEP 1 - BENEFICIARIO: GESTIONE ERRORI ED EVENTI
+// ==============================================================================
+function clearStep1Errors() {
+  const me = document.getElementById('choiceBeneficiaryMe');
+  const other = document.getElementById('choiceBeneficiaryOther');
+  const banner = document.getElementById('step1ErrorBanner');
+  const nameInput = document.getElementById('inputDelegateName');
+  const cfInput = document.getElementById('inputDelegateCF');
+  const nameLabel = document.getElementById('labelDelegateName');
+  const cfLabel = document.getElementById('labelDelegateCF');
+
+  if (me) me.classList.remove('choice-card-error');
+  if (other) other.classList.remove('choice-card-error');
+  if (nameInput) nameInput.classList.remove('field-error');
+  if (cfInput) cfInput.classList.remove('field-error');
+  if (nameLabel) nameLabel.classList.remove('label-error');
+  if (cfLabel) cfLabel.classList.remove('label-error');
+  if (banner) banner.style.display = 'none';
+}
+
+function handleStep1DelegateChange() {
+  const nameInput = document.getElementById('inputDelegateName');
+  const cfInput = document.getElementById('inputDelegateCF');
+  const nameLabel = document.getElementById('labelDelegateName');
+  const cfLabel = document.getElementById('labelDelegateCF');
+  const banner = document.getElementById('step1ErrorBanner');
+
+  if (nameInput && nameInput.value.trim() && nameLabel) {
+    nameInput.classList.remove('field-error');
+    nameLabel.classList.remove('label-error');
+  }
+  if (cfInput && cfInput.value.trim() && cfLabel) {
+    cfInput.classList.remove('field-error');
+    cfLabel.classList.remove('label-error');
+  }
+  const isNameValid = !nameInput || nameInput.value.trim().length > 0;
+  const isCFValid = !cfInput || cfInput.value.trim().length > 0;
+  if (isNameValid && isCFValid && banner) {
+    banner.style.display = 'none';
+  }
+}
+
 function setBeneficiaryChoice(type) {
   state.wizard.beneficiary = type;
   const me = document.getElementById('choiceBeneficiaryMe');
   const other = document.getElementById('choiceBeneficiaryOther');
   if (me) {
     me.classList.toggle('selected', type === 'me');
+    me.classList.remove('choice-card-error');
     me.setAttribute('aria-checked', type === 'me' ? 'true' : 'false');
   }
   if (other) {
     other.classList.toggle('selected', type === 'other');
+    other.classList.remove('choice-card-error');
     other.setAttribute('aria-checked', type === 'other' ? 'true' : 'false');
   }
 
@@ -422,14 +500,68 @@ function setBeneficiaryChoice(type) {
   if (delegationBox) {
     delegationBox.style.display = type === 'other' ? 'block' : 'none';
   }
+
+  const banner = document.getElementById('step1ErrorBanner');
+  if (type === 'me') {
+    if (banner) banner.style.display = 'none';
+  } else if (type === 'other') {
+    handleStep1DelegateChange();
+  }
 }
 
 function proceedFromStep1() {
+  const me = document.getElementById('choiceBeneficiaryMe');
+  const other = document.getElementById('choiceBeneficiaryOther');
+  const banner = document.getElementById('step1ErrorBanner');
+  let hasError = false;
+
   if (!state.wizard.beneficiary) {
-    alert('Seleziona per chi stai effettuando la prenotazione per proseguire.');
+    hasError = true;
+    if (me) me.classList.add('choice-card-error');
+    if (other) other.classList.add('choice-card-error');
+  }
+
+  if (state.wizard.beneficiary === 'other') {
+    const nameInput = document.getElementById('inputDelegateName');
+    const cfInput = document.getElementById('inputDelegateCF');
+    const nameLabel = document.getElementById('labelDelegateName');
+    const cfLabel = document.getElementById('labelDelegateCF');
+
+    if (nameInput && !nameInput.value.trim()) {
+      hasError = true;
+      nameInput.classList.add('field-error');
+      if (nameLabel) nameLabel.classList.add('label-error');
+    }
+    if (cfInput && !cfInput.value.trim()) {
+      hasError = true;
+      cfInput.classList.add('field-error');
+      if (cfLabel) cfLabel.classList.add('label-error');
+    }
+  }
+
+  if (hasError) {
+    if (banner) {
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     return;
   }
+
+  clearStep1Errors();
   goToScreen('screen-step-regime');
+}
+
+// ==============================================================================
+// STEP 2 - TIPO PRENOTAZIONE: GESTIONE ERRORI ED EVENTI
+// ==============================================================================
+function clearStep2Errors() {
+  const ssn = document.getElementById('choiceRegimeSSN');
+  const alpi = document.getElementById('choiceRegimeALPI');
+  const banner = document.getElementById('step2ErrorBanner');
+
+  if (ssn) ssn.classList.remove('choice-card-error');
+  if (alpi) alpi.classList.remove('choice-card-error');
+  if (banner) banner.style.display = 'none';
 }
 
 function setRegimeChoice(type) {
@@ -438,20 +570,84 @@ function setRegimeChoice(type) {
   const alpi = document.getElementById('choiceRegimeALPI');
   if (ssn) {
     ssn.classList.toggle('selected', type === 'ssn');
+    ssn.classList.remove('choice-card-error');
     ssn.setAttribute('aria-checked', type === 'ssn' ? 'true' : 'false');
   }
   if (alpi) {
     alpi.classList.toggle('selected', type === 'alpi');
+    alpi.classList.remove('choice-card-error');
     alpi.setAttribute('aria-checked', type === 'alpi' ? 'true' : 'false');
   }
+
+  const banner = document.getElementById('step2ErrorBanner');
+  if (banner) banner.style.display = 'none';
 }
 
 function proceedFromStep2() {
+  const ssn = document.getElementById('choiceRegimeSSN');
+  const alpi = document.getElementById('choiceRegimeALPI');
+  const banner = document.getElementById('step2ErrorBanner');
+
   if (!state.wizard.regime) {
-    alert('Seleziona il regime con cui desideri effettuare la prenotazione per proseguire.');
+    if (ssn) ssn.classList.add('choice-card-error');
+    if (alpi) alpi.classList.add('choice-card-error');
+    if (banner) {
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     return;
   }
+
+  clearStep2Errors();
   goToScreen('screen-step-prescription');
+}
+
+// ==============================================================================
+// STEP 3 - INSERIMENTO DATI & RICETTA: GESTIONE ERRORI ED EVENTI
+// ==============================================================================
+function clearStep3Errors() {
+  const emailInput = document.getElementById('inputEmail');
+  const phoneInput = document.getElementById('inputPhone');
+  const emailLabel = document.getElementById('labelInputEmail');
+  const phoneLabel = document.getElementById('labelInputPhone');
+  const c1 = document.getElementById('prescCard1');
+  const c2 = document.getElementById('prescCard2');
+  const banner = document.getElementById('step3ErrorBanner');
+
+  if (emailInput) emailInput.classList.remove('field-error');
+  if (phoneInput) phoneInput.classList.remove('field-error');
+  if (emailLabel) emailLabel.classList.remove('label-error');
+  if (phoneLabel) phoneLabel.classList.remove('label-error');
+  if (c1) c1.classList.remove('card-error');
+  if (c2) c2.classList.remove('card-error');
+  if (banner) banner.style.display = 'none';
+}
+
+function handleStep3FieldChange() {
+  const emailInput = document.getElementById('inputEmail');
+  const emailLabel = document.getElementById('labelInputEmail');
+  const phoneInput = document.getElementById('inputPhone');
+  const phoneLabel = document.getElementById('labelInputPhone');
+  const banner = document.getElementById('step3ErrorBanner');
+
+  const emailVal = emailInput ? emailInput.value.trim() : '';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailVal.length > 0 && emailRegex.test(emailVal);
+
+  if (isEmailValid && emailInput) {
+    emailInput.classList.remove('field-error');
+    if (emailLabel) emailLabel.classList.remove('label-error');
+  }
+
+  const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+  if (phoneVal.length > 0 && phoneInput) {
+    phoneInput.classList.remove('field-error');
+    if (phoneLabel) phoneLabel.classList.remove('label-error');
+  }
+
+  if (isEmailValid && phoneVal.length > 0 && state.wizard.selectedExam && banner) {
+    banner.style.display = 'none';
+  }
 }
 
 function setPrescriptionCard(examType) {
@@ -459,23 +655,138 @@ function setPrescriptionCard(examType) {
   const isCardio = examType === 'cardio';
   const c1 = document.getElementById('prescCard1');
   const c2 = document.getElementById('prescCard2');
-  if (c1) c1.classList.toggle('selected', isCardio);
-  if (c2) c2.classList.toggle('selected', !isCardio);
+  if (c1) {
+    c1.classList.toggle('selected', isCardio);
+    c1.classList.remove('card-error');
+  }
+  if (c2) {
+    c2.classList.toggle('selected', !isCardio);
+    c2.classList.remove('card-error');
+  }
 
   state.wizard.selectedExamCode = isCardio ? '160A37295673820' : '160A24680453583';
   const recEl = document.getElementById('step4RecipeNumber');
   if (recEl) recEl.innerText = state.wizard.selectedExamCode;
 
-  state.wizard.exam = isCardio ? 'INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)' : 'VISITA SPECIALISTICA CARDIOLOGICA';
-  state.wizard.examCode = isCardio ? '67001' : '89700';
+  state.wizard.exam = isCardio
+    ? 'INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)'
+    : 'PROFILO LIPIDICO (COLESTEROLO TOTALE, TRIGLICERIDI, HDL-C, LDL-C)';
+  state.wizard.examCode = isCardio ? '67001' : '68002';
+
+  updateStep4RecipeDetails();
+
+  const emailInput = document.getElementById('inputEmail');
+  const emailVal = emailInput ? emailInput.value.trim() : '';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailVal.length > 0 && emailRegex.test(emailVal);
+  const banner = document.getElementById('step3ErrorBanner');
+  if (isEmailValid && banner) {
+    banner.style.display = 'none';
+  }
 }
 
 function proceedFromStep3() {
+  const emailInput = document.getElementById('inputEmail');
+  const emailLabel = document.getElementById('labelInputEmail');
+  const phoneInput = document.getElementById('inputPhone');
+  const phoneLabel = document.getElementById('labelInputPhone');
+  const c1 = document.getElementById('prescCard1');
+  const c2 = document.getElementById('prescCard2');
+  const banner = document.getElementById('step3ErrorBanner');
+
+  let hasError = false;
+
+  const emailVal = emailInput ? emailInput.value.trim() : '';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailVal.length > 0 && emailRegex.test(emailVal);
+
+  if (!isEmailValid) {
+    hasError = true;
+    if (emailInput) emailInput.classList.add('field-error');
+    if (emailLabel) emailLabel.classList.add('label-error');
+  } else {
+    if (emailInput) emailInput.classList.remove('field-error');
+    if (emailLabel) emailLabel.classList.remove('label-error');
+  }
+
+  const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+  if (!phoneVal) {
+    hasError = true;
+    if (phoneInput) phoneInput.classList.add('field-error');
+    if (phoneLabel) phoneLabel.classList.add('label-error');
+  } else {
+    if (phoneInput) phoneInput.classList.remove('field-error');
+    if (phoneLabel) phoneLabel.classList.remove('label-error');
+  }
+
   if (!state.wizard.selectedExam) {
-    alert('Seleziona una delle ricette trovate per proseguire.');
+    hasError = true;
+    if (c1) c1.classList.add('card-error');
+    if (c2) c2.classList.add('card-error');
+  } else {
+    if (c1) c1.classList.remove('card-error');
+    if (c2) c2.classList.remove('card-error');
+  }
+
+  if (hasError) {
+    if (banner) {
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     return;
   }
+
+  clearStep3Errors();
   goToScreen('screen-step-slots');
+}
+
+// ==============================================================================
+// STEP 4 - DETTAGLI RICETTA SELEZIONATA (DROPDOWN INFORMATIVO)
+// ==============================================================================
+function toggleRecipeDetails() {
+  const dropdown = document.getElementById('step4RecipeDetailsDropdown');
+  const btnText = document.getElementById('btnToggleRecipeDetailsText');
+  const caret = document.getElementById('recipeDetailsCaret');
+  if (!dropdown) return;
+
+  const isHidden = dropdown.style.display === 'none' || !dropdown.style.display;
+  if (isHidden) {
+    updateStep4RecipeDetails();
+    dropdown.style.display = 'block';
+    if (btnText) btnText.innerText = 'Nascondi Dettagli';
+    if (caret) caret.style.transform = 'rotate(180deg)';
+  } else {
+    dropdown.style.display = 'none';
+    if (btnText) btnText.innerText = 'Vedi Dettagli';
+    if (caret) caret.style.transform = 'rotate(0deg)';
+  }
+}
+
+function updateStep4RecipeDetails() {
+  const recEl = document.getElementById('step4RecipeNumber');
+  const contentEl = document.getElementById('step4RecipeDetailsContent');
+  const isCardio = (state.wizard.selectedExam === 'cardio' || !state.wizard.selectedExam);
+
+  const recipeCode = isCardio ? '160A37295673820' : '160A24680453583';
+  if (recEl) {
+    recEl.innerText = state.wizard.selectedExamCode || recipeCode;
+  }
+
+  if (contentEl) {
+    if (isCardio) {
+      contentEl.innerHTML = `
+        -INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)<br>
+        -GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4 DETERMINAZIONI)
+      `;
+    } else {
+      contentEl.innerHTML = `
+        -COLESTEROLO TOTALE<br>
+        -TRIGLICERIDI<br>
+        -COLESTEROLO HDL (HDL-C)<br>
+        -COLESTEROLO LDL (LDL-C)
+      `;
+    }
+  }
 }
 
 // Helper: Parse DD/MM/YYYY or YYYY-MM-DD
@@ -857,13 +1168,32 @@ function handleScegliAltraData(slotId) {
   }
 }
 
+function clearStep4Errors() {
+  const banner = document.getElementById('step4ErrorBanner');
+  const filterPanel = document.getElementById('step4FiltersPanel');
+  const slotsWrap = document.querySelector('.disponibilita-table-wrap');
+
+  if (filterPanel) filterPanel.classList.remove('step4-filters-error');
+  if (slotsWrap) slotsWrap.classList.remove('step4-slots-error');
+  if (banner) banner.style.display = 'none';
+}
+
 function selectSlot(slotId) {
-  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  const allSlots = getRepositorySlots();
   const found = allSlots.find(s => s.id === slotId);
-  if (found) {
+
+  // Allow to select and de-select slots clicking on them
+  if (state.wizard.selectedSlot && state.wizard.selectedSlot.id === slotId) {
+    state.wizard.selectedSlot = null;
+  } else if (found) {
     state.wizard.selectedSlot = found;
-    renderSlots();
+    const banner = document.getElementById('step4ErrorBanner');
+    const slotsWrap = document.querySelector('.disponibilita-table-wrap');
+    if (slotsWrap) slotsWrap.classList.remove('step4-slots-error');
+    if (banner) banner.style.display = 'none';
   }
+
+  renderSlots();
 }
 
 function handleASLCheckChange() {
@@ -872,22 +1202,45 @@ function handleASLCheckChange() {
   if (master) {
     master.checked = checks.length > 0 && checks.every(c => c.checked);
   }
+  const filterPanel = document.getElementById('step4FiltersPanel');
+  if (filterPanel && checks.some(c => c.checked)) {
+    filterPanel.classList.remove('step4-filters-error');
+    const banner = document.getElementById('step4ErrorBanner');
+    if (banner && state.wizard.selectedSlot) banner.style.display = 'none';
+  }
   renderSlots();
 }
 
 function proceedFromStep4() {
-  if (state.version === 'v2') {
-    const checkedBoxes = document.querySelectorAll('.asl-check:checked');
-    if (checkedBoxes.length === 0) {
-      alert('Seleziona almeno un\'Azienda Sanitaria per visualizzare e scegliere una disponibilità.');
-      return;
-    }
+  const banner = document.getElementById('step4ErrorBanner');
+  const filterPanel = document.getElementById('step4FiltersPanel');
+  const slotsWrap = document.querySelector('.disponibilita-table-wrap');
+  let hasError = false;
+
+  const checkedBoxes = document.querySelectorAll('.asl-check:checked');
+  if (checkedBoxes.length === 0) {
+    hasError = true;
+    if (filterPanel) filterPanel.classList.add('step4-filters-error');
+  } else {
+    if (filterPanel) filterPanel.classList.remove('step4-filters-error');
   }
 
   if (!state.wizard.selectedSlot) {
-    alert('Seleziona una delle disponibilità per proseguire.');
+    hasError = true;
+    if (slotsWrap) slotsWrap.classList.add('step4-slots-error');
+  } else {
+    if (slotsWrap) slotsWrap.classList.remove('step4-slots-error');
+  }
+
+  if (hasError) {
+    if (banner) {
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     return;
   }
+
+  clearStep4Errors();
   goToScreen('screen-step-recap');
 }
 
@@ -1090,7 +1443,7 @@ const availModalState = {
 
 function openAvailModal(slotId) {
   availModalState.slotId = slotId;
-  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  const allSlots = getRepositorySlots();
   const slot = allSlots.find(s => s.id === slotId) || state.wizard.selectedSlot;
 
   if (slot) {
@@ -1350,7 +1703,7 @@ function updateAvailSummary() {
 }
 
 function confirmAvailModal() {
-  const allSlots = (state.version === 'v1' ? v1AvailableSlots : getRepositorySlots());
+  const allSlots = getRepositorySlots();
   let targetSlot = allSlots.find(s => s.id === availModalState.slotId);
 
   if (!targetSlot) {
@@ -1370,7 +1723,7 @@ function confirmAvailModal() {
 
 // Step 5: Update Recap with slot details (Matching Image 8)
 function updateRecapStep() {
-  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const defaultSlot = getRepositorySlots()[0] || {};
   const slot = state.wizard.selectedSlot || defaultSlot;
 
   const setVal = (id, val) => {
@@ -1467,14 +1820,14 @@ function proceedFromStep5() {
   state.wizard.cupCode = '2026649029';
 
   // Aggiunge la prenotazione alla lista personale
-  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const defaultSlot = getRepositorySlots()[0] || {};
   const slot = state.wizard.selectedSlot || defaultSlot;
   const newBooking = {
     id: state.wizard.cupCode,
     date: slot.date || '13/11/2026',
     time: slot.time || '07:55',
     dateTime: (slot.date || '13/11/2026') + ' Ore ' + (slot.time || '07:55'),
-    exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'VISITA SPECIALISTICA'),
+    exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'PROFILO LIPIDICO (COLESTEROLO E TRIGLICERIDI)'),
     hospital: slot.struttura || 'OSPEDALE OSTUNI',
     bookingType: 'SSN con Ricetta Dematerializzata',
     cancelDeadline: '11/11/2026',
@@ -1492,7 +1845,7 @@ function proceedFromStep5() {
 
 // Step 6: Update Success (Riepilogo - Matching Image 2)
 function updateSuccessStep() {
-  const defaultSlot = (state.version === 'v1' ? v1AvailableSlots[0] : getRepositorySlots()[0]) || {};
+  const defaultSlot = getRepositorySlots()[0] || {};
   const slot = state.wizard.selectedSlot || defaultSlot;
   const setVal = (id, val) => {
     const el = document.getElementById(id);
@@ -1600,6 +1953,10 @@ function updateTornaIndietro(screenId) {
 function toggleAllASL(masterCheckbox) {
   const checks = document.querySelectorAll('.asl-check');
   checks.forEach(c => c.checked = masterCheckbox.checked);
+  const filterPanel = document.getElementById('step4FiltersPanel');
+  if (filterPanel && masterCheckbox.checked) {
+    filterPanel.classList.remove('step4-filters-error');
+  }
   renderSlots();
 }
 
@@ -1630,7 +1987,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let savedVersion = 'v1';
   try {
     savedVersion = localStorage.getItem('fse_prototype_version') || 'v1';
-  } catch (e) {}
+  } catch (e) { }
   setPrototypeVersion(savedVersion);
   goToScreen('screen-home');
 });
