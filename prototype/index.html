@@ -197,13 +197,18 @@
         aria-label="Percorso di navigazione"></nav>
 
       <div class="page-header-title-row">
-        <h1 class="page-main-title" id="pageMainHeading">Portale della salute</h1>
-        <div id="stepSubtitleContainer" style="display: none;">
-          <div class="step-subtitle-badge">
-            <span class="step-subtitle-bar"></span>
-            <span id="stepSubtitleText">Beneficiario</span>
+        <div class="page-header-title-left">
+          <h1 class="page-main-title" id="pageMainHeading">Portale della salute</h1>
+          <div id="stepSubtitleContainer" style="display: none;">
+            <div class="step-subtitle-badge">
+              <span class="step-subtitle-bar"></span>
+              <span id="stepSubtitleText">Beneficiario</span>
+            </div>
           </div>
         </div>
+        <button type="button" class="btn-chiudi-wizard" id="btnChiudiWizard" onclick="closeBookingToBookings()" style="display: none;">
+          Chiudi <span class="btn-chiudi-cross" aria-hidden="true">&times;</span>
+        </button>
       </div>
 
       <!-- ==================================================================
@@ -399,40 +404,29 @@
           <div class="login-methods-grid">
             <!-- SPID -->
             <div class="login-method-card" onclick="loginToFSE('SPID')">
-              <div class="login-method-badge">SPID</div>
-              <div class="login-method-title">Sistema Pubblico di Identit&agrave; Digitale</div>
-              <div class="login-method-desc">Accedi in modo rapido e sicuro con le tue credenziali SPID di livello 2
-                (PosteID, Aruba, InfoCert, Sielte, etc.).</div>
-              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;"
+              <button type="button" class="btn-login-method-blue"
                 onclick="event.stopPropagation(); loginToFSE('SPID');">Entra con SPID</button>
+              <div class="login-method-acronym-text">Sistema Pubblico di Identit&agrave; Digitale</div>
             </div>
 
             <!-- CIE -->
             <div class="login-method-card" onclick="loginToFSE('CIE')">
-              <div class="login-method-badge" style="background: #1D5C96;">CIE</div>
-              <div class="login-method-title">Carta d'Identit&agrave; Elettronica</div>
-              <div class="login-method-desc">Accedi con la tua CIE 3.0 mediante smartphone abilitato NFC con app CieID o
-                lettore smart card da PC.</div>
-              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;"
+              <button type="button" class="btn-login-method-blue"
                 onclick="event.stopPropagation(); loginToFSE('CIE');">Entra con CIE</button>
+              <div class="login-method-acronym-text">Carta d'Identit&agrave; Elettronica</div>
             </div>
 
             <!-- CNS -->
             <div class="login-method-card" onclick="loginToFSE('CNS')">
-              <div class="login-method-badge" style="background: #475569;">CNS</div>
-              <div class="login-method-title">Tessera Sanitaria / CNS</div>
-              <div class="login-method-desc">Accedi inserendo la tua Smart Card Tessera Sanitaria attivata nel lettore
-                collegato al computer.</div>
-              <button class="btn-nav-wireframe-primary" style="margin-top: 20px; width: 100%;"
+              <button type="button" class="btn-login-method-blue"
                 onclick="event.stopPropagation(); loginToFSE('CNS');">Entra con CNS</button>
+              <div class="login-method-acronym-text">Carta Nazionale dei Servizi</div>
             </div>
           </div>
 
           <div class="login-actions-footer">
             <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-home')">&larr; Torna alla
               Home</button>
-            <button class="btn-nav-wireframe-primary" onclick="loginToFSE('Direct')">Accedi direttamente all'Area
-              Personale (Miriana Pinto) &rarr;</button>
           </div>
         </div>
       </section>
@@ -634,7 +628,7 @@
         <p class="bookings-subtitle">Gestisci le prenotazioni effettuate.</p>
         <div class="bookings-toolbar">
           <button class="btn-filtra-nav" id="btnFiltraPrenotazioni" onclick="openFilterModal()">Filtra</button>
-          <button class="btn-wireframe-navy" onclick="goToScreen('screen-step-beneficiary')">Nuova prenotazione</button>
+          <button class="btn-wireframe-navy" onclick="startNewBooking(); goToScreen('screen-step-beneficiary')">Nuova prenotazione</button>
         </div>
         <div class="booking-active-filters-bar" id="bookingActiveFiltersBar" style="display: none;"></div>
         <div class="bookings-wireframe-list" id="bookingsWireframeList">
@@ -931,7 +925,7 @@
             <div>
               <div class="choice-title">Prenota per te stesso o per altri con Accesso Libero</div>
               <div class="choice-desc">
-                Mediante questa scelta avrai bisogno solo di due dati:
+                Mediante questa scelta avrai bisogno di due dati:
                 <ul class="choice-bullet-list">
                   <li>il Codice Fiscale di chi deve effettuare la prenotazione;</li>
                   <li>il numero della Tessera Sanitaria di chi deve effettuare la prenotazione.</li>
@@ -991,8 +985,7 @@
             <div>
               <div class="choice-title">Prenotazione con Ricetta Dematerializzata</div>
               <div class="choice-desc">La ricetta dematerializzata è la versione elettronica della tradizionale ricetta
-                rossa cartacea. È un documento digitale ed il codice ricetta è chiamato il Numero Ricetta Elettronica
-                (NRE).</div>
+                rossa cartacea.</div>
             </div>
           </div>
 
@@ -1004,8 +997,8 @@
               <div class="choice-title">Prenotazione con Ricetta Rossa o ALPI</div>
               <div class="choice-desc">
                 <ul class="choice-bullet-list">
-                  <li>Ricetta Rossa è la tipologia che viene compilata sul ricettario regionale;</li>
-                  <li>ALPI , ovvero Attività Libero-Professionale Intramuraria</li>
+                  <li>Ricetta Rossa è la ricetta che viene compilata sul ricettario regionale;</li>
+                  <li>ALPI, ovvero Attività Libero-Professionale Intramuraria</li>
                 </ul>
               </div>
             </div>
@@ -1180,6 +1173,23 @@
           </div>
         </div>
 
+        <!-- Banner informativo visualizzato solo in caso di modifica data prenotazione -->
+        <div class="booking-modification-banner" id="step4ModificationBanner" style="display: none;">
+          <div class="booking-mod-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#25619A" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <div class="booking-mod-content">
+            <div class="booking-mod-title" id="step4ModTitle">Modifica della prenotazione</div>
+            <div class="booking-mod-desc" id="step4ModDesc">
+              Stai modificando la data per questa prestazione. Seleziona una nuova data o struttura tra quelle disponibili, oppure clicca su <em>"Scegli altra data"</em>.
+            </div>
+          </div>
+        </div>
+
         <!-- Filtri azienda sanitaria -->
         <div class="form-panel-white" id="step4FiltersPanel">
           <div class="form-section-label">Scegli l'Azienda Sanitaria</div>
@@ -1257,8 +1267,8 @@
         </div>
 
         <div class="wizard-nav-bottom-bar">
-          <button class="btn-nav-wireframe-secondary" onclick="goToScreen('screen-step-prescription')">Indietro</button>
-          <button class="btn-nav-wireframe-primary" onclick="proceedFromStep4()">Prosegui</button>
+          <button class="btn-nav-wireframe-secondary" type="button" onclick="step4GoBack()">Indietro</button>
+          <button class="btn-nav-wireframe-primary" type="button" onclick="proceedFromStep4()">Prosegui</button>
         </div>
       </section>
 
@@ -1661,14 +1671,23 @@
                 <div class="avail-calendar-selectors">
                   <select id="availCalMonthSelect" class="avail-select-picker"
                     onchange="changeCalendarMonth(this.value)">
+                    <option value="0">GENNAIO</option>
+                    <option value="1">FEBBRAIO</option>
+                    <option value="2">MARZO</option>
+                    <option value="3">APRILE</option>
+                    <option value="4">MAGGIO</option>
+                    <option value="5">GIUGNO</option>
+                    <option value="6">LUGLIO</option>
+                    <option value="7">AGOSTO</option>
+                    <option value="8">SETTEMBRE</option>
                     <option value="9">OTTOBRE</option>
                     <option value="10" selected>NOVEMBRE</option>
                     <option value="11">DICEMBRE</option>
-                    <option value="0">GENNAIO</option>
                   </select>
                   <select id="availCalYearSelect" class="avail-select-picker" onchange="changeCalendarYear(this.value)">
                     <option value="2026" selected>2026</option>
                     <option value="2027">2027</option>
+                    <option value="2028">2028</option>
                   </select>
                 </div>
 
@@ -1846,7 +1865,7 @@
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </div>
-          <div class="success-banner-text">Prenotazione effettuata con successo!</div>
+          <div class="success-banner-text" id="successBannerText">Prenotazione effettuata con successo!</div>
         </div>
 
         <!-- Booking details card -->
@@ -2041,6 +2060,59 @@
         <option value="screen-step-success">Step 6 Riepilogo</option>
         <option value="screen-spec-guide">Design System &amp; Componenti</option>
       </select>
+    </div>
+  </div>
+
+  <!-- ==================================================================
+       MODAL: CONFERMA DISDETTA PRENOTAZIONE
+       ================================================================== -->
+  <div class="wireframe-modal-overlay" id="cancelConfirmModalOverlay" role="dialog" aria-modal="true"
+    onclick="handleCancelConfirmBackdropClick(event)">
+    <div class="cancel-confirm-modal-card" onclick="event.stopPropagation()">
+      <button class="cancel-confirm-close" type="button" onclick="closeCancelConfirmModal()"
+        aria-label="Chiudi finestra">&times;</button>
+      <div class="cancel-confirm-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#C9553A" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2 class="cancel-confirm-title">Conferma disdetta</h2>
+      <p class="cancel-confirm-text">
+        Confermi di voler disdire la prenotazione <strong id="cancelConfirmBookingId"></strong>?
+      </p>
+      <p class="cancel-confirm-warning">
+        Ricorda che la disdetta va comunicata almeno 48 ore prima per evitare la sanzione regionale.
+      </p>
+      <div class="cancel-confirm-actions">
+        <button type="button" class="btn-cancel-dismiss" onclick="closeCancelConfirmModal()">Annulla</button>
+        <button type="button" class="btn-cancel-confirm" onclick="confirmCancelBooking()">Conferma disdetta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================
+       MODAL: SUCCESSO ANNULLAMENTO PRENOTAZIONE
+       ================================================================== -->
+  <div class="wireframe-modal-overlay" id="cancelSuccessModalOverlay" role="dialog" aria-modal="true"
+    onclick="handleCancelSuccessBackdropClick(event)">
+    <div class="cancel-success-modal-card" onclick="event.stopPropagation()">
+      <button class="cancel-success-close" type="button" onclick="closeCancelSuccessModal()"
+        aria-label="Chiudi finestra">&times;</button>
+      <div class="cancel-success-icon">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="8 12 11 15 16 9"></polyline>
+        </svg>
+      </div>
+      <h2 class="cancel-success-title">La prenotazione è stata correttamente annullata.</h2>
+      <div class="cancel-success-numero">
+        <span class="cancel-success-numero-label">Numero disdetta:</span>
+        <span class="cancel-success-numero-value" id="cancelSuccessNumero">318174</span>
+      </div>
     </div>
   </div>
 

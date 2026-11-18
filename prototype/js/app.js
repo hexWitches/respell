@@ -1,11 +1,5 @@
 /**
  * PugliaSalute Redesign Prototype - Interactive Logic (Strict Wireframe v1 Edition)
- * Usability & User Experience 2025/26
- * - No Emojis
- * - No Pre-selected Cards
- * - Progress Bar with Dynamic Color & Checkmark (Non-clickable)
- * - 6th Step Named 'Riepilogo'
- * - Exact Buttons ('Prosegui', 'Indietro', etc.) and Functions
  */
 
 // Application State
@@ -221,6 +215,8 @@ function loginToFSE(method) {
 // Start New Booking from success page or menu: resets wizard state
 function startNewBooking() {
   state.wizard = {
+    editingBookingId: null,
+    isModification: false,
     beneficiary: null,
     delegateName: '',
     delegateCF: '',
@@ -228,7 +224,9 @@ function startNewBooking() {
     selectedExam: null,
     selectedExamCode: '',
     selectedSlot: null,
-    cupCode: '2026649029'
+    cupCode: '2026649029',
+    privacyAccepted: false,
+    privacyScrolled: false
   };
 
   const bMe = document.getElementById('choiceBeneficiaryMe');
@@ -267,9 +265,21 @@ function startNewBooking() {
   if (detailsText) detailsText.innerText = 'Vedi Dettagli';
   if (detailsCaret) detailsCaret.style.transform = 'rotate(0deg)';
 
+  const modBanner = document.getElementById('step4ModificationBanner');
+  if (modBanner) modBanner.style.display = 'none';
+
   resetStep4Filters();
 
   goToScreen('screen-step-beneficiary');
+}
+
+// Navigazione tasto "Indietro" su Step 4
+function step4GoBack() {
+  if (state.wizard && state.wizard.isModification) {
+    goToScreen('screen-bookings');
+  } else {
+    goToScreen('screen-step-prescription');
+  }
 }
 
 // Screen Router
@@ -323,12 +333,14 @@ function updatePageHeader(screenId) {
   // Always keep Top Red Window Bar with breadcrumbs and font resizer visible across both Public and FSE
   if (topWindowBar) topWindowBar.style.display = 'flex';
 
-  // Reset torna indietro for non-wizard screens
+  // Reset torna indietro and chiudi for non-wizard screens
   if (!screenId.startsWith('screen-step-')) {
     const tornaContainer = document.getElementById('tornaIndietroContainer');
     if (tornaContainer) tornaContainer.style.display = 'none';
     const tornaBtn = document.getElementById('btnTornaIndietro');
     if (tornaBtn) tornaBtn.style.display = 'none';
+    const chiudiBtn = document.getElementById('btnChiudiWizard');
+    if (chiudiBtn) chiudiBtn.style.display = 'none';
   }
 
   if (screenId === 'screen-home') {
@@ -380,9 +392,10 @@ function updatePageHeader(screenId) {
       if (navLinkFseAssistenza) navLinkFseAssistenza.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'none'; // Assistenza has its own header
     } else if (screenId.startsWith('screen-step-')) {
+      const isMod = Boolean(state.wizard && state.wizard.isModification);
       if (navLinkFsePrenotazioni) navLinkFsePrenotazioni.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'block';
-      if (heading) heading.innerText = 'Nuova prenotazione';
+      if (heading) heading.innerText = isMod ? 'Modifica data prenotazione' : 'Nuova prenotazione';
       if (stepper) stepper.style.display = 'flex';
 
       if (breadcrumb) {
@@ -394,7 +407,7 @@ function updatePageHeader(screenId) {
           <span class="breadcrumb-sep">/</span>
           <a onclick="goToScreen('screen-bookings')">Le mie prenotazioni</a>
           <span class="breadcrumb-sep">/</span>
-          <span class="breadcrumb-current">Nuova prenotazione</span>
+          <span class="breadcrumb-current">${isMod ? 'Modifica data prenotazione' : 'Nuova prenotazione'}</span>
         `;
       }
 
@@ -418,6 +431,11 @@ function updatePageHeader(screenId) {
       if (screenId === 'screen-step-slots') {
         updateStep4RecipeDetails();
         renderSlots();
+
+        const modBanner = document.getElementById('step4ModificationBanner');
+        if (modBanner) {
+          modBanner.style.display = isMod ? 'flex' : 'none';
+        }
       } else if (screenId === 'screen-step-recap') {
         updateRecapStep();
       } else if (screenId === 'screen-step-success') {
@@ -546,7 +564,7 @@ function renderBookings() {
 
       <div class="booking-row-actions-new">
         <div class="booking-actions-left">
-          <button class="btn-booking-action" onclick="showNotImplemented()">Modifica</button>
+          <button class="btn-booking-action" onclick="modifyBooking('${b.id}')">Modifica</button>
           <button class="btn-booking-action" onclick="cancelBooking('${b.id}')">Disdici</button>
         </div>
         <a class="link-vedi-dettagli" onclick="showNotImplemented()">Vedi Dettagli &rarr;</a>
@@ -555,12 +573,159 @@ function renderBookings() {
   `).join('');
 }
 
+// Modifica data prenotazione: invia l'utente allo Step 4 per cambiare la data
+function modifyBooking(id) {
+  const booking = state.bookings.find(b => b.id === id);
+  if (!booking) return;
+
+  // Inizializza il wizard con i dati della prenotazione esistente
+  state.wizard = {
+    editingBookingId: booking.id,
+    isModification: true,
+    beneficiary: 'me',
+    delegateName: '',
+    delegateCF: '',
+    regime: (booking.bookingType && booking.bookingType.includes('Rossa')) ? 'alpi' : 'ssn',
+    selectedExam: 'cardio',
+    selectedExamCode: (booking.bookingType && booking.bookingType.includes('Rossa')) ? '160A24680453583' : '160A37295673820',
+    exam: booking.exam,
+    examCode: '160A37295673820',
+    selectedSlot: null,
+    cupCode: booking.id,
+    originalDate: booking.date,
+    originalTime: booking.time,
+    originalHospital: booking.hospital,
+    originalAzienda: booking.azienda || '',
+    privacyAccepted: true,
+    privacyScrolled: true
+  };
+
+  const allSlots = getRepositorySlots();
+
+  // Trova l'Azienda Sanitaria associata alla struttura o alla prenotazione
+  let targetAsl = booking.azienda || '';
+  if (!targetAsl && booking.hospital) {
+    const matchSlot = allSlots.find(s => s.struttura && s.struttura.toUpperCase().includes(booking.hospital.toUpperCase()));
+    if (matchSlot) targetAsl = matchSlot.azienda;
+  }
+  if (!targetAsl) {
+    targetAsl = 'Asl Brindisi';
+  }
+
+  // Pre-seleziona la checkbox dell'ASL corrispondente
+  const checks = document.querySelectorAll('.asl-check');
+  checks.forEach(c => {
+    const val = (c.value || c.parentElement.textContent || '').trim();
+    if (val.toLowerCase() === targetAsl.toLowerCase() || (targetAsl && val.includes(targetAsl)) || (targetAsl && targetAsl.includes(val))) {
+      c.checked = true;
+    } else {
+      c.checked = false;
+    }
+  });
+
+  const master = document.getElementById('aslTutto');
+  if (master) master.checked = false;
+
+  // Popola e pre-seleziona la struttura nel menu a tendina
+  updateStrutturaDropdown([targetAsl], allSlots);
+  const selectStruttura = document.getElementById('selectStruttura');
+  if (selectStruttura) {
+    const hasOpt = Array.from(selectStruttura.options).some(o => o.value === booking.hospital);
+    if (hasOpt) {
+      selectStruttura.value = booking.hospital;
+    } else {
+      selectStruttura.value = '';
+    }
+  }
+
+  const inputDate = document.getElementById('inputDateFrom');
+  if (inputDate) inputDate.value = '';
+
+  // Aggiorna codice ricetta nel summary bar
+  const recipeLabel = document.getElementById('step4RecipeNumber');
+  if (recipeLabel) {
+    recipeLabel.innerText = state.wizard.selectedExamCode;
+  }
+
+  // Configura il banner di modifica in Step 4
+  const modBanner = document.getElementById('step4ModificationBanner');
+  const modTitle = document.getElementById('step4ModTitle');
+  const modDesc = document.getElementById('step4ModDesc');
+  if (modBanner) {
+    modBanner.style.display = 'flex';
+    if (modTitle) {
+      modTitle.innerText = `Modifica della prenotazione n. ${booking.id}`;
+    }
+    if (modDesc) {
+      modDesc.innerHTML = `Stai modificando la data per la prestazione <strong>${booking.exam}</strong>.<br>Appuntamento attuale: <strong>${booking.dateTime || (booking.date + ' Ore ' + booking.time)}</strong> presso <strong>${booking.hospital}</strong>.<br>Seleziona una nuova data e struttura dall'elenco, oppure clicca su <em>"Scegli altra data"</em> per scegliere giorno e ora dal calendario.`;
+    }
+  }
+
+  clearStep4Errors();
+
+  // Invia direttamente l'utente allo Step 4 (Data e struttura)
+  goToScreen('screen-step-slots');
+}
+
 function cancelBooking(id) {
-  const ok = confirm(`Confermi di voler disdire la prenotazione ${id}?\nRicorda che la disdetta va comunicata almeno 48 ore prima per evitare la sanzione regionale.`);
-  if (ok) {
+  state._pendingCancelId = id;
+  const label = document.getElementById('cancelConfirmBookingId');
+  if (label) label.textContent = id;
+
+  const modal = document.getElementById('cancelConfirmModalOverlay');
+  if (modal) {
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
+}
+
+function closeCancelConfirmModal() {
+  const modal = document.getElementById('cancelConfirmModalOverlay');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+  state._pendingCancelId = null;
+}
+
+function handleCancelConfirmBackdropClick(e) {
+  if (e.target && e.target.id === 'cancelConfirmModalOverlay') {
+    closeCancelConfirmModal();
+  }
+}
+
+function confirmCancelBooking() {
+  const id = state._pendingCancelId;
+  closeCancelConfirmModal();
+
+  if (id) {
     state.bookings = state.bookings.filter(b => b.id !== id);
     renderBookings();
-    alert(`Prenotazione ${id} annullata.`);
+
+    // Generate a fake disdetta number
+    const disdettaNum = String(Math.floor(100000 + Math.random() * 900000));
+    const numEl = document.getElementById('cancelSuccessNumero');
+    if (numEl) numEl.textContent = disdettaNum;
+
+    const successModal = document.getElementById('cancelSuccessModalOverlay');
+    if (successModal) {
+      successModal.classList.add('active');
+      successModal.style.display = 'flex';
+    }
+  }
+}
+
+function closeCancelSuccessModal() {
+  const modal = document.getElementById('cancelSuccessModalOverlay');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function handleCancelSuccessBackdropClick(e) {
+  if (e.target && e.target.id === 'cancelSuccessModalOverlay') {
+    closeCancelSuccessModal();
   }
 }
 
@@ -915,18 +1080,37 @@ function updateStep4RecipeDetails() {
   }
 }
 
-// Helper: Parse DD/MM/YYYY or YYYY-MM-DD
+// Helper: Format Date object to DD/MM/YYYY string
+function formatDateDDMMYYYY(d) {
+  if (!d || isNaN(d.getTime())) return '';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Helper: Parse DD/MM/YYYY or YYYY-MM-DD (normalized to midnight)
 function parseSlotDate(dateStr, dateISO) {
   if (dateISO) {
     const d = new Date(dateISO);
-    if (!isNaN(d.getTime())) return d;
+    if (!isNaN(d.getTime())) {
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
   }
   if (!dateStr) return null;
   const parts = dateStr.split('/');
   if (parts.length === 3) {
-    return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    const d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    d.setHours(0, 0, 0, 0);
+    return d;
   }
-  return new Date(dateStr);
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  return null;
 }
 
 // Switch prototype version ('v1' or 'v2')
@@ -945,6 +1129,7 @@ function setPrototypeVersion(ver) {
   }
 
   setupStep4ForVersion(targetVer);
+  updateTornaIndietro(state.currentScreen);
 
   if (state.currentScreen === 'screen-step-slots') {
     renderSlots();
@@ -1422,8 +1607,12 @@ function generateV1DateOptions(slot, currentDateTime) {
   if (slot && slot.time) {
     baseTime = slot.time;
   }
-  if (!baseDate || isNaN(baseDate.getTime())) {
-    baseDate = new Date(2026, 11, 9); // 09/12/2026
+
+  // Ensure baseDate is at least today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (!baseDate || isNaN(baseDate.getTime()) || baseDate < today) {
+    baseDate = new Date(today);
   }
 
   const options = [];
@@ -1543,22 +1732,12 @@ function handleAvailV1BackdropClick(e) {
 const availModalState = {
   slotId: null,
   view: 'lista', // 'lista' or 'calendario'
-  selectedDate: '16/11/2026',
-  selectedDateObj: new Date(2026, 10, 16),
+  selectedDate: null,
+  selectedDateObj: null,
   selectedTime: '7:42',
-  calYear: 2026,
-  calMonth: 10, // 0-based: 10 = Novembre
-  datesPool: [
-    '14/11/2026',
-    '15/11/2026',
-    '16/11/2026',
-    '17/11/2026',
-    '18/11/2026',
-    '19/11/2026',
-    '20/11/2026',
-    '21/11/2026',
-    '22/11/2026'
-  ],
+  calYear: null,
+  calMonth: null,
+  datesPool: [],
   visibleDatesCount: 6,
   timesPool: [
     '7:30', '7:42', '7:54', '8:18',
@@ -1567,29 +1746,84 @@ const availModalState = {
   ]
 };
 
+// Build filtered and sorted dates pool starting from today (or after), strictly excluding past dates
+function buildFilteredSortedDatesPool(preferredDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const datesMap = new Map();
+
+  // 1. Generate sequential dates for the next 45 days starting from today
+  for (let i = 0; i < 45; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    d.setHours(0, 0, 0, 0);
+    datesMap.set(formatDateDDMMYYYY(d), d);
+  }
+
+  // 2. Include any future dates from the repository slots
+  const allSlots = getRepositorySlots();
+  allSlots.forEach(s => {
+    if (s.date) {
+      const d = parseSlotDate(s.date, s.dateISO);
+      if (d && d >= today) {
+        datesMap.set(formatDateDDMMYYYY(d), d);
+      }
+    }
+  });
+
+  // 3. If preferredDate is supplied, check if >= today
+  if (preferredDate) {
+    const d = parseSlotDate(preferredDate);
+    if (d && d >= today) {
+      datesMap.set(formatDateDDMMYYYY(d), d);
+    }
+  }
+
+  // 4. Filter out any date strictly before today, then sort ascending
+  const sortedDates = Array.from(datesMap.entries())
+    .filter(([str, dateObj]) => dateObj >= today)
+    .sort((a, b) => a[1].getTime() - b[1].getTime())
+    .map(entry => entry[0]);
+
+  return sortedDates;
+}
+
 function openAvailModal(slotId) {
   availModalState.slotId = slotId;
   const allSlots = getRepositorySlots();
   const slot = allSlots.find(s => s.id === slotId) || state.wizard.selectedSlot;
 
-  if (slot) {
-    if (slot.date) {
-      availModalState.selectedDate = slot.date;
-      const parts = slot.date.split('/');
-      if (parts.length === 3) {
-        availModalState.selectedDateObj = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-        availModalState.calYear = availModalState.selectedDateObj.getFullYear();
-        availModalState.calMonth = availModalState.selectedDateObj.getMonth();
-      }
-    }
-    if (slot.time) {
-      availModalState.selectedTime = slot.time;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let preferredDate = null;
+  if (slot && slot.date) {
+    const parsed = parseSlotDate(slot.date, slot.dateISO);
+    if (parsed && parsed >= today) {
+      preferredDate = slot.date;
     }
   }
 
-  // Ensure selectedDate is in datesPool
-  if (availModalState.selectedDate && !availModalState.datesPool.includes(availModalState.selectedDate)) {
-    availModalState.datesPool.unshift(availModalState.selectedDate);
+  // Build sorted dates pool starting strictly from today or after
+  availModalState.datesPool = buildFilteredSortedDatesPool(preferredDate);
+  availModalState.visibleDatesCount = 6;
+
+  // Select preferred date if valid and future, otherwise the earliest available date (today)
+  if (preferredDate && availModalState.datesPool.includes(preferredDate)) {
+    availModalState.selectedDate = preferredDate;
+  } else {
+    availModalState.selectedDate = availModalState.datesPool[0] || formatDateDDMMYYYY(today);
+  }
+
+  availModalState.selectedDateObj = parseSlotDate(availModalState.selectedDate) || new Date(today);
+  availModalState.calYear = availModalState.selectedDateObj.getFullYear();
+  availModalState.calMonth = availModalState.selectedDateObj.getMonth();
+
+  if (slot && slot.time) {
+    availModalState.selectedTime = slot.time;
+  } else if (!availModalState.selectedTime) {
+    availModalState.selectedTime = '7:42';
   }
 
   renderAvailModal();
@@ -1664,30 +1898,36 @@ function renderDatesList() {
 
 function showMoreAvailDates() {
   if (availModalState.visibleDatesCount < availModalState.datesPool.length) {
-    availModalState.visibleDatesCount += 3;
+    availModalState.visibleDatesCount = Math.min(availModalState.visibleDatesCount + 5, availModalState.datesPool.length);
   } else {
     const lastDateStr = availModalState.datesPool[availModalState.datesPool.length - 1];
-    const parts = lastDateStr.split('/');
-    const d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-    for (let i = 1; i <= 3; i++) {
-      d.setDate(d.getDate() + 1);
-      const day = String(d.getDate()).padStart(2, '0');
-      const mon = String(d.getMonth() + 1).padStart(2, '0');
-      availModalState.datesPool.push(`${day}/${mon}/${d.getFullYear()}`);
+    let d = parseSlotDate(lastDateStr);
+    if (!d) d = new Date();
+    for (let i = 1; i <= 5; i++) {
+      const nextDate = new Date(d);
+      nextDate.setDate(d.getDate() + i);
+      const str = formatDateDDMMYYYY(nextDate);
+      if (!availModalState.datesPool.includes(str)) {
+        availModalState.datesPool.push(str);
+      }
     }
+    availModalState.datesPool.sort((a, b) => parseSlotDate(a) - parseSlotDate(b));
     availModalState.visibleDatesCount = availModalState.datesPool.length;
   }
   renderDatesList();
 }
 
 function selectAvailDate(dateStr) {
+  const d = parseSlotDate(dateStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (!d || d < today) return; // Disallow selecting past dates
+
   availModalState.selectedDate = dateStr;
-  const parts = dateStr.split('/');
-  if (parts.length === 3) {
-    availModalState.selectedDateObj = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-    availModalState.calYear = availModalState.selectedDateObj.getFullYear();
-    availModalState.calMonth = availModalState.selectedDateObj.getMonth();
-  }
+  availModalState.selectedDateObj = d;
+  availModalState.calYear = d.getFullYear();
+  availModalState.calMonth = d.getMonth();
 
   renderDatesList();
   renderCalendarGrid();
@@ -1705,6 +1945,8 @@ function renderCalendarGrid() {
 
   const year = availModalState.calYear;
   const month = availModalState.calMonth;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   // Day 1 of current month
   const firstDayObj = new Date(year, month, 1);
@@ -1720,18 +1962,41 @@ function renderCalendarGrid() {
   const prevDaysCount = startingDay - 1;
   for (let i = prevDaysCount; i > 0; i--) {
     const dayNum = daysInPrevMonth - i + 1;
-    html += `<div class="avail-cal-day muted" onclick="selectCalendarPrevMonthDay(${dayNum})">${dayNum}</div>`;
+    let prevM = month - 1;
+    let prevY = year;
+    if (prevM < 0) { prevM = 11; prevY -= 1; }
+    const cellDate = new Date(prevY, prevM, dayNum);
+    cellDate.setHours(0, 0, 0, 0);
+    const isPast = cellDate < today;
+
+    if (isPast) {
+      html += `<div class="avail-cal-day past muted disabled" title="Data passata non selezionabile">${dayNum}</div>`;
+    } else {
+      html += `<div class="avail-cal-day muted" onclick="selectCalendarPrevMonthDay(${dayNum})">${dayNum}</div>`;
+    }
   }
 
   // Current month days
   for (let day = 1; day <= daysInCurrentMonth; day++) {
-    const dateStr = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+    const cellDate = new Date(year, month, day);
+    cellDate.setHours(0, 0, 0, 0);
+    const dateStr = formatDateDDMMYYYY(cellDate);
     const isSelected = (dateStr === availModalState.selectedDate);
-    html += `
-      <div class="avail-cal-day ${isSelected ? 'selected' : ''}" onclick="selectAvailCalendarDay(${year}, ${month}, ${day})">
-        ${day}
-      </div>
-    `;
+    const isPast = cellDate < today;
+
+    if (isPast) {
+      html += `
+        <div class="avail-cal-day past muted disabled" title="Data passata non selezionabile">
+          ${day}
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="avail-cal-day ${isSelected ? 'selected' : ''}" onclick="selectAvailCalendarDay(${year}, ${month}, ${day})">
+          ${day}
+        </div>
+      `;
+    }
   }
 
   // Next month leading days to complete grid
@@ -1755,12 +2020,22 @@ function changeCalendarYear(val) {
 }
 
 function selectAvailCalendarDay(year, month, day) {
-  const dateStr = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+  const chosenDate = new Date(year, month, day);
+  chosenDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (chosenDate < today) {
+    return; // Disallow selecting past dates
+  }
+
+  const dateStr = formatDateDDMMYYYY(chosenDate);
   availModalState.selectedDate = dateStr;
-  availModalState.selectedDateObj = new Date(year, month, day);
+  availModalState.selectedDateObj = chosenDate;
 
   if (!availModalState.datesPool.includes(dateStr)) {
-    availModalState.datesPool.unshift(dateStr);
+    availModalState.datesPool.push(dateStr);
+    availModalState.datesPool.sort((a, b) => parseSlotDate(a) - parseSlotDate(b));
   }
 
   renderCalendarGrid();
@@ -1816,7 +2091,7 @@ function updateAvailSummary() {
   const summaryEl = document.getElementById('availModalSummaryValue');
   if (!summaryEl) return;
 
-  const d = availModalState.selectedDateObj || new Date(2026, 10, 16);
+  const d = availModalState.selectedDateObj || new Date();
   const days = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
   const months = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
 
@@ -1942,27 +2217,41 @@ function proceedFromStep5() {
 
   if (errorBanner) errorBanner.style.display = 'none';
 
-  // Genera o conferma codice prenotazione (Matching Image 2: 2026649029)
-  state.wizard.cupCode = '2026649029';
-
-  // Aggiunge la prenotazione alla lista personale
+  // Genera o conferma codice prenotazione
   const defaultSlot = getRepositorySlots()[0] || {};
   const slot = state.wizard.selectedSlot || defaultSlot;
-  const newBooking = {
-    id: state.wizard.cupCode,
-    date: slot.date || '13/11/2026',
-    time: slot.time || '07:55',
-    dateTime: (slot.date || '13/11/2026') + ' Ore ' + (slot.time || '07:55'),
-    exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'PROFILO LIPIDICO (COLESTEROLO E TRIGLICERIDI)'),
-    hospital: slot.struttura || 'OSPEDALE OSTUNI',
-    bookingType: 'SSN con Ricetta Dematerializzata',
-    cancelDeadline: '11/11/2026',
-    status: 'Confermato'
-  };
 
-  // Se non già presente, aggiungila
-  if (!state.bookings.some(b => b.id === newBooking.id)) {
-    state.bookings.unshift(newBooking);
+  if (state.wizard && state.wizard.isModification && state.wizard.editingBookingId) {
+    state.wizard.cupCode = state.wizard.editingBookingId;
+    const existing = state.bookings.find(b => b.id === state.wizard.editingBookingId);
+    if (existing) {
+      existing.date = slot.date || existing.date;
+      existing.time = slot.time || existing.time;
+      existing.dateTime = (slot.date || existing.date) + ' Ore ' + (slot.time || existing.time);
+      existing.hospital = slot.struttura || existing.hospital;
+      if (slot.azienda) existing.azienda = slot.azienda;
+      existing.status = 'Confermato (Data modificata)';
+    }
+  } else {
+    state.wizard.cupCode = '2026649029';
+
+    // Aggiunge la nuova prenotazione alla lista personale
+    const newBooking = {
+      id: state.wizard.cupCode,
+      date: slot.date || '13/11/2026',
+      time: slot.time || '07:55',
+      dateTime: (slot.date || '13/11/2026') + ' Ore ' + (slot.time || '07:55'),
+      exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'PROFILO LIPIDICO (COLESTEROLO E TRIGLICERIDI)'),
+      hospital: slot.struttura || 'OSPEDALE OSTUNI',
+      bookingType: 'SSN con Ricetta Dematerializzata',
+      cancelDeadline: '11/11/2026',
+      status: 'Confermato'
+    };
+
+    // Se non già presente, aggiungila
+    if (!state.bookings.some(b => b.id === newBooking.id)) {
+      state.bookings.unshift(newBooking);
+    }
   }
 
   // Naviga al 6° Passo (Riepilogo)
@@ -1981,6 +2270,15 @@ function updateSuccessStep() {
   setVal('successBookingId', 'NUMERO PRENOTAZIONE: ' + (state.wizard.cupCode || '2026649029'));
   setVal('successHospital', slot.struttura || 'OSPEDALE OSTUNI');
   setVal('successDateTime', (slot.date || '13/11/2026') + ' ore ' + (slot.time || '07:55'));
+
+  const bannerText = document.getElementById('successBannerText');
+  if (bannerText) {
+    if (state.wizard && state.wizard.isModification) {
+      bannerText.innerText = 'Data della prenotazione modificata con successo!';
+    } else {
+      bannerText.innerText = 'Prenotazione effettuata con successo!';
+    }
+  }
 }
 
 // Privacy Modal Controls (Wireframe r3_c1 - Consultazione facoltativa)
@@ -2032,6 +2330,11 @@ function shiftDocs(direction) {
 
 // "Torna indietro" navigation — goes back one wizard step
 function tornaIndietro() {
+  if (state.wizard && state.wizard.isModification && state.currentScreen === 'screen-step-slots') {
+    goToScreen('screen-bookings');
+    return;
+  }
+
   const stepOrder = [
     'screen-step-beneficiary',
     'screen-step-regime',
@@ -2049,13 +2352,13 @@ function tornaIndietro() {
   }
 }
 
-// Update "Torna indietro" visibility based on current screen
+// Update "Torna indietro" / "Chiudi ×" visibility based on current screen and version
 function updateTornaIndietro(screenId) {
   const btn = document.getElementById('btnTornaIndietro');
   const container = document.getElementById('tornaIndietroContainer');
-  if (!btn || !container) return;
+  const chiudiBtn = document.getElementById('btnChiudiWizard');
 
-  const showOnScreens = [
+  const wizardScreens = [
     'screen-step-beneficiary',
     'screen-step-regime',
     'screen-step-prescription',
@@ -2064,15 +2367,30 @@ function updateTornaIndietro(screenId) {
     'screen-step-success'
   ];
 
-  if (showOnScreens.includes(screenId)) {
-    btn.classList.add('visible');
-    btn.style.display = 'inline-block';
-    container.style.display = 'block';
+  const isWizard = wizardScreens.includes(screenId);
+
+  if (isWizard && state.version === 'v2') {
+    // Version 2: show "Chiudi ×" button in page header, hide "Torna indietro"
+    if (btn) { btn.classList.remove('visible'); btn.style.display = 'none'; }
+    if (container) container.style.display = 'none';
+    if (chiudiBtn) chiudiBtn.style.display = 'inline-flex';
+  } else if (isWizard) {
+    // Version 1: show "Torna indietro", hide "Chiudi ×"
+    if (btn) { btn.classList.add('visible'); btn.style.display = 'inline-block'; }
+    if (container) container.style.display = 'block';
+    if (chiudiBtn) chiudiBtn.style.display = 'none';
   } else {
-    btn.classList.remove('visible');
-    btn.style.display = 'none';
-    container.style.display = 'none';
+    // Not a wizard screen: hide both
+    if (btn) { btn.classList.remove('visible'); btn.style.display = 'none'; }
+    if (container) container.style.display = 'none';
+    if (chiudiBtn) chiudiBtn.style.display = 'none';
   }
+}
+
+// "Chiudi ×" — Close the booking wizard and return to "Le mie prenotazioni"
+function closeBookingToBookings() {
+  startNewBooking();
+  goToScreen('screen-bookings');
 }
 
 // Toggle all ASL checkboxes
@@ -2256,16 +2574,37 @@ function updateActiveFilterIndicator(hasActiveFilters, filters) {
 
   if (filterPillBar) {
     if (hasActiveFilters) {
-      const activeLabels = [];
-      if (filters.year) activeLabels.push(`Anno: <strong>${filters.year}</strong>`);
-      if (filters.azienda) activeLabels.push(`Azienda: <strong>${filters.azienda}</strong>`);
-      if (filters.status) activeLabels.push(`Stato: <strong>${filters.status}</strong>`);
+      const activePills = [];
+      if (filters.year) {
+        activePills.push(`
+          <span class="filter-tag-pill" id="filterPillYear">
+            <span class="filter-tag-pill-text">Anno: <strong>${filters.year}</strong></span>
+            <button type="button" class="filter-tag-pill-remove" onclick="removeSingleBookingFilter('year')" aria-label="Rimuovi filtro anno ${filters.year}" title="Rimuovi filtro anno">✕</button>
+          </span>
+        `);
+      }
+      if (filters.azienda) {
+        activePills.push(`
+          <span class="filter-tag-pill" id="filterPillAzienda">
+            <span class="filter-tag-pill-text">Azienda: <strong>${filters.azienda}</strong></span>
+            <button type="button" class="filter-tag-pill-remove" onclick="removeSingleBookingFilter('azienda')" aria-label="Rimuovi filtro azienda ${filters.azienda}" title="Rimuovi filtro azienda">✕</button>
+          </span>
+        `);
+      }
+      if (filters.status) {
+        activePills.push(`
+          <span class="filter-tag-pill" id="filterPillStatus">
+            <span class="filter-tag-pill-text">Stato: <strong>${filters.status}</strong></span>
+            <button type="button" class="filter-tag-pill-remove" onclick="removeSingleBookingFilter('status')" aria-label="Rimuovi filtro stato ${filters.status}" title="Rimuovi filtro stato">✕</button>
+          </span>
+        `);
+      }
 
       filterPillBar.style.display = 'flex';
       filterPillBar.innerHTML = `
         <span class="filter-active-summary-label">Filtri attivi:</span>
-        ${activeLabels.map(l => `<span class="filter-tag-pill">${l}</span>`).join('')}
-        <button type="button" class="btn-clear-filters-link" onclick="resetBookingFilters()">Rimuovi filtri ✕</button>
+        ${activePills.join('')}
+        <button type="button" class="btn-clear-filters-link" onclick="resetBookingFilters()">Rimuovi tutti ✕</button>
       `;
     } else {
       filterPillBar.style.display = 'none';
@@ -2274,18 +2613,38 @@ function updateActiveFilterIndicator(hasActiveFilters, filters) {
   }
 }
 
+// Rimuove un singolo filtro selezionato cliccando la "x" sulla relativa pillola
+function removeSingleBookingFilter(filterKey) {
+  if (!state.bookingFilters) return;
+
+  if (filterKey === 'year') {
+    state.bookingFilters.year = '';
+  } else if (filterKey === 'azienda') {
+    state.bookingFilters.azienda = '';
+  } else if (filterKey === 'status') {
+    state.bookingFilters.status = '';
+  }
+
+  // Sincronizza i campi select del modal
+  syncFilterInputs(state.bookingFilters.year, state.bookingFilters.azienda, state.bookingFilters.status);
+
+  // Re-renderizza la lista delle prenotazioni
+  renderBookings();
+}
+
+// Sincronizza i selettori nei modal filtri
+function syncFilterInputs(year, azienda, status) {
+  document.querySelectorAll('#filterSelectAnno').forEach(el => { el.value = year || ''; });
+  document.querySelectorAll('#filterSelectAzienda').forEach(el => { el.value = azienda || ''; });
+  document.querySelectorAll('#filterSelectStato').forEach(el => { el.value = status || ''; });
+}
+
 function openFilterModal() {
   const modal = document.getElementById('bookingFilterModalOverlay');
   if (!modal) return;
 
   const filters = state.bookingFilters || { year: '', azienda: '', status: '' };
-  const selYear = document.getElementById('filterSelectAnno');
-  const selAzienda = document.getElementById('filterSelectAzienda');
-  const selStatus = document.getElementById('filterSelectStato');
-
-  if (selYear) selYear.value = filters.year || '';
-  if (selAzienda) selAzienda.value = filters.azienda || '';
-  if (selStatus) selStatus.value = filters.status || '';
+  syncFilterInputs(filters.year, filters.azienda, filters.status);
 
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -2316,6 +2675,8 @@ function applyBookingFilters() {
     status: selStatus ? selStatus.value : ''
   };
 
+  syncFilterInputs(state.bookingFilters.year, state.bookingFilters.azienda, state.bookingFilters.status);
+
   closeFilterModal();
   renderBookings();
 }
@@ -2327,13 +2688,7 @@ function resetBookingFilters() {
     status: ''
   };
 
-  const selYear = document.getElementById('filterSelectAnno');
-  const selAzienda = document.getElementById('filterSelectAzienda');
-  const selStatus = document.getElementById('filterSelectStato');
-
-  if (selYear) selYear.value = '';
-  if (selAzienda) selAzienda.value = '';
-  if (selStatus) selStatus.value = '';
+  syncFilterInputs('', '', '');
 
   closeFilterModal();
   renderBookings();
