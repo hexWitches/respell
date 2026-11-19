@@ -4,12 +4,12 @@
 
 // Application State
 const state = {
-  version: 'v1', // 'v1' (Base Wireframe) or 'v2' (Redesign Disponibilità & Calendario)
+  version: 'v2', // Disponibilità & Calendario
   currentScreen: 'screen-home',
   user: {
     name: 'MIRIANA PINTO',
     cf: 'PNTMRN90A41A662K',
-    phone: '+1234567890',
+    phone: '+39 340 1234567',
     email: 'miriana.pinto@email.it'
   },
   wizard: {
@@ -30,18 +30,20 @@ const state = {
     status: ''
   },
   bookings: [
+    // Gruppo 1: Prenotate da pagare e da effettuare (cronologico decrescente)
     {
-      id: '2026699059',
-      date: '18/08/2026',
-      time: '08:15',
-      dateTime: '18/08/2026 Ore 08:15',
-      exam: 'PROTEINE [S]',
-      hospital: 'OSPEDALE CIVILE - MARTINA FRANCA',
-      azienda: 'ASL Taranto',
-      bookingType: 'SSN con Ricetta Rossa',
-      cancelDeadline: '',
-      status: 'Effettuato pagato'
+      id: '2026409823',
+      date: '28/12/2026',
+      time: '09:15',
+      dateTime: '28/12/2026 Ore 09:15',
+      exam: 'VISITA OCULISTICA (PRIMA VISITA)',
+      hospital: 'OSPEDALE SAN PAOLO - BARI',
+      azienda: 'ASL Bari',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '24/12/2026',
+      status: 'Da pagare da effettuare'
     },
+    // Gruppo 2: Pagate da effettuare (dalla più vicina alla più lontana)
     {
       id: '2026841102',
       date: '24/11/2026',
@@ -67,6 +69,19 @@ const state = {
       status: 'Pagato da effettuare'
     },
     {
+      id: '2026338871',
+      date: '18/12/2026',
+      time: '08:45',
+      dateTime: '18/12/2026 Ore 08:45',
+      exam: 'GLUCOSIO DOSAGGIO SERIALE (CURVA DA CARICO)',
+      hospital: 'OSPEDALE LORENZO BONOMO - ANDRIA',
+      azienda: 'ASL Barletta-Andria-Trani',
+      bookingType: 'SSN Ricetta Dematerializzata',
+      cancelDeadline: '16/12/2026',
+      status: 'Pagato da effettuare'
+    },
+    // Gruppo 3: Pagate ed effettuate (cronologico decrescente)
+    {
       id: '2026512994',
       date: '15/10/2026',
       time: '15:30',
@@ -79,28 +94,16 @@ const state = {
       status: 'Effettuato pagato'
     },
     {
-      id: '2026338871',
-      date: '18/12/2026',
-      time: '08:45',
-      dateTime: '18/12/2026 Ore 08:45',
-      exam: 'GLUCOSIO DOSAGGIO SERIALE (CURVA DA CARICO)',
-      hospital: 'OSPEDALE LORENZO BONOMO - ANDRIA',
-      azienda: 'ASL Barletta-Andria-Trani',
-      bookingType: 'SSN Ricetta Dematerializzata',
-      cancelDeadline: '16/12/2026',
-      status: 'Pagato da effettuare'
-    },
-    {
-      id: '2026409823',
-      date: '28/12/2026',
-      time: '09:15',
-      dateTime: '28/12/2026 Ore 09:15',
-      exam: 'VISITA OCULISTICA (PRIMA VISITA)',
-      hospital: 'OSPEDALE SAN PAOLO - BARI',
-      azienda: 'ASL Bari',
-      bookingType: 'SSN Ricetta Dematerializzata',
-      cancelDeadline: '24/12/2026',
-      status: 'Da pagare da effettuare'
+      id: '2026699059',
+      date: '18/08/2026',
+      time: '08:15',
+      dateTime: '18/08/2026 Ore 08:15',
+      exam: 'PROTEINE [S]',
+      hospital: 'OSPEDALE CIVILE - MARTINA FRANCA',
+      azienda: 'ASL Taranto',
+      bookingType: 'SSN con Ricetta Rossa',
+      cancelDeadline: '',
+      status: 'Effettuato pagato'
     },
     {
       id: '2025730476',
@@ -129,35 +132,7 @@ const state = {
   ]
 };
 
-// Version 1 Available appointment slots (original reference wireframe)
-const v1AvailableSlots = [
-  {
-    id: 'slot-1',
-    azienda: 'Asl Brindisi',
-    struttura: 'OSPEDALE OSTUNI',
-    address: 'VIA LUIGI MICOLI - OSTUNI (BR)',
-    date: '13/11/2026',
-    time: '07:55',
-    dateTime: '13/11/2026 ore 07:55',
-    ambulatorio: 'VIA LUIGI MICOLI - OSTUNI (BR)',
-    sedeUnita: 'SEDE: VIA VILLAFRANCA UNITA: VIA LUIGI MICCOLI - OSTUNI (BR)',
-    firstAvailable: false
-  },
-  {
-    id: 'slot-2',
-    azienda: 'Asl Barletta-Andria-Trani',
-    struttura: 'POL. MARGHERITA DI SAVOIA',
-    address: 'Via Ospedale 3, Margherita di Savoia (BT)',
-    date: '03/12/2026',
-    time: '08:30',
-    dateTime: '03/12/2026 ore 08:30',
-    ambulatorio: 'VIA OSPEDALE 3 - MARGHERITA DI SAVOIA (BT)',
-    sedeUnita: 'SEDE: VIA OSPEDALE 3 - MARGHERITA DI SAVOIA (BT)',
-    firstAvailable: false
-  }
-];
-
-// Version 2 appointment slots from the fake repository (prototype/js/fake-repository.js)
+// Appointment slots from the fake repository (prototype/js/fake-repository.js)
 function getRepositorySlots() {
   if (typeof window !== 'undefined' && Array.isArray(window.fakeAvailabilities) && window.fakeAvailabilities.length > 0) {
     return window.fakeAvailabilities;
@@ -258,6 +233,11 @@ function startNewBooking() {
   clearStep4Errors();
   clearStep5ConsentErrors();
 
+  const step3Email = document.getElementById('inputEmail');
+  const step3Phone = document.getElementById('inputPhone');
+  if (step3Email) step3Email.value = (typeof userContacts !== 'undefined' && userContacts.email) ? userContacts.email : (state.user.email || 'miriana.pinto@email.it');
+  if (step3Phone) step3Phone.value = (typeof userContacts !== 'undefined' && userContacts.cellulare) ? userContacts.cellulare : (state.user.phone || '+39 340 1234567');
+
   const detailsDropdown = document.getElementById('step4RecipeDetailsDropdown');
   const detailsText = document.getElementById('btnToggleRecipeDetailsText');
   const detailsCaret = document.getElementById('recipeDetailsCaret');
@@ -294,12 +274,6 @@ function goToScreen(screenId) {
   if (target) {
     target.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Update discreet dock selector
-  const dockSel = document.getElementById('dockScreenSelect');
-  if (dockSel && dockSel.value !== screenId) {
-    dockSel.value = screenId;
   }
 
   // Header and title area updates based on screen
@@ -384,6 +358,8 @@ function updatePageHeader(screenId) {
 
     if (screenId === 'screen-fse') {
       if (pageTopZone) pageTopZone.style.display = 'none'; // Area Personale has its own header
+    } else if (screenId === 'screen-profilo-sanitario') {
+      if (pageTopZone) pageTopZone.style.display = 'none'; // Profilo sanitario has its own header
     } else if (screenId === 'screen-bookings') {
       if (navLinkFsePrenotazioni) navLinkFsePrenotazioni.classList.add('active');
       if (pageTopZone) pageTopZone.style.display = 'none'; // Le mie prenotazioni has its own header
@@ -428,7 +404,16 @@ function updatePageHeader(screenId) {
       // Mostra "Torna indietro" su tutti i passi wizard (Step 1-6)
       updateTornaIndietro(screenId);
 
-      if (screenId === 'screen-step-slots') {
+      if (screenId === 'screen-step-prescription') {
+        const step3Email = document.getElementById('inputEmail');
+        const step3Phone = document.getElementById('inputPhone');
+        if (step3Email && (!step3Email.value || step3Email.value.trim() === '')) {
+          step3Email.value = (typeof userContacts !== 'undefined' && userContacts.email) ? userContacts.email : (state.user.email || 'miriana.pinto@email.it');
+        }
+        if (step3Phone && (!step3Phone.value || step3Phone.value.trim() === '')) {
+          step3Phone.value = (typeof userContacts !== 'undefined' && userContacts.cellulare) ? userContacts.cellulare : (state.user.phone || '+39 340 1234567');
+        }
+      } else if (screenId === 'screen-step-slots') {
         updateStep4RecipeDetails();
         renderSlots();
 
@@ -481,6 +466,80 @@ function updateStepperProgress(currentStepNum) {
   }
 }
 
+// ==============================================================================
+// ORDINAMENTO E RENDER DELLE PRENOTAZIONI PERSONALI
+// ==============================================================================
+
+// Priorità gruppi di stato:
+// 1: Prenotate da pagare e da effettuare
+// 2: Pagate da effettuare
+// 3: Pagate ed effettuate
+function getBookingStatusPriority(b) {
+  if (!b || !b.status) return 99;
+  const s = b.status.toLowerCase();
+
+  // 1. Prenotate da pagare e da effettuare
+  if (s.includes('da pagare') || s.includes('confermat')) {
+    return 1;
+  }
+  // 2. Pagate da effettuare
+  if (s.includes('pagato da effettuare') || (s.includes('pagat') && s.includes('da effettuare'))) {
+    return 2;
+  }
+  // 3. Pagate ed effettuate
+  if (s.includes('effettuat')) {
+    return 3;
+  }
+  return 4;
+}
+
+// Timestamp per ordinamento cronologico (dalla più recente alla più vecchia)
+function getBookingTimestamp(b) {
+  if (!b) return 0;
+  if (b.date) {
+    const parts = b.date.split('/');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      let hours = 0;
+      let minutes = 0;
+      if (b.time) {
+        const timeParts = b.time.split(':');
+        if (timeParts.length >= 2) {
+          hours = parseInt(timeParts[0], 10);
+          minutes = parseInt(timeParts[1], 10);
+        }
+      }
+      const d = new Date(year, month, day, hours, minutes, 0);
+      if (!isNaN(d.getTime())) return d.getTime();
+    }
+  }
+  const fallback = parseSlotDate(b.date || b.dateTime);
+  return fallback ? fallback.getTime() : 0;
+}
+
+// Comparatore:
+// 1. Gruppo di stato prima (1: Da pagare da effettuare -> 2: Pagato da effettuare -> 3: Effettuato pagato)
+// 2. Per le prenotazioni da effettuare (Gruppi 1 e 2): ordine cronologico crescente (la data più prossima per prima)
+// 3. Per lo storico delle prenotazioni già effettuate (Gruppo 3): ordine cronologico decrescente (la più recente per prima)
+function compareBookings(a, b) {
+  const pA = getBookingStatusPriority(a);
+  const pB = getBookingStatusPriority(b);
+
+  if (pA !== pB) {
+    return pA - pB;
+  }
+
+  const timeA = getBookingTimestamp(a);
+  const timeB = getBookingTimestamp(b);
+
+  if (pA <= 2) {
+    return timeA - timeB;
+  }
+  return timeB - timeA;
+}
+
 // Render Bookings List (Matching Image 6)
 function renderBookings() {
   const container = document.getElementById('bookingsWireframeList');
@@ -508,6 +567,14 @@ function renderBookings() {
     }
     return true;
   });
+
+  // Ordinamento:
+  // 1. Prima quelle prenotate da pagare e da effettuare
+  // 2. Poi quelle pagate da effettuare
+  // 3. Infine quelle pagate ed effettuate
+  // All'interno dei gruppi da effettuare (1 e 2): in ordine cronologico (la più vicina per prima)
+  // All'interno dello storico (3): in ordine cronologico decrescente (la più recente per prima)
+  filteredBookings.sort(compareBookings);
 
   if (filteredBookings.length === 0) {
     container.innerHTML = `
@@ -640,6 +707,18 @@ function modifyBooking(id) {
 
   const inputDate = document.getElementById('inputDateFrom');
   if (inputDate) inputDate.value = '';
+  const displayDate = document.getElementById('filterDateDisplay');
+  if (displayDate) {
+    displayDate.value = '';
+    displayDate.classList.remove('has-value');
+  }
+  const clearBtn = document.getElementById('btnFilterDateClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (typeof filterCalState !== 'undefined') {
+    filterCalState.selectedDateStr = '';
+    filterCalState.selectedDateObj = null;
+  }
+  closeFilterDatePicker();
 
   // Aggiorna codice ricetta nel summary bar
   const recipeLabel = document.getElementById('step4RecipeNumber');
@@ -1113,42 +1192,443 @@ function parseSlotDate(dateStr, dateISO) {
   return null;
 }
 
-// Switch prototype version ('v1' or 'v2')
-function setPrototypeVersion(ver) {
-  const targetVer = (ver === 'v2') ? 'v2' : 'v1';
-  state.version = targetVer;
-  try {
-    localStorage.setItem('fse_prototype_version', targetVer);
-  } catch (e) {
-    // Ignore storage restriction
-  }
+// ==============================================================================
+// STEP 4: CUSTOM DATEPICKER CALENDAR ("Cerca a partire da:")
+// ==============================================================================
+const filterCalState = {
+  selectedDateStr: '', // 'DD/MM/YYYY'
+  selectedDateObj: null,
+  calYear: 2026,
+  calMonth: 10 // November (0-indexed)
+};
 
-  const dockSel = document.getElementById('dockVersionSelect');
-  if (dockSel && dockSel.value !== targetVer) {
-    dockSel.value = targetVer;
-  }
-
-  setupStep4ForVersion(targetVer);
-  updateTornaIndietro(state.currentScreen);
-
-  if (state.currentScreen === 'screen-step-slots') {
-    renderSlots();
-  } else if (state.currentScreen === 'screen-step-recap') {
-    updateRecapStep();
-  } else if (state.currentScreen === 'screen-step-success') {
-    updateSuccessStep();
+function toggleFilterDatePicker(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('filterDatePickerPopover');
+  if (!popover) return;
+  const isHidden = (popover.style.display === 'none' || !popover.style.display);
+  if (isHidden) {
+    openFilterDatePicker();
+  } else {
+    closeFilterDatePicker();
   }
 }
 
-// Setup Step 4 initial filters and dropdowns based on version
-function setupStep4ForVersion(ver) {
-  state.version = ver;
+function openFilterDatePicker() {
+  const popover = document.getElementById('filterDatePickerPopover');
+  if (!popover) return;
+
+  const inputVal = document.getElementById('inputDateFrom') ? document.getElementById('inputDateFrom').value : '';
+  if (inputVal) {
+    const d = parseSlotDate(inputVal);
+    if (d) {
+      filterCalState.selectedDateObj = d;
+      filterCalState.selectedDateStr = formatDateDDMMYYYY(d);
+      filterCalState.calYear = d.getFullYear();
+      filterCalState.calMonth = d.getMonth();
+    }
+  } else {
+    const today = new Date();
+    filterCalState.calYear = today.getFullYear();
+    filterCalState.calMonth = today.getMonth();
+  }
+
+  renderFilterCalendarGrid();
+  popover.style.display = 'block';
+
+  const displayInput = document.getElementById('filterDateDisplay');
+  if (displayInput) displayInput.setAttribute('aria-expanded', 'true');
+}
+
+function closeFilterDatePicker() {
+  const popover = document.getElementById('filterDatePickerPopover');
+  if (popover) popover.style.display = 'none';
+
+  const displayInput = document.getElementById('filterDateDisplay');
+  if (displayInput) displayInput.setAttribute('aria-expanded', 'false');
+}
+
+function changeFilterCalMonth(val) {
+  filterCalState.calMonth = parseInt(val, 10);
+  renderFilterCalendarGrid();
+}
+
+function changeFilterCalYear(val) {
+  filterCalState.calYear = parseInt(val, 10);
+  renderFilterCalendarGrid();
+}
+
+function renderFilterCalendarGrid() {
+  const grid = document.getElementById('filterCalDaysGrid');
+  const monthSelect = document.getElementById('filterCalMonthSelect');
+  const yearSelect = document.getElementById('filterCalYearSelect');
+  if (!grid) return;
+
+  if (monthSelect) monthSelect.value = filterCalState.calMonth;
+  if (yearSelect) yearSelect.value = filterCalState.calYear;
+
+  const year = filterCalState.calYear;
+  const month = filterCalState.calMonth;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Day 1 of current month
+  const firstDayObj = new Date(year, month, 1);
+  let startingDay = firstDayObj.getDay(); // 0 is Sunday
+  if (startingDay === 0) startingDay = 7; // Convert to Mon=1, Sun=7
+
+  const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  let html = '';
+
+  // Previous month trailing days
+  const prevDaysCount = startingDay - 1;
+  for (let i = prevDaysCount; i > 0; i--) {
+    const dayNum = daysInPrevMonth - i + 1;
+    let prevM = month - 1;
+    let prevY = year;
+    if (prevM < 0) { prevM = 11; prevY -= 1; }
+    const cellDate = new Date(prevY, prevM, dayNum);
+    cellDate.setHours(0, 0, 0, 0);
+    const isPast = cellDate < today;
+
+    if (isPast) {
+      html += `<div class="avail-cal-day past muted disabled" title="Data passata non selezionabile">${dayNum}</div>`;
+    } else {
+      html += `<div class="avail-cal-day muted" onclick="selectFilterCalPrevMonthDay(${dayNum})">${dayNum}</div>`;
+    }
+  }
+
+  // Current month days
+  for (let day = 1; day <= daysInCurrentMonth; day++) {
+    const cellDate = new Date(year, month, day);
+    cellDate.setHours(0, 0, 0, 0);
+    const dateStr = formatDateDDMMYYYY(cellDate);
+    const isSelected = (dateStr === filterCalState.selectedDateStr);
+    const isPast = cellDate < today;
+
+    if (isPast) {
+      html += `
+        <div class="avail-cal-day past muted disabled" title="Data passata non selezionabile">
+          ${day}
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="avail-cal-day ${isSelected ? 'selected' : ''}" onclick="selectFilterCalendarDay(${year}, ${month}, ${day})">
+          ${day}
+        </div>
+      `;
+    }
+  }
+
+  // Next month leading days to complete grid
+  const totalCells = prevDaysCount + daysInCurrentMonth;
+  const nextDaysCount = (totalCells > 35) ? (42 - totalCells) : (35 - totalCells);
+  for (let day = 1; day <= nextDaysCount; day++) {
+    html += `<div class="avail-cal-day muted" onclick="selectFilterCalNextMonthDay(${day})">${day}</div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function selectFilterCalendarDay(year, month, day) {
+  const chosenDate = new Date(year, month, day);
+  chosenDate.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (chosenDate < today) {
+    return; // Disallow selecting past dates
+  }
+
+  const dateStr = formatDateDDMMYYYY(chosenDate);
+  filterCalState.selectedDateStr = dateStr;
+  filterCalState.selectedDateObj = chosenDate;
+
+  const inputDate = document.getElementById('inputDateFrom');
+  const displayDate = document.getElementById('filterDateDisplay');
+  const clearBtn = document.getElementById('btnFilterDateClear');
+
+  if (inputDate) inputDate.value = dateStr;
+  if (displayDate) {
+    displayDate.value = dateStr;
+    displayDate.classList.add('has-value');
+  }
+  if (clearBtn) clearBtn.style.display = 'inline-flex';
+
+  closeFilterDatePicker();
+  renderSlots();
+}
+
+function selectFilterCalPrevMonthDay(day) {
+  let m = filterCalState.calMonth - 1;
+  let y = filterCalState.calYear;
+  if (m < 0) {
+    m = 11;
+    y -= 1;
+  }
+  filterCalState.calMonth = m;
+  filterCalState.calYear = y;
+  selectFilterCalendarDay(y, m, day);
+}
+
+function selectFilterCalNextMonthDay(day) {
+  let m = filterCalState.calMonth + 1;
+  let y = filterCalState.calYear;
+  if (m > 11) {
+    m = 0;
+    y += 1;
+  }
+  filterCalState.calMonth = m;
+  filterCalState.calYear = y;
+  selectFilterCalendarDay(y, m, day);
+}
+
+function selectFilterCalToday(e) {
+  if (e) e.stopPropagation();
+  const today = new Date();
+  selectFilterCalendarDay(today.getFullYear(), today.getMonth(), today.getDate());
+}
+
+function clearFilterDate(e) {
+  if (e) e.stopPropagation();
+  filterCalState.selectedDateStr = '';
+  filterCalState.selectedDateObj = null;
+
+  const inputDate = document.getElementById('inputDateFrom');
+  const displayDate = document.getElementById('filterDateDisplay');
+  const clearBtn = document.getElementById('btnFilterDateClear');
+
+  if (inputDate) inputDate.value = '';
+  if (displayDate) {
+    displayDate.value = '';
+    displayDate.classList.remove('has-value');
+  }
+  if (clearBtn) clearBtn.style.display = 'none';
+
+  closeFilterDatePicker();
+  renderSlots();
+}
+
+// Helper: Parse manual typed date string (DD/MM/YYYY, DD-MM-YYYY, DD/MM, YYYY-MM-DD)
+function parseManualDateInput(val) {
+  if (!val) return null;
+  val = val.trim();
+
+  // Match DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+  const dmyMatch = val.match(/^(\d{1,2})[\/\-\.](\d{1,2})([\/\-\.](\d{2,4}))?$/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1], 10);
+    const month = parseInt(dmyMatch[2], 10) - 1;
+    let year = dmyMatch[4] ? parseInt(dmyMatch[4], 10) : 2026;
+    if (year < 100) year += 2000;
+    if (month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+      const d = new Date(year, month, day);
+      if (d.getFullYear() === year && d.getMonth() === month && d.getDate() === day) {
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+    }
+  }
+
+  // Match YYYY-MM-DD
+  const isoMatch = val.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  if (isoMatch) {
+    const year = parseInt(isoMatch[1], 10);
+    const month = parseInt(isoMatch[2], 10) - 1;
+    const day = parseInt(isoMatch[3], 10);
+    if (month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+      const d = new Date(year, month, day);
+      if (d.getFullYear() === year && d.getMonth() === month && d.getDate() === day) {
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+    }
+  }
+  return null;
+}
+
+// Keydown handler: allow only numbers, navigation, backspace, delete, tab, enter
+function handleFilterDateKeydown(e, input) {
+  const allowedControlKeys = [
+    'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+    'Home', 'End'
+  ];
+
+  if (allowedControlKeys.includes(e.key) || e.ctrlKey || e.metaKey) {
+    if (e.key === 'Enter') {
+      input.blur();
+    }
+    // Handle backspace when right after a slash
+    if (e.key === 'Backspace') {
+      const pos = input.selectionStart;
+      if ((pos === 3 || pos === 6) && input.selectionEnd === pos) {
+        e.preventDefault();
+        const val = input.value;
+        input.value = val.slice(0, pos - 2) + val.slice(pos);
+        input.setSelectionRange(pos - 2, pos - 2);
+        handleFilterDateInput(input, e);
+      }
+    }
+    return;
+  }
+
+  // Allow only digits 0-9
+  if (!/^\d$/.test(e.key)) {
+    e.preventDefault();
+  }
+}
+
+// Handler per l'inserimento manuale da tastiera con maschera e slash automatici (DD/MM/YYYY)
+function handleFilterDateInput(input, event) {
+  let digits = input.value.replace(/\D/g, '');
+  if (digits.length > 8) {
+    digits = digits.substring(0, 8);
+  }
+
+  const clearBtn = document.getElementById('btnFilterDateClear');
+  const hiddenInput = document.getElementById('inputDateFrom');
+
+  if (!digits) {
+    input.value = '';
+    input.classList.remove('has-value');
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (hiddenInput) hiddenInput.value = '';
+    filterCalState.selectedDateStr = '';
+    filterCalState.selectedDateObj = null;
+    renderSlots();
+    return;
+  }
+
+  if (clearBtn) clearBtn.style.display = 'inline-flex';
+  input.classList.add('has-value');
+
+  // Format DD/MM/YYYY and validate segments
+  let formatted = '';
+
+  // Day (1-2 digits)
+  if (digits.length >= 1) {
+    let day = digits.substring(0, 2);
+    // If first digit is > 3, auto-pad with 0 (e.g. 5 -> 05)
+    if (digits.length === 1 && parseInt(digits[0], 10) > 3) {
+      day = '0' + digits[0];
+      digits = day + digits.substring(1);
+    } else if (day.length === 2) {
+      let dayNum = parseInt(day, 10);
+      if (dayNum > 31) day = '31';
+      if (dayNum === 0) day = '01';
+    }
+    formatted = day;
+
+    if (digits.length > 2) {
+      formatted += '/';
+      let month = digits.substring(2, 4);
+      // If month first digit is > 1, auto-pad with 0 (e.g. 4 -> 04)
+      if (digits.length === 3 && parseInt(digits[2], 10) > 1) {
+        month = '0' + digits[2];
+        digits = digits.substring(0, 2) + month + digits.substring(3);
+      } else if (month.length === 2) {
+        let monthNum = parseInt(month, 10);
+        if (monthNum > 12) month = '12';
+        if (monthNum === 0) month = '01';
+      }
+      formatted += month;
+
+      if (digits.length > 4) {
+        formatted += '/';
+        const year = digits.substring(4, 8);
+        formatted += year;
+      } else if (digits.length === 4) {
+        formatted += '/';
+      }
+    } else if (digits.length === 2) {
+      formatted += '/';
+    }
+  }
+
+  input.value = formatted;
+
+  // When complete 8 digits are entered (DD/MM/YYYY), validate date and filter
+  if (digits.length === 8) {
+    const d = parseManualDateInput(formatted);
+    if (d) {
+      const validStr = formatDateDDMMYYYY(d);
+      input.value = validStr;
+      filterCalState.selectedDateStr = validStr;
+      filterCalState.selectedDateObj = d;
+      filterCalState.calYear = d.getFullYear();
+      filterCalState.calMonth = d.getMonth();
+
+      if (hiddenInput) hiddenInput.value = validStr;
+      renderSlots();
+
+      const popover = document.getElementById('filterDatePickerPopover');
+      if (popover && popover.style.display !== 'none') {
+        renderFilterCalendarGrid();
+      }
+    }
+  } else {
+    // Incomplete date while typing: clear filter until full date is typed
+    if (hiddenInput && hiddenInput.value !== '') {
+      hiddenInput.value = '';
+      filterCalState.selectedDateStr = '';
+      filterCalState.selectedDateObj = null;
+      renderSlots();
+    }
+  }
+}
+
+// Handler per completamento o perdita focus del campo (blur)
+function handleFilterDateBlur(input) {
+  const val = input.value.trim();
+  const digits = val.replace(/\D/g, '');
+  const clearBtn = document.getElementById('btnFilterDateClear');
+  const hiddenInput = document.getElementById('inputDateFrom');
+
+  if (!digits) {
+    input.value = '';
+    input.classList.remove('has-value');
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (hiddenInput) hiddenInput.value = '';
+    renderSlots();
+    return;
+  }
+
+  // If user typed only day and month (4 digits, e.g. 20/11), auto-complete with 2026
+  if (digits.length === 4) {
+    const d = parseManualDateInput(val);
+    if (d) {
+      const validStr = formatDateDDMMYYYY(d);
+      input.value = validStr;
+      input.classList.add('has-value');
+      if (clearBtn) clearBtn.style.display = 'inline-flex';
+      if (hiddenInput) hiddenInput.value = validStr;
+      filterCalState.selectedDateStr = validStr;
+      filterCalState.selectedDateObj = d;
+      filterCalState.calYear = d.getFullYear();
+      filterCalState.calMonth = d.getMonth();
+      renderSlots();
+      return;
+    }
+  }
+
+  // If less than 8 digits and not full date, reset or clean up
+  if (digits.length < 8) {
+    clearFilterDate();
+  }
+}
+
+// Setup Step 4 initial filters and dropdowns
+function setupStep4() {
   state.wizard.selectedSlot = null;
 
   const master = document.getElementById('aslTutto');
   if (master) master.checked = false;
 
-  // In entrambe le versioni nessun filtro ASL è attivo di default
   const checks = document.querySelectorAll('.asl-check');
   checks.forEach(c => c.checked = false);
 
@@ -1161,6 +1641,18 @@ function setupStep4ForVersion(ver) {
 
   const inputDate = document.getElementById('inputDateFrom');
   if (inputDate) inputDate.value = '';
+  const displayDate = document.getElementById('filterDateDisplay');
+  if (displayDate) {
+    displayDate.value = '';
+    displayDate.classList.remove('has-value');
+  }
+  const clearBtn = document.getElementById('btnFilterDateClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (typeof filterCalState !== 'undefined') {
+    filterCalState.selectedDateStr = '';
+    filterCalState.selectedDateObj = null;
+  }
+  closeFilterDatePicker();
 
   const countBadge = document.getElementById('slotsCountBadge');
   if (countBadge) countBadge.style.display = 'none';
@@ -1168,7 +1660,7 @@ function setupStep4ForVersion(ver) {
 
 // Reset Step 4 filters and inputs
 function resetStep4Filters() {
-  setupStep4ForVersion(state.version || 'v1');
+  setupStep4();
 }
 
 // Dynamically populate structure select dropdown based on selected ASLs (used in v2)
@@ -1205,145 +1697,8 @@ function updateStrutturaDropdown(checkedAsls, allSlots) {
   selectStruttura.innerHTML = optionsHtml;
 }
 
-// Step 4: Render Slots (Version Dispatcher)
+// Step 4: Dynamic Fake Repository Render with Empty Guidance State
 function renderSlots() {
-  if (state.version === 'v1') {
-    renderSlotsV1();
-  } else {
-    renderSlotsV2();
-  }
-}
-
-// Step 4 Version 1: Dynamic Slots from fake-repository.js with empty guidance state
-function renderSlotsV1() {
-  const container = document.getElementById('slotsWireframeList');
-  const countBadge = document.getElementById('slotsCountBadge');
-  const selectStruttura = document.getElementById('selectStruttura');
-  const inputDateFrom = document.getElementById('inputDateFrom');
-  if (!container) return;
-
-  const allSlots = getRepositorySlots();
-
-  // Get all checked ASL checkboxes
-  const checkedBoxes = Array.from(document.querySelectorAll('.asl-check:checked'));
-  const checkedAsls = checkedBoxes.map(cb => (cb.value || cb.parentElement.textContent).trim());
-
-  // Update structure select options dynamically
-  updateStrutturaDropdown(checkedAsls, allSlots);
-
-  // If NO Azienda Sanitaria is selected, do NOT show availabilities
-  if (checkedAsls.length === 0) {
-    state.wizard.selectedSlot = null;
-    if (countBadge) countBadge.style.display = 'none';
-
-    container.innerHTML = `
-      <div class="slots-empty-state">
-        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h7"></path>
-          <circle cx="18" cy="18" r="3"></circle>
-          <path d="m20.5 20.5 2 2"></path>
-        </svg>
-        <div class="slots-empty-title">Nessuna Azienda Sanitaria selezionata</div>
-        <p class="slots-empty-desc">
-          Per visualizzare le date e le strutture disponibili è necessario selezionare almeno un'<strong>Azienda Sanitaria</strong> dall'elenco sovrastante.
-        </p>
-      </div>
-    `;
-    return;
-  }
-
-  // Filter slots by selected ASLs
-  let filtered = allSlots.filter(slot => checkedAsls.includes(slot.azienda));
-
-  // Filter by structure if chosen
-  const selectedStruttura = selectStruttura ? selectStruttura.value : '';
-  if (selectedStruttura) {
-    filtered = filtered.filter(slot => slot.struttura.toUpperCase() === selectedStruttura.toUpperCase());
-  }
-
-  // Filter by starting date if chosen
-  const dateFromVal = inputDateFrom ? inputDateFrom.value : '';
-  if (dateFromVal) {
-    const fromDate = new Date(dateFromVal);
-    fromDate.setHours(0, 0, 0, 0);
-
-    filtered = filtered.filter(slot => {
-      const slotDate = parseSlotDate(slot.date, slot.dateISO);
-      return slotDate ? slotDate >= fromDate : true;
-    });
-  }
-
-  // Update badge count
-  if (countBadge) {
-    countBadge.style.display = 'inline-block';
-    countBadge.innerText = `${filtered.length} ${filtered.length === 1 ? 'disponibilità' : 'disponibilità'}`;
-  }
-
-  // If no slots match the criteria
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="slots-empty-state">
-        <svg class="slots-empty-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="8" y1="12" x2="16" y2="12"></line>
-        </svg>
-        <div class="slots-empty-title">Nessuna disponibilità trovata</div>
-        <p class="slots-empty-desc">
-          Non sono state trovate disponibilità per le selezioni correnti. Prova a selezionare un'altra struttura o ad ampliare le Aziende Sanitarie scelte.
-        </p>
-      </div>
-    `;
-    return;
-  }
-
-  // Deselect if previously selected slot is no longer in filtered list
-  if (state.wizard.selectedSlot && !filtered.some(s => s.id === state.wizard.selectedSlot.id)) {
-    state.wizard.selectedSlot = null;
-  }
-
-  // Render Table
-  let html = `
-    <div class="slot-table-header">
-      <div style="width: 36px;"></div>
-      <div>Azienda sanitaria</div>
-      <div>Struttura</div>
-      <div>Data e ora</div>
-      <div style="width: 140px; text-align: right;"></div>
-    </div>
-  `;
-
-  html += filtered.map(slot => {
-    const isSelected = state.wizard.selectedSlot && state.wizard.selectedSlot.id === slot.id;
-    return `
-      <div class="slot-table-row ${isSelected ? 'selected' : ''}" onclick="selectSlot('${slot.id}')">
-        <div class="slot-radio-cell">
-          <div class="slot-radio-btn ${isSelected ? 'checked' : ''}">
-            ${isSelected ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
-          </div>
-        </div>
-        <div class="slot-cell-azienda">
-          ${slot.azienda}
-        </div>
-        <div class="slot-cell-struttura">
-          ${slot.struttura}
-          ${slot.firstAvailable ? '<span class="slot-first-badge">Prima data utile</span>' : ''}
-        </div>
-        <div class="slot-cell-datetime">
-          <div class="slot-date-line">${slot.date}</div>
-          <div class="slot-time-line">${slot.time}</div>
-        </div>
-        <div class="slot-cell-action">
-          <button class="btn-scegli-altra-data" type="button" onclick="event.stopPropagation(); handleScegliAltraData('${slot.id}');">Scegli altra data</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  container.innerHTML = html;
-}
-
-// Step 4 Version 2: Dynamic Fake Repository Render with Empty Guidance State
-function renderSlotsV2() {
   const container = document.getElementById('slotsWireframeList');
   const countBadge = document.getElementById('slotsCountBadge');
   const selectStruttura = document.getElementById('selectStruttura');
@@ -1392,7 +1747,7 @@ function renderSlotsV2() {
   // Filter by starting date if chosen
   const dateFromVal = inputDateFrom ? inputDateFrom.value : '';
   if (dateFromVal) {
-    const fromDate = new Date(dateFromVal);
+    const fromDate = parseSlotDate(dateFromVal) || new Date(dateFromVal);
     fromDate.setHours(0, 0, 0, 0);
 
     filtered = filtered.filter(slot => {
@@ -1472,11 +1827,7 @@ function renderSlotsV2() {
 
 // Action for 'Scegli altra data' button
 function handleScegliAltraData(slotId) {
-  if (state.version === 'v2') {
-    openAvailModal(slotId);
-  } else {
-    openAvailV1Modal(slotId);
-  }
+  openAvailModal(slotId);
 }
 
 function clearStep4Errors() {
@@ -1555,176 +1906,7 @@ function proceedFromStep4() {
   goToScreen('screen-step-recap');
 }
 
-// ==============================================================================
-// MODALE CALENDARIO DISPONIBILITÀ - VERSIONE 1 (Matching media_3745fb8f)
-// ==============================================================================
-const availModalV1State = {
-  slotId: null,
-  selectedDateTime: '',
-  options: []
-};
 
-function openAvailV1Modal(slotId) {
-  availModalV1State.slotId = slotId;
-  const allSlots = getRepositorySlots();
-  const slot = allSlots.find(s => s.id === slotId) || state.wizard.selectedSlot;
-
-  // Recipe & performance details
-  const nreEl = document.getElementById('availV1ModalNRE');
-  const prestEl = document.getElementById('availV1ModalPrestazioni');
-  if (nreEl) {
-    nreEl.innerText = state.wizard.selectedExamCode || '160A24680453583';
-  }
-  if (prestEl) {
-    prestEl.innerText = (state.wizard.selectedExam === 'cardio' ? '1 di 1' : '3 di 3');
-  }
-
-  // Determine current slot date/time
-  const currentDateTime = slot ? (slot.dateTime || `${slot.date} ore ${slot.time}`) : '09/12/2026 ore 08:30';
-  availModalV1State.selectedDateTime = currentDateTime;
-
-  // Generate 10 alternative date options (5 on left, 5 on right)
-  availModalV1State.options = generateV1DateOptions(slot, currentDateTime);
-
-  // Render modal table rows
-  renderAvailV1Table();
-
-  // Show modal
-  const modal = document.getElementById('availModalV1Overlay');
-  if (modal) {
-    modal.classList.add('active');
-    modal.style.display = 'flex';
-  }
-}
-
-function generateV1DateOptions(slot, currentDateTime) {
-  let baseDate = null;
-  let baseTime = '08:30';
-
-  if (slot && slot.date) {
-    baseDate = parseSlotDate(slot.date, slot.dateISO);
-  }
-  if (slot && slot.time) {
-    baseTime = slot.time;
-  }
-
-  // Ensure baseDate is at least today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (!baseDate || isNaN(baseDate.getTime()) || baseDate < today) {
-    baseDate = new Date(today);
-  }
-
-  const options = [];
-  const cur = new Date(baseDate);
-
-  // Collect 10 working days (Mon-Fri)
-  let count = 0;
-  while (count < 10) {
-    const dayOfWeek = cur.getDay(); // 0 is Sunday, 6 is Saturday
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      const day = String(cur.getDate()).padStart(2, '0');
-      const month = String(cur.getMonth() + 1).padStart(2, '0');
-      const year = cur.getFullYear();
-      const dtStr = `${day}/${month}/${year} ore ${baseTime}`;
-      options.push(dtStr);
-      count++;
-    }
-    cur.setDate(cur.getDate() + 1);
-  }
-
-  // Ensure currentDateTime is included in options
-  if (currentDateTime && !options.includes(currentDateTime)) {
-    options[0] = currentDateTime;
-  }
-
-  return options;
-}
-
-function renderAvailV1Table() {
-  const container = document.getElementById('availV1TableBody');
-  if (!container) return;
-
-  const options = availModalV1State.options || [];
-  // 5 rows, each with 2 columns: left is index i, right is index i + 5
-  let html = '';
-  for (let i = 0; i < 5; i++) {
-    const optLeft = options[i] || '';
-    const optRight = options[i + 5] || '';
-
-    const isLeftSelected = (optLeft === availModalV1State.selectedDateTime);
-    const isRightSelected = (optRight === availModalV1State.selectedDateTime);
-
-    html += `
-      <div class="avail-v1-table-row">
-        <div class="avail-v1-cell ${optLeft ? '' : 'avail-v1-cell-empty'}">
-          <span class="avail-v1-cell-date">${optLeft}</span>
-          ${optLeft ? `
-            <button type="button" class="avail-v1-check-btn ${isLeftSelected ? 'selected' : ''}" onclick="selectAvailV1DateTime('${optLeft}')" aria-label="Seleziona data ${optLeft}">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </button>
-          ` : ''}
-        </div>
-        <div class="avail-v1-cell ${optRight ? '' : 'avail-v1-cell-empty'}">
-          <span class="avail-v1-cell-date">${optRight}</span>
-          ${optRight ? `
-            <button type="button" class="avail-v1-check-btn ${isRightSelected ? 'selected' : ''}" onclick="selectAvailV1DateTime('${optRight}')" aria-label="Seleziona data ${optRight}">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </button>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-
-  container.innerHTML = html;
-}
-
-function selectAvailV1DateTime(dateTimeStr) {
-  availModalV1State.selectedDateTime = dateTimeStr;
-  renderAvailV1Table();
-}
-
-function confirmAvailV1Modal() {
-  const allSlots = getRepositorySlots();
-  let targetSlot = allSlots.find(s => s.id === availModalV1State.slotId);
-  if (!targetSlot) {
-    targetSlot = state.wizard.selectedSlot || allSlots[0];
-  }
-
-  if (targetSlot && availModalV1State.selectedDateTime) {
-    const parts = availModalV1State.selectedDateTime.split(' ore ');
-    if (parts.length === 2) {
-      targetSlot.date = parts[0].trim();
-      targetSlot.time = parts[1].trim();
-      targetSlot.dateTime = availModalV1State.selectedDateTime;
-    } else {
-      targetSlot.dateTime = availModalV1State.selectedDateTime;
-    }
-    state.wizard.selectedSlot = targetSlot;
-  }
-
-  closeAvailV1Modal();
-  renderSlots();
-}
-
-function closeAvailV1Modal() {
-  const modal = document.getElementById('availModalV1Overlay');
-  if (modal) {
-    modal.classList.remove('active');
-    modal.style.display = 'none';
-  }
-}
-
-function handleAvailV1BackdropClick(e) {
-  if (e.target && e.target.id === 'availModalV1Overlay') {
-    closeAvailV1Modal();
-  }
-}
 
 // ==============================================================================
 // MODALE CALENDARIO DISPONIBILITÀ (Scegli altra data - Matching Wireframe)
@@ -2134,7 +2316,7 @@ function updateRecapStep() {
 
   setVal('recapNRE', state.wizard.selectedExamCode || '160A37295673820');
   setVal('recapPrestazioni', '1');
-  setVal('recapData', slot.date || '13/11/2026');
+  setVal('recapData', slot.date || '20/11/2026');
   setVal('recapOra', slot.time || '07:55');
   setVal('recapAzienda', slot.azienda || 'Asl Brindisi');
   setVal('recapStruttura', slot.struttura || 'OSPEDALE OSTUNI');
@@ -2218,8 +2400,17 @@ function proceedFromStep5() {
   if (errorBanner) errorBanner.style.display = 'none';
 
   // Genera o conferma codice prenotazione
-  const defaultSlot = getRepositorySlots()[0] || {};
+  const defaultSlot = getRepositorySlots()[0] || {
+    id: 'slot-default',
+    azienda: 'Asl Brindisi',
+    struttura: 'OSPEDALE OSTUNI',
+    address: 'VIA LUIGI MICCOLI - OSTUNI (BR)',
+    date: '20/11/2026',
+    time: '07:55',
+    dateTime: '20/11/2026 ore 07:55'
+  };
   const slot = state.wizard.selectedSlot || defaultSlot;
+  const deadline = calculateCancelDeadline(slot);
 
   if (state.wizard && state.wizard.isModification && state.wizard.editingBookingId) {
     state.wizard.cupCode = state.wizard.editingBookingId;
@@ -2230,32 +2421,83 @@ function proceedFromStep5() {
       existing.dateTime = (slot.date || existing.date) + ' Ore ' + (slot.time || existing.time);
       existing.hospital = slot.struttura || existing.hospital;
       if (slot.azienda) existing.azienda = slot.azienda;
-      existing.status = 'Confermato (Data modificata)';
+      existing.cancelDeadline = deadline.dateStr;
+      existing.status = 'Da pagare da effettuare';
     }
   } else {
-    state.wizard.cupCode = '2026649029';
+    // Genera un CUP code univoco per la nuova prenotazione
+    if (!state.wizard.cupCode || state.wizard.cupCode === '2026649029') {
+      if (state.bookings.some(b => b.id === '2026649029')) {
+        state.wizard.cupCode = '2026' + String(Math.floor(100000 + Math.random() * 900000));
+      } else {
+        state.wizard.cupCode = '2026649029';
+      }
+    }
 
-    // Aggiunge la nuova prenotazione alla lista personale
+    // Determina la prestazione selezionata nello Step 3 (esatta dicitura della ricetta)
+    let examName = '';
+    if (state.wizard.selectedExam === 'cardio') {
+      examName = 'INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX. 5)';
+    } else if (state.wizard.selectedExam === 'lipidi') {
+      examName = 'PROFILO LIPIDICO (COLESTEROLO TOTALE, TRIGLICERIDI, HDL-C, LDL-C)';
+    } else if (state.wizard.exam) {
+      examName = state.wizard.exam;
+    } else {
+      examName = 'PROFILO LIPIDICO (COLESTEROLO TOTALE, TRIGLICERIDI, HDL-C, LDL-C)';
+    }
+
+    // Tipo prenotazione in base al regime scelto nello Step 2
+    let bookingTypeStr = 'SSN con Ricetta Dematerializzata';
+    if (state.wizard.regime === 'alpi') {
+      bookingTypeStr = 'Libera Professione (ALPI)';
+    } else if (state.wizard.regime === 'ssn') {
+      bookingTypeStr = 'SSN con Ricetta Dematerializzata';
+    }
+
+    const slotDate = slot.date || '20/11/2026';
+    const slotTime = slot.time || '07:55';
+    const slotDateTime = `${slotDate} Ore ${slotTime}`;
+    const slotHospital = slot.struttura || 'OSPEDALE OSTUNI';
+    const slotAzienda = slot.azienda || 'Asl Brindisi';
+
+    // Aggiunge la nuova prenotazione alla lista personale con tutti i dati perfettamente combacianti
     const newBooking = {
       id: state.wizard.cupCode,
-      date: slot.date || '13/11/2026',
-      time: slot.time || '07:55',
-      dateTime: (slot.date || '13/11/2026') + ' Ore ' + (slot.time || '07:55'),
-      exam: (state.wizard.selectedExam === 'cardio' ? 'INSULINA (CURVA DA CARICO)' : 'PROFILO LIPIDICO (COLESTEROLO E TRIGLICERIDI)'),
-      hospital: slot.struttura || 'OSPEDALE OSTUNI',
-      bookingType: 'SSN con Ricetta Dematerializzata',
-      cancelDeadline: '11/11/2026',
-      status: 'Confermato'
+      date: slotDate,
+      time: slotTime,
+      dateTime: slotDateTime,
+      exam: examName,
+      hospital: slotHospital,
+      azienda: slotAzienda,
+      bookingType: bookingTypeStr,
+      cancelDeadline: deadline.dateStr,
+      status: 'Da pagare da effettuare'
     };
 
-    // Se non già presente, aggiungila
-    if (!state.bookings.some(b => b.id === newBooking.id)) {
-      state.bookings.unshift(newBooking);
-    }
+    // Rimuove eventuale duplicato con lo stesso id e inserisce in cima alla lista
+    state.bookings = state.bookings.filter(b => b.id !== newBooking.id);
+    state.bookings.unshift(newBooking);
   }
 
   // Naviga al 6° Passo (Riepilogo)
   goToScreen('screen-step-success');
+}
+
+// Calcolo termine utile disdetta (48 ore prima della prenotazione)
+function calculateCancelDeadline(slot) {
+  if (!slot) return { dateStr: '18/11/2026', timeStr: '07:55', fullStr: '18/11/2026 ore 07:55' };
+  const d = parseSlotDate(slot.date, slot.dateISO);
+  if (d && !isNaN(d.getTime())) {
+    const deadline = new Date(d.getTime() - 2 * 24 * 60 * 60 * 1000);
+    const dateStr = formatDateDDMMYYYY(deadline);
+    const timeStr = slot.time || '07:55';
+    return {
+      dateStr: dateStr,
+      timeStr: timeStr,
+      fullStr: `${dateStr} ore ${timeStr}`
+    };
+  }
+  return { dateStr: '18/11/2026', timeStr: '07:55', fullStr: '18/11/2026 ore 07:55' };
 }
 
 // Step 6: Update Success (Riepilogo - Matching Image 2)
@@ -2266,10 +2508,20 @@ function updateSuccessStep() {
     const el = document.getElementById(id);
     if (el) el.innerText = val;
   };
+  const setHtml = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
 
   setVal('successBookingId', 'NUMERO PRENOTAZIONE: ' + (state.wizard.cupCode || '2026649029'));
   setVal('successHospital', slot.struttura || 'OSPEDALE OSTUNI');
-  setVal('successDateTime', (slot.date || '13/11/2026') + ' ore ' + (slot.time || '07:55'));
+  setVal('successDateTime', (slot.date || '20/11/2026') + ' ore ' + (slot.time || '07:55'));
+
+  // Calcolo dinamico termine utile di disdetta (48 ore prima della prenotazione)
+  const deadline = calculateCancelDeadline(slot);
+  setVal('successCancelDeadlineDate', deadline.dateStr);
+  setVal('successCancelDeadlineTime', `Entro le ore ${deadline.timeStr} (48h prima)`);
+  setHtml('successDisdettaFullText', `<strong>${deadline.dateStr} alle ore ${deadline.timeStr}</strong>`);
 
   const bannerText = document.getElementById('successBannerText');
   if (bannerText) {
@@ -2352,7 +2604,7 @@ function tornaIndietro() {
   }
 }
 
-// Update "Torna indietro" / "Chiudi ×" visibility based on current screen and version
+// Update "Chiudi ×" visibility based on current screen
 function updateTornaIndietro(screenId) {
   const btn = document.getElementById('btnTornaIndietro');
   const container = document.getElementById('tornaIndietroContainer');
@@ -2369,16 +2621,11 @@ function updateTornaIndietro(screenId) {
 
   const isWizard = wizardScreens.includes(screenId);
 
-  if (isWizard && state.version === 'v2') {
-    // Version 2: show "Chiudi ×" button in page header, hide "Torna indietro"
+  if (isWizard) {
+    // Show "Chiudi ×" button in page header, hide "Torna indietro"
     if (btn) { btn.classList.remove('visible'); btn.style.display = 'none'; }
     if (container) container.style.display = 'none';
     if (chiudiBtn) chiudiBtn.style.display = 'inline-flex';
-  } else if (isWizard) {
-    // Version 1: show "Torna indietro", hide "Chiudi ×"
-    if (btn) { btn.classList.add('visible'); btn.style.display = 'inline-block'; }
-    if (container) container.style.display = 'block';
-    if (chiudiBtn) chiudiBtn.style.display = 'none';
   } else {
     // Not a wizard screen: hide both
     if (btn) { btn.classList.remove('visible'); btn.style.display = 'none'; }
@@ -2417,22 +2664,30 @@ function closeUserMenu() {
   if (menu) menu.classList.remove('active');
 }
 
-// Close user menu when clicking outside
+// Close user menu and custom datepicker when clicking outside
 document.addEventListener('click', (e) => {
   const pill = document.querySelector('.user-pill-btn-v2');
   const menu = document.getElementById('userDropdownMenu');
   if (pill && menu && !pill.contains(e.target) && !menu.contains(e.target)) {
     menu.classList.remove('active');
   }
+
+  const popover = document.getElementById('filterDatePickerPopover');
+  const dateGroup = document.querySelector('.filter-date-picker-group');
+  if (popover && popover.style.display !== 'none') {
+    if (dateGroup && !dateGroup.contains(e.target)) {
+      closeFilterDatePicker();
+    }
+  }
 });
 
 // Initial Setup
 document.addEventListener('DOMContentLoaded', () => {
-  let savedVersion = 'v1';
-  try {
-    savedVersion = localStorage.getItem('fse_prototype_version') || 'v1';
-  } catch (e) { }
-  setPrototypeVersion(savedVersion);
+  setupStep4();
+  const step3Email = document.getElementById('inputEmail');
+  const step3Phone = document.getElementById('inputPhone');
+  if (step3Email) step3Email.value = userContacts.email;
+  if (step3Phone) step3Phone.value = userContacts.cellulare;
   goToScreen('screen-home');
 });
 
@@ -2692,4 +2947,135 @@ function resetBookingFilters() {
 
   closeFilterModal();
   renderBookings();
+}
+
+
+/* ==========================================================================
+   PROFILO SANITARIO (AREA PERSONALE) LOGIC
+   ========================================================================== */
+
+// Recapiti paziente
+let userContacts = {
+  cellulare: '+39 340 1234567',
+  email: 'miriana.pinto@email.it'
+};
+
+function saveProfiloRecapiti() {
+  const cellInput = document.getElementById('profiloCellulare');
+  const emailInput = document.getElementById('profiloEmail');
+  const successBanner = document.getElementById('profiloSaveSuccessBanner');
+
+  if (cellInput && emailInput) {
+    userContacts.cellulare = cellInput.value.trim();
+    userContacts.email = emailInput.value.trim();
+    state.user.phone = userContacts.cellulare;
+    state.user.email = userContacts.email;
+
+    // Sincronizza i campi contatti nello Step 3 del wizard
+    const step3Email = document.getElementById('inputEmail');
+    const step3Phone = document.getElementById('inputPhone');
+    if (step3Email) step3Email.value = userContacts.email;
+    if (step3Phone) step3Phone.value = userContacts.cellulare;
+
+    if (successBanner) {
+      successBanner.style.display = 'flex';
+      setTimeout(() => {
+        successBanner.style.display = 'none';
+      }, 5000);
+    }
+  }
+}
+
+function resetProfiloRecapiti() {
+  const cellInput = document.getElementById('profiloCellulare');
+  const emailInput = document.getElementById('profiloEmail');
+  const successBanner = document.getElementById('profiloSaveSuccessBanner');
+
+  if (cellInput) cellInput.value = userContacts.cellulare;
+  if (emailInput) emailInput.value = userContacts.email;
+  if (successBanner) successBanner.style.display = 'none';
+}
+
+// Modal Scegli / Revoca Medico
+function openScegliRevocaModal() {
+  const modal = document.getElementById('modalScegliRevocaOverlay');
+  if (modal) modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeScegliRevocaModal() {
+  const modal = document.getElementById('modalScegliRevocaOverlay');
+  if (modal) modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleScegliRevocaBackdropClick(event) {
+  if (event && event.target && event.target.id === 'modalScegliRevocaOverlay') {
+    closeScegliRevocaModal();
+  }
+}
+
+function confirmScegliRevocaMedico() {
+  const select = document.getElementById('selectNuovoMedico');
+  if (!select || !select.value) {
+    alert('Seleziona un medico disponibile per procedere con la scelta.');
+    return;
+  }
+  alert('Richiesta registrata con successo! Il nuovo medico è stato assegnato al tuo profilo.');
+  closeScegliRevocaModal();
+}
+
+// Modal Chiedi Nuova Esenzione con Autocertificazione
+function openChiediEsenzioneModal() {
+  const modal = document.getElementById('modalChiediEsenzioneOverlay');
+  if (modal) modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChiediEsenzioneModal() {
+  const modal = document.getElementById('modalChiediEsenzioneOverlay');
+  if (modal) modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleChiediEsenzioneBackdropClick(event) {
+  if (event && event.target && event.target.id === 'modalChiediEsenzioneOverlay') {
+    closeChiediEsenzioneModal();
+  }
+}
+
+function submitAutocertificazioneEsenzione() {
+  const select = document.getElementById('selectCodiceEsenzione');
+  const check = document.getElementById('checkAutocertificazione');
+
+  if (!select || !select.value) {
+    alert('Seleziona un codice di esenzione.');
+    return;
+  }
+  if (!check || !check.checked) {
+    alert('Devi confermare la dichiarazione di responsabilità.');
+    return;
+  }
+
+  alert(`La richiesta di esenzione (${select.value}) è stata trasmessa con successo al sistema regionale per le verifiche.`);
+  closeChiediEsenzioneModal();
+}
+
+// Modal Revoca Esenzione
+function openRevocaEsenzioneModal() {
+  const modal = document.getElementById('modalRevocaEsenzioneOverlay');
+  if (modal) modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRevocaEsenzioneModal() {
+  const modal = document.getElementById('modalRevocaEsenzioneOverlay');
+  if (modal) modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleRevocaEsenzioneBackdropClick(event) {
+  if (event && event.target && event.target.id === 'modalRevocaEsenzioneOverlay') {
+    closeRevocaEsenzioneModal();
+  }
 }

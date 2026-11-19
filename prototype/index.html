@@ -5,6 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FSE Puglia - Portale della Salute e Prenotazioni FSE (Wireframe v2)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23A23847'/><text y='70' x='50' font-size='60' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>F</text></svg>">
@@ -100,75 +105,42 @@
             <div class="user-dropdown-name">Miriana Pinto</div>
             <div class="user-dropdown-cf">PNTMRN90A41A662K</div>
             <hr class="user-dropdown-divider">
-            <button class="user-dropdown-item" onclick="goToScreen('screen-fse'); closeUserMenu();">Area
-              Personale</button>
-            <button class="user-dropdown-item" onclick="goToScreen('screen-bookings'); closeUserMenu();">Le mie
-              prenotazioni</button>
-            <button class="user-dropdown-item user-dropdown-logout" onclick="logoutToHome()">Esci</button>
+            <button class="user-dropdown-item" onclick="goToScreen('screen-profilo-sanitario'); closeUserMenu();">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>Profilo sanitario
+            </button>
+            <button class="user-dropdown-item" onclick="goToScreen('screen-bookings'); closeUserMenu();">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle;">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>Le mie prenotazioni
+            </button>
+            <button class="user-dropdown-item" onclick="goToScreen('screen-fse'); closeUserMenu();">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>Home Fascicolo
+            </button>
+            <button class="user-dropdown-item user-dropdown-logout" onclick="logoutToHome()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle;">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>Esci
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
 
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
-
-          <div class="filter-modal-divider"></div>
-
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
   </header>
 
@@ -206,71 +178,13 @@
             </div>
           </div>
         </div>
-        <button type="button" class="btn-chiudi-wizard" id="btnChiudiWizard" onclick="closeBookingToBookings()" style="display: none;">
+        <button type="button" class="btn-chiudi-wizard" id="btnChiudiWizard" onclick="closeBookingToBookings()"
+          style="display: none;">
           Chiudi <span class="btn-chiudi-cross" aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
 
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
-
-          <div class="filter-modal-divider"></div>
-
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
 
       <!-- "Torna indietro" button — shown when wizard stepper is active -->
       <div id="tornaIndietroContainer" style="display: none; margin: 12px 0 16px 0;">
@@ -368,16 +282,16 @@
 
           <div class="emergency-cards-grid-4">
             <div class="emergency-box-card" onclick="showNotImplemented()">
-              <span class="emergency-box-text">pronto soccorso</span>
+              <span class="emergency-box-text">Pronto Soccorso</span>
             </div>
             <div class="emergency-box-card" onclick="showNotImplemented()">
-              <span class="emergency-box-text">assistenza notturna<br>e festiva</span>
+              <span class="emergency-box-text">Assistenza Notturna<br>e festiva</span>
             </div>
             <div class="emergency-box-card" onclick="showNotImplemented()">
-              <span class="emergency-box-text">118 e 118 sordi</span>
+              <span class="emergency-box-text">118 e 118 Sordi</span>
             </div>
             <div class="emergency-box-card" onclick="showNotImplemented()">
-              <span class="emergency-box-text">centro antiveleni</span>
+              <span class="emergency-box-text">Centro Antiveleni</span>
             </div>
           </div>
         </div>
@@ -614,6 +528,308 @@
       </section>
 
       <!-- ==================================================================
+           SCREEN: PROFILO SANITARIO (AREA PERSONALE)
+           ================================================================== -->
+      <section id="screen-profilo-sanitario" class="wireframe-screen">
+        <nav class="breadcrumb-nav" aria-label="Percorso di navigazione">
+          <a onclick="goToScreen('screen-home')">PugliaSalute</a>
+          <span class="breadcrumb-sep">/</span>
+          <a onclick="goToScreen('screen-fse')">Fascicolo Sanitario Elettronico</a>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">Profilo sanitario</span>
+        </nav>
+
+        <div class="profilo-header-block">
+          <div class="profilo-header-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            AREA PERSONALE
+          </div>
+          <h1 class="page-main-title" style="margin-bottom: 6px;">Profilo sanitario</h1>
+          <p class="profilo-subtitle">
+            Gestisci i tuoi dati anagrafici e recapiti, consulta le informazioni sul tuo medico di famiglia e visualizza
+            le tue esenzioni ticket.
+          </p>
+        </div>
+
+        <!-- SEZIONE 1: I TUOI DATI -->
+        <div class="profilo-section-card">
+          <div class="profilo-section-header">
+            <div class="profilo-section-title-wrap">
+              <div class="profilo-section-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div>
+                <h2 class="profilo-section-title">I tuoi dati</h2>
+                <p class="profilo-section-desc">Dati anagrafici certificati dal Sistema Sanitario e recapiti di contatto
+                  modificabili.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="profilo-data-grid">
+            <!-- Nome -->
+            <div class="profilo-field-box">
+              <span class="profilo-field-label">Nome</span>
+              <div class="profilo-field-readonly">Miriana</div>
+            </div>
+
+            <!-- Cognome -->
+            <div class="profilo-field-box">
+              <span class="profilo-field-label">Cognome</span>
+              <div class="profilo-field-readonly">Pinto</div>
+            </div>
+
+            <!-- Codice Fiscale -->
+            <div class="profilo-field-box">
+              <span class="profilo-field-label">Codice Fiscale</span>
+              <div class="profilo-field-readonly profilo-field-cf">PNTMRN90A41A662K</div>
+            </div>
+
+            <!-- Data di nascita -->
+            <div class="profilo-field-box">
+              <span class="profilo-field-label">Data di nascita</span>
+              <div class="profilo-field-readonly">14/01/1990</div>
+            </div>
+          </div>
+
+          <div class="profilo-cert-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>I dati anagrafici sono certificati tramite identità digitale (SPID/CIE) e non possono essere
+              modificati da questo portale.</span>
+          </div>
+
+          <div class="profilo-contacts-divider"></div>
+
+          <h3 class="profilo-contacts-title">Recapiti di contatto (Modificabili)</h3>
+          <p class="profilo-contacts-subtitle">I recapiti saranno utilizzati per le notifiche sui tuoi appuntamenti,
+            promemoria ricette e comunicazioni sanitarie.</p>
+
+          <form id="formProfiloRecapiti" onsubmit="event.preventDefault(); saveProfiloRecapiti();">
+            <div class="profilo-contacts-grid">
+              <div class="form-group-wireframe">
+                <label class="form-field-label" for="profiloCellulare">
+                  Numero di cellulare <span class="required-star">*</span>
+                </label>
+                <div class="input-with-icon-wrapper">
+                  <input type="tel" id="profiloCellulare" class="form-input-wireframe" value="+39 340 1234567" required
+                    autocomplete="tel">
+                </div>
+                <span class="field-help-text">Per ricezione SMS con promemoria e codici di prenotazione.</span>
+              </div>
+
+              <div class="form-group-wireframe">
+                <label class="form-field-label" for="profiloEmail">
+                  Indirizzo Email <span class="required-star">*</span>
+                </label>
+                <div class="input-with-icon-wrapper">
+                  <input type="email" id="profiloEmail" class="form-input-wireframe" value="miriana.pinto@email.it"
+                    required autocomplete="email">
+                </div>
+                <span class="field-help-text">Per invio ricevute di prenotazione, documenti e referti.</span>
+              </div>
+            </div>
+
+            <div class="profilo-actions-row">
+              <button type="submit" class="btn-wireframe-navy" id="btnSalvaRecapiti">Salva modifiche recapiti</button>
+              <button type="button" class="btn-outline-navy" onclick="resetProfiloRecapiti()">Annulla modifiche</button>
+            </div>
+            <div id="profiloSaveSuccessBanner" class="profilo-alert-success" style="display: none;" role="status">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Recapiti aggiornati con successo! Le prossime comunicazioni verranno inviate ai nuovi
+                contatti.</span>
+            </div>
+          </form>
+        </div>
+
+        <!-- SEZIONE 2: I TUOI MEDICI -->
+        <div class="profilo-section-card">
+          <div class="profilo-section-header">
+            <div class="profilo-section-title-wrap">
+              <div class="profilo-section-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <h2 class="profilo-section-title">I tuoi medici</h2>
+                  <span class="profilo-badge-active">Medico Attivo</span>
+                </div>
+                <p class="profilo-section-desc">Informazioni sul Medico di Medicina Generale (MMG) attualmente
+                  assegnato.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn-outline-navy" onclick="openScegliRevocaModal()">
+              Scegli/Revoca medico di famiglia
+            </button>
+          </div>
+
+          <div class="profilo-medico-card">
+            <div class="medico-main-identity">
+              <div class="medico-avatar" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div>
+                <div class="medico-role-label">Medico di Medicina Generale (MMG)</div>
+                <div class="medico-name-title">Dott. Alessandro De Luca</div>
+                <div class="medico-codice">Codice Regionale: <strong>BA40921</strong></div>
+              </div>
+            </div>
+
+            <div class="medico-info-grid">
+              <!-- Azienda Sanitaria -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Azienda Sanitaria</span>
+                <span class="medico-cell-value">ASL BARI</span>
+              </div>
+
+              <!-- Distretto -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Distretto</span>
+                <span class="medico-cell-value">Distretto Socio Sanitario 4 - Bari Centro</span>
+              </div>
+
+              <!-- Data di presa in cura -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Data di presa in cura</span>
+                <span class="medico-cell-value">15/03/2021</span>
+              </div>
+
+              <!-- Telefono ambulatorio -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Telefono ambulatorio</span>
+                <span class="medico-cell-value">
+                  <a href="tel:0805219874" class="medico-link-tel">080 5219874</a>
+                </span>
+              </div>
+
+              <!-- Cellulare reperibilità -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Cellulare reperibilità</span>
+                <span class="medico-cell-value">
+                  <a href="tel:+393389876543" class="medico-link-tel">+39 338 9876543</a>
+                </span>
+              </div>
+
+              <!-- Email -->
+              <div class="medico-info-cell">
+                <span class="medico-cell-label">Email</span>
+                <span class="medico-cell-value">
+                  <a href="mailto:dott.deluca.mmg@sanita.puglia.it"
+                    class="medico-link-email">dott.deluca.mmg@sanita.puglia.it</a>
+                </span>
+              </div>
+            </div>
+
+            <!-- Posizione ambulatorio -->
+            <div class="medico-extra-box">
+              <div class="medico-extra-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span class="medico-extra-title">Informazioni riguardo alla posizione dell'ambulatorio</span>
+              </div>
+              <p class="medico-extra-text">
+                <strong>Via Sparano da Bari, 142 - 70121 Bari (BA)</strong><br>
+                Piano 1, Scala B. La struttura è dotata di ascensore e accesso per persone a mobilità ridotta. Fermata
+                autobus a 100 metri (Linee urbane 1, 2, 6, 12).
+              </p>
+            </div>
+
+            <!-- Note e orari ambulatorio -->
+            <div class="medico-extra-box" style="margin-top: 14px;">
+              <div class="medico-extra-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="medico-extra-title">Note e informazioni ambulatorio</span>
+              </div>
+              <p class="medico-extra-text">
+                <strong>Orari di apertura e ricevimento:</strong><br>
+                Lunedì, Mercoledì e Venerdì: 09:00 - 12:30<br>
+                Martedì e Giovedì: 15:30 - 18:30<br>
+                <span style="display:inline-block; margin-top: 6px; color: #475569;">
+                  Le visite in studio avvengono previo appuntamento telefonico. Per urgenze non differibili, richieste
+                  di certificati o rinnovo ricette ripetitive contattare la segreteria dal lunedì al venerdì dalle 08:30
+                  alle 10:00 o inviare un'email all'indirizzo sopra indicato.
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEZIONE 3: LE TUE ESENZIONI -->
+        <div class="profilo-section-card">
+          <div class="profilo-section-header">
+            <div class="profilo-section-title-wrap">
+              <div class="profilo-section-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="profilo-section-title">Le tue esenzioni</h2>
+                <p class="profilo-section-desc">Esenzioni ticket sanitarie riconosciute per reddito, patologia,
+                  invalidità o autocertificate.</p>
+              </div>
+            </div>
+
+            <div class="profilo-header-actions-group">
+              <button type="button" class="btn-wireframe-navy" onclick="openChiediEsenzioneModal()">
+                Chiedi una nuova esenzione con autocertificazione
+              </button>
+              <button type="button" class="btn-outline-navy" onclick="openRevocaEsenzioneModal()">
+                Revoca esenzione
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty State (Matching user text requirement) -->
+          <div class="profilo-esenzioni-empty" id="esenzioniEmptyState">
+            <div class="esenzioni-empty-icon-wrap" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+            </div>
+            <h3 class="esenzioni-empty-title">Non sono presenti esenzioni associate al tuo profilo sanitario</h3>
+            <p class="esenzioni-empty-desc">
+              Qui potrai trovare tutte le esenzioni riconosciute e quelle autocertificate. Al momento non hai esenzioni.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
            SCREEN 3: LE MIE PRENOTAZIONI
            ================================================================== -->
       <section id="screen-bookings" class="wireframe-screen">
@@ -628,7 +844,8 @@
         <p class="bookings-subtitle">Gestisci le prenotazioni effettuate.</p>
         <div class="bookings-toolbar">
           <button class="btn-filtra-nav" id="btnFiltraPrenotazioni" onclick="openFilterModal()">Filtra</button>
-          <button class="btn-wireframe-navy" onclick="startNewBooking(); goToScreen('screen-step-beneficiary')">Nuova prenotazione</button>
+          <button class="btn-outline-navy" onclick="startNewBooking(); goToScreen('screen-step-beneficiary')">Nuova
+            prenotazione</button>
         </div>
         <div class="booking-active-filters-bar" id="bookingActiveFiltersBar" style="display: none;"></div>
         <div class="bookings-wireframe-list" id="bookingsWireframeList">
@@ -923,7 +1140,7 @@
             role="radio" aria-checked="false" tabindex="0">
             <div class="choice-checkmark-circle">✓</div>
             <div>
-              <div class="choice-title">Prenota per te stesso o per altri con Accesso Libero</div>
+              <div class="choice-title">Prenota con Accesso Libero</div>
               <div class="choice-desc">
                 Mediante questa scelta avrai bisogno di due dati:
                 <ul class="choice-bullet-list">
@@ -1049,13 +1266,13 @@
         <div class="form-inputs-row-2col" style="margin-bottom: 24px;">
           <div class="form-field-group">
             <label class="form-field-label" id="labelInputPhone">Recapito Telefonico*</label>
-            <input type="tel" id="inputPhone" class="form-field-input" value="+1234567890"
+            <input type="tel" id="inputPhone" class="form-field-input" value="+39 340 1234567"
               oninput="handleStep3FieldChange()">
           </div>
           <div class="form-field-group">
             <label class="form-field-label" id="labelInputEmail">E-mail invio promemoria*</label>
-            <input type="email" id="inputEmail" class="form-field-input" placeholder="Inserisci la tua email"
-              oninput="handleStep3FieldChange()">
+            <input type="email" id="inputEmail" class="form-field-input" value="miriana.pinto@email.it"
+              placeholder="Inserisci la tua email" oninput="handleStep3FieldChange()">
           </div>
         </div>
 
@@ -1185,7 +1402,8 @@
           <div class="booking-mod-content">
             <div class="booking-mod-title" id="step4ModTitle">Modifica della prenotazione</div>
             <div class="booking-mod-desc" id="step4ModDesc">
-              Stai modificando la data per questa prestazione. Seleziona una nuova data o struttura tra quelle disponibili, oppure clicca su <em>"Scegli altra data"</em>.
+              Stai modificando la data per questa prestazione. Seleziona una nuova data o struttura tra quelle
+              disponibili, oppure clicca su <em>"Scegli altra data"</em>.
             </div>
           </div>
         </div>
@@ -1237,9 +1455,85 @@
             </select>
           </div>
 
-          <div class="form-field-group" style="margin-top: 16px; max-width: 260px;">
-            <label class="form-field-label">Cerca a partire da:</label>
-            <input type="date" id="inputDateFrom" class="form-field-input" onchange="renderSlots()">
+          <div class="form-field-group filter-date-picker-group"
+            style="margin-top: 16px; max-width: 260px; position: relative;">
+            <label class="form-field-label" for="filterDateDisplay">Cerca a partire da:</label>
+            <div class="custom-datepicker-input-wrapper">
+              <input type="text" id="filterDateDisplay" class="form-field-input custom-date-display"
+                placeholder="gg/mm/aaaa" autocomplete="off" maxlength="10" inputmode="numeric"
+                onkeydown="handleFilterDateKeydown(event, this)" oninput="handleFilterDateInput(this, event)"
+                onblur="handleFilterDateBlur(this)" aria-haspopup="dialog" aria-expanded="false"
+                aria-controls="filterDatePickerPopover">
+              <button type="button" class="btn-custom-date-clear" id="btnFilterDateClear"
+                onclick="clearFilterDate(event)" aria-label="Cancella data selezionata" title="Cancella data"
+                style="display: none;">
+                &times;
+              </button>
+              <button type="button" class="btn-custom-date-trigger" onclick="toggleFilterDatePicker(event)"
+                aria-label="Apri calendario" title="Apri calendario">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </button>
+            </div>
+            <!-- Campo hidden con valore data per logica di filtraggio -->
+            <input type="hidden" id="inputDateFrom" value="">
+
+            <!-- Popover Calendario personalizzato identico al modal -->
+            <div class="custom-datepicker-popover" id="filterDatePickerPopover" role="dialog"
+              aria-label="Calendario cerca a partire da" style="display: none;" onclick="event.stopPropagation()">
+              <div class="custom-cal-header-title">Data</div>
+
+              <div class="avail-calendar-selectors custom-cal-selectors">
+                <select id="filterCalMonthSelect" class="avail-select-picker"
+                  onchange="changeFilterCalMonth(this.value)" aria-label="Mese">
+                  <option value="0">GENNAIO</option>
+                  <option value="1">FEBBRAIO</option>
+                  <option value="2">MARZO</option>
+                  <option value="3">APRILE</option>
+                  <option value="4">MAGGIO</option>
+                  <option value="5">GIUGNO</option>
+                  <option value="6">LUGLIO</option>
+                  <option value="7">AGOSTO</option>
+                  <option value="8">SETTEMBRE</option>
+                  <option value="9">OTTOBRE</option>
+                  <option value="10" selected>NOVEMBRE</option>
+                  <option value="11">DICEMBRE</option>
+                </select>
+                <select id="filterCalYearSelect" class="avail-select-picker" onchange="changeFilterCalYear(this.value)"
+                  aria-label="Anno">
+                  <option value="2026" selected>2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                </select>
+              </div>
+
+              <div class="custom-cal-divider"></div>
+
+              <div class="avail-calendar-grid-wrap custom-cal-grid-wrap">
+                <div class="avail-cal-weekdays">
+                  <span>Lun</span>
+                  <span>Mar</span>
+                  <span>Mer</span>
+                  <span>Gio</span>
+                  <span>Ven</span>
+                  <span>Sab</span>
+                  <span>Dom</span>
+                </div>
+                <div class="avail-cal-days" id="filterCalDaysGrid">
+                  <!-- Popolato dinamicamente da app.js -->
+                </div>
+              </div>
+
+              <div class="custom-cal-actions">
+                <button type="button" class="btn-cal-action-today" onclick="selectFilterCalToday(event)">Oggi</button>
+                <button type="button" class="btn-cal-action-clear" onclick="clearFilterDate(event)">Azzera data</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1288,7 +1582,7 @@
             <div class="recap-detail-value" id="recapPrestazioni">3</div>
 
             <div class="recap-detail-label">Data</div>
-            <div class="recap-detail-value" id="recapData">13/11/2026</div>
+            <div class="recap-detail-value" id="recapData">20/11/2026</div>
             <div class="recap-detail-label">Ora</div>
             <div class="recap-detail-value" id="recapOra">7:55</div>
 
@@ -1310,38 +1604,35 @@
           <p class="dichiarazioni-title">Accetta le seguenti Dichiarazioni qui riportate per procedere</p>
           <p class="note-operatore-label">NOTE OPERATORE</p>
           <div class="note-operatore-text" id="noteOperatoreText">
-            <p style="margin-bottom: 8px;"><strong>INSULINA (CURVA DA CARICO O DOPO TEST FARMACOLOGICI, MAX.
-                5):</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE IN QUESTA AGENDA SOLO SE
-              NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO; (cod. 67001,cod. 90.28.5,cod.
-              90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I CODICI INDICATI LA PRESTAZIONE NON
-              VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE PRENOTATI IL SABATO E I GIORNI
-              PREFESTIVI.</p>
-            <p style="margin-bottom: 8px;"><strong>GLUCOSIO DOSAGGIO SERIALE DOPO CARICO (DA 2 a 4
-                DETERMINAZIONI):</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE IN QUESTA
-              AGENDA SOLO SE NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO; (cod.
-              67001,cod. 90.28.5,cod. 90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I CODICI
-              INDICATI LA PRESTAZIONE NON VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE
-              PRENOTATI IL SABATO E I GIORNI PREFESTIVI.</p>
-            <p><strong>HB - EMOGLOBINA GLICATA:</strong> !!! ATTENZIONE ATTENZIONE ATTENZIONE !!! È POSSIBILE PRENOTARE
-              IN QUESTA AGENDA SOLO SE NELL'IMPEGNATIVA SONO RIPORTATI I CODICI DI CURVA DA CARICO E/O DOPO CARICO;
-              (cod. 67001,cod. 90.28.5,cod. 90.26.5,cod. 90.27.1, cod. 66501-1). IN CASO LA RICETTA NON PRESENTI I
-              CODICI INDICATI LA PRESTAZIONE NON VERRÀ ESEGUITA.!!!ATTENZIONE!!! GLI ESAMI COLTURALI NON POSSONO ESSERE
-              PRENOTATI IL SABATO E I GIORNI PREFESTIVI.</p>
+            <p><strong>Insulina (curva da carico o dopo test farmacologici, max. 5)<br>
+                Glucosio, dosaggio seriale dopo carico (da 2 a 4 determinazioni)</strong><br>
+              Per prenotare in questa agenda, l’impegnativa deve riportare uno dei seguenti codici di curva da carico o
+              dopo carico: 67001, 90.28.5, 90.26.5, 90.27.1, 66501-1.
+              <br>Ti consigliamo di controllare la ricetta prima di presentarti: se i codici non sono presenti, la
+              prestazione non potrà essere eseguita.
+            </p>
+            <p><strong>HB – Emoglobina glicata</strong><br>Per questa prestazione, controlla
+              che sull’impegnativa sia presente uno dei
+              codici indicati sopra (67001, 90.28.5, 90.26.5, 90.27.1, 66501-1) prima di presentarti.</p>
+            <p><strong>Nota valida per gli esami colturali</strong><br>Gli esami colturali non possono essere prenotati
+              il sabato e nei giorni prefestivi.</p>
           </div>
           <div class="consent-row-wireframe" id="consentRowNote" style="margin-top: 14px;">
             <input type="checkbox" id="checkNoteOperatore" onchange="handleStep5CheckboxChange()"
-              style="margin-top: 2px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
-            <label for="checkNoteOperatore" style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 500;">
+              style="margin-top: 2px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
+            <label for="checkNoteOperatore"
+              style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 700; font-size: 1rem;">
               Dichiaro di aver preso visione della Note Operatore di questa prestazione
             </label>
           </div>
         </div>
 
         <!-- Privacy -->
-        <div style="padding: 16px 0; font-size: 0.88rem; color: var(--ps-text-muted);">
+        <div style="padding: 16px 0; font-size: 0.96rem; color: var(--ps-text-main);">
           I tuoi dati sanitari vengono usati solo per gestire la prenotazione. Qui puoi consultare l'<a
             class="link-privacy-underline" onclick="openPrivacyModal()"
-            style="color: var(--ps-text-main); font-weight: 600; cursor: pointer;">Informativa Privacy</a>
+            style="color: var(--ps-wireframe-link-blue); font-weight: 700; cursor: pointer; text-decoration: underline;">Informativa
+            Privacy</a>
           <svg style="display:inline; margin-left:4px; vertical-align:middle;" width="14" height="14"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
@@ -1352,9 +1643,9 @@
         </div>
         <div class="consent-row-wireframe" id="consentRowPrivacy" style="margin-bottom: 20px;">
           <input type="checkbox" id="checkPrivacyConsent" onchange="handleStep5CheckboxChange()"
-            style="margin-top: 2px; width: 16px; height: 16px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
+            style="margin-top: 2px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--ps-wireframe-red);">
           <label for="checkPrivacyConsent" id="labelPrivacyConsent"
-            style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 500;">
+            style="cursor: pointer; color: var(--ps-wireframe-red); font-weight: 700; font-size: 1rem;">
             Dichiaro di accettare l'Informativa Privacy
           </label>
         </div>
@@ -1390,7 +1681,7 @@
           </div>
 
           <div class="wireframe-modal-body" id="privacyModalBody">
-            <p style="color: var(--ps-text-muted); font-size: 0.82rem; margin-bottom: 12px;">
+            <p style="color: var(--ps-text-main); font-size: 0.95rem; line-height: 1.6; margin-bottom: 14px;">
               I dati personali raccolti per l'erogazione del servizio di prenotazione CUP saranno trattati in conformità
               al Regolamento Generale sulla Protezione dei Dati (Regolamento UE 2016/679 - GDPR) e al D.Lgs. 196/2003.
             </p>
@@ -1423,183 +1714,10 @@
         </div>
       </div>
 
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
 
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
-
-          <div class="filter-modal-divider"></div>
-
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
 
       <!-- ==================================================================
-           MODAL: CALENDARIO DISPONIBILITÀ (VERSIONE 1 - Matching media_3745fb8f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="availModalV1Overlay" role="dialog" aria-modal="true"
-        onclick="handleAvailV1BackdropClick(event)">
-        <div class="avail-v1-modal-card" onclick="event.stopPropagation()">
-          <!-- Header -->
-          <div class="avail-v1-modal-header">
-            <h2 class="avail-v1-modal-title">Calendario Disponibilit&agrave;</h2>
-            <button class="avail-v1-modal-close" type="button" onclick="closeAvailV1Modal()"
-              aria-label="Chiudi finestra">&times;</button>
-          </div>
-
-          <!-- Subtitle -->
-          <p class="avail-v1-modal-subtitle">Qui puoi visualizzare le date disponibili dell'appuntamento che hai
-            precedentemente selezionato.</p>
-
-          <!-- Info Box: NRE & Prestazioni -->
-          <div class="avail-v1-meta-box">
-            <div class="avail-v1-meta-item">NRE: <strong id="availV1ModalNRE">160A24680453583</strong></div>
-            <div class="avail-v1-meta-item">Prestazioni: <strong id="availV1ModalPrestazioni">3 di 3</strong></div>
-          </div>
-
-          <!-- 2-Column Table of Dates -->
-          <div class="avail-v1-table-wrap">
-            <div class="avail-v1-table-header">
-              <div class="avail-v1-th-col">
-                <span class="avail-v1-th-label">Date</span>
-                <span class="avail-v1-th-action">Seleziona</span>
-              </div>
-              <div class="avail-v1-th-col">
-                <span class="avail-v1-th-label">Date</span>
-                <span class="avail-v1-th-action">Seleziona</span>
-              </div>
-            </div>
-            <div class="avail-v1-table-body" id="availV1TableBody">
-              <!-- Popolato dinamicamente da app.js -->
-            </div>
-          </div>
-
-          <!-- Instruction Note -->
-          <p class="avail-v1-instruction">
-            Puoi scegliere l'opzione alternativa che preferisci tra quelle esposte mediante il bottone laterale, poi
-            clicca su &quot;Conferma&quot; per proseguire con la prenotazione.
-          </p>
-
-          <!-- Footer Action -->
-          <div class="avail-v1-footer">
-            <button type="button" class="btn-avail-v1-confirm" onclick="confirmAvailV1Modal()">Conferma</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
-
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
-
-          <div class="filter-modal-divider"></div>
-
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- ==================================================================
-           MODAL: CALENDARIO DISPONIBILITÀ (VERSIONE 2 - Scegli altra data)
+           MODAL: CALENDARIO DISPONIBILITÀ (Scegli altra data)
            ================================================================== -->
       <div class="wireframe-modal-overlay" id="availModalOverlay" role="dialog" aria-modal="true"
         onclick="handleAvailBackdropClick(event)">
@@ -1731,127 +1849,9 @@
         </div>
       </div>
 
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="closeFilterModal()">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
 
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
 
-          <div class="filter-modal-divider"></div>
 
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
-           ================================================================== -->
-      <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
-        aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
-        <div class="filter-modal-card" onclick="event.stopPropagation()">
-          <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
-            aria-label="Chiudi finestra">&times;</button>
-
-          <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
-          <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
-            prenotazioni.</p>
-
-          <div class="filter-modal-divider"></div>
-
-          <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
-            <!-- Anno -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
-              <select class="filter-modal-select" id="filterSelectAnno">
-                <option value="">Inserisci l'anno</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
-            </div>
-
-            <!-- Azienda sanitaria -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
-              <select class="filter-modal-select" id="filterSelectAzienda">
-                <option value="">Inserisci l'azienda sanitaria</option>
-                <option value="ASL Bari">ASL Bari</option>
-                <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
-                <option value="ASL Brindisi">ASL Brindisi</option>
-                <option value="ASL Foggia">ASL Foggia</option>
-                <option value="ASL Lecce">ASL Lecce</option>
-                <option value="ASL Taranto">ASL Taranto</option>
-              </select>
-            </div>
-
-            <!-- Stato -->
-            <div class="filter-modal-group">
-              <label class="filter-modal-label" for="filterSelectStato">Stato</label>
-              <select class="filter-modal-select" id="filterSelectStato">
-                <option value="">Inserisci lo stato della prenotazione</option>
-                <option value="Effettuato pagato">Effettuato pagato</option>
-                <option value="Pagato da effettuare">Pagato da effettuare</option>
-                <option value="Da pagare da effettuare">Da pagare da effettuare</option>
-              </select>
-            </div>
-
-            <!-- Footer Buttons -->
-            <div class="filter-modal-actions">
-              <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
-              <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
-              <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
-            </div>
-          </form>
-        </div>
-      </div>
 
       <!-- ==================================================================
            SCREEN 10: STEP 6 - RIEPILOGO
@@ -1879,7 +1879,18 @@
             </div>
             <div>
               <span class="success-booking-label">Data e ora</span>
-              <span class="success-booking-value" id="successDateTime">13/11/2026 ore 07:55</span>
+              <span class="success-booking-value" id="successDateTime">20/11/2026 ore 07:55</span>
+            </div>
+          </div>
+          <div class="success-booking-row success-deadline-row">
+            <div>
+              <span class="success-booking-label">Data Utile Disdetta</span>
+              <span class="success-booking-value success-deadline-value"
+                id="successCancelDeadlineDate">18/11/2026</span>
+            </div>
+            <div>
+              <span class="success-booking-label">Termine orario disdetta</span>
+              <span class="success-booking-value" id="successCancelDeadlineTime">Entro le ore 07:55 (48h prima)</span>
             </div>
           </div>
           <div class="success-booking-actions">
@@ -1900,6 +1911,30 @@
               </svg>
               Paga
             </a>
+          </div>
+        </div>
+
+        <!-- Reminder termine disdetta (48 ore prima) -->
+        <div class="success-disdetta-reminder" role="region" aria-label="Promemoria termine di disdetta">
+          <div class="success-disdetta-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="success-disdetta-content">
+            <div class="success-disdetta-title">Promemoria termine utile per la disdetta</div>
+            <div class="success-disdetta-text">
+              In caso di impossibilità a presentarti, ricordati di disdire o modificare la prenotazione <strong>almeno
+                48 ore prima</strong> (entro il <span id="successDisdettaFullText"><strong>18/11/2026 alle ore
+                  07:55</strong></span>) per consentire ad altri pazienti di usufruire della prestazione.
+              <span class="success-disdetta-warning">
+                La mancata disdetta entro 48 ore comporta l'applicazione della sanzione prevista dalla legge regionale
+                (malus ticket), anche in presenza di esenzione.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -2034,32 +2069,219 @@
     </div>
   </main>
 
-  <!-- Discreet Quick-Nav Dock per saltare alle schermate e commutare Versione 1 / Versione 2 -->
-  <div class="wireframe-quick-nav-dock">
-    <div class="dock-version-group">
-      <span class="dock-label">Versione:</span>
-      <select class="dock-select dock-ver-select" id="dockVersionSelect" onchange="setPrototypeVersion(this.value)">
-        <option value="v1">v1 (Wireframe base)</option>
-        <option value="v2">v2 (Disponibilità &amp; Calendario)</option>
-      </select>
+
+
+  <!-- ==================================================================
+           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
+           ================================================================== -->
+  <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
+    aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
+    <div class="filter-modal-card" onclick="event.stopPropagation()">
+      <button class="filter-modal-close" type="button" onclick="closeFilterModal()"
+        aria-label="Chiudi finestra">&times;</button>
+
+      <h2 class="filter-modal-title" id="filterModalTitle">Filtra</h2>
+      <p class="filter-modal-subtitle">Imposta l’anno, l’azienda erogante o lo stato per cercare tra le tue
+        prenotazioni.</p>
+
+      <div class="filter-modal-divider"></div>
+
+      <form id="bookingFilterForm" onsubmit="event.preventDefault(); applyBookingFilters();">
+        <!-- Anno -->
+        <div class="filter-modal-group">
+          <label class="filter-modal-label" for="filterSelectAnno">Anno</label>
+          <select class="filter-modal-select" id="filterSelectAnno">
+            <option value="">Inserisci l'anno</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
+        <!-- Azienda sanitaria -->
+        <div class="filter-modal-group">
+          <label class="filter-modal-label" for="filterSelectAzienda">Azienda sanitaria</label>
+          <select class="filter-modal-select" id="filterSelectAzienda">
+            <option value="">Inserisci l'azienda sanitaria</option>
+            <option value="ASL Bari">ASL Bari</option>
+            <option value="ASL Barletta-Andria-Trani">ASL Barletta-Andria-Trani</option>
+            <option value="ASL Brindisi">ASL Brindisi</option>
+            <option value="ASL Foggia">ASL Foggia</option>
+            <option value="ASL Lecce">ASL Lecce</option>
+            <option value="ASL Taranto">ASL Taranto</option>
+          </select>
+        </div>
+
+        <!-- Stato -->
+        <div class="filter-modal-group">
+          <label class="filter-modal-label" for="filterSelectStato">Stato</label>
+          <select class="filter-modal-select" id="filterSelectStato">
+            <option value="">Inserisci lo stato della prenotazione</option>
+            <option value="Effettuato pagato">Effettuato pagato</option>
+            <option value="Pagato da effettuare">Pagato da effettuare</option>
+            <option value="Da pagare da effettuare">Da pagare da effettuare</option>
+          </select>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="filter-modal-actions">
+          <button type="button" class="btn-filter-outline" onclick="closeFilterModal()">Chiudi</button>
+          <button type="button" class="btn-filter-outline" onclick="resetBookingFilters()">Reset</button>
+          <button type="button" class="btn-filter-apply" onclick="applyBookingFilters()">Applica</button>
+        </div>
+      </form>
     </div>
-    <span class="dock-sep">|</span>
-    <div class="dock-screen-group">
-      <span class="dock-label">Schermata:</span>
-      <select class="dock-select" id="dockScreenSelect" onchange="goToScreen(this.value)">
-        <option value="screen-home">Home Portale (media_fc4d4c90)</option>
-        <option value="screen-login">Accesso FSE (Login)</option>
-        <option value="screen-fse">Area Personale (FSE)</option>
-        <option value="screen-bookings">Le mie prenotazioni</option>
-        <option value="screen-assistenza">Assistenza e Supporto</option>
-        <option value="screen-step-beneficiary">Step 1 Accedi / Beneficiario</option>
-        <option value="screen-step-regime">Step 2 Tipo Prenotazione</option>
-        <option value="screen-step-prescription">Step 3 Inserimento Dati</option>
-        <option value="screen-step-slots">Step 4 Data e struttura</option>
-        <option value="screen-step-recap">Step 5 Conferma</option>
-        <option value="screen-step-success">Step 6 Riepilogo</option>
-        <option value="screen-spec-guide">Design System &amp; Componenti</option>
-      </select>
+  </div>
+
+  <!-- ==================================================================
+       MODAL: SCEGLI / REVOCA MEDICO DI FAMIGLIA
+       ================================================================== -->
+  <div class="wireframe-modal-overlay" id="modalScegliRevocaOverlay" role="dialog" aria-modal="true"
+    aria-labelledby="scegliRevocaModalTitle" onclick="handleScegliRevocaBackdropClick(event)">
+    <div class="filter-modal-card" style="max-width: 580px;" onclick="event.stopPropagation()">
+      <button class="filter-modal-close" type="button" onclick="closeScegliRevocaModal()"
+        aria-label="Chiudi finestra">&times;</button>
+
+      <h2 class="filter-modal-title" id="scegliRevocaModalTitle">Scegli / Revoca Medico di Famiglia</h2>
+      <p class="filter-modal-subtitle">
+        Gestisci la scelta o la revoca del tuo Medico di Medicina Generale (MMG) nell'ambito territoriale di ASL BARI.
+      </p>
+
+      <div class="filter-modal-divider"></div>
+
+      <div
+        style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 14px 18px; margin-bottom: 18px;">
+        <div
+          style="font-size: 0.85rem; font-weight: 700; color: #64748B; text-transform: uppercase; margin-bottom: 2px;">
+          Medico attuale in carica</div>
+        <div style="font-size: 1.15rem; font-weight: 800; color: var(--ps-wireframe-navy);">Dott. Alessandro De Luca
+        </div>
+        <div style="font-size: 0.90rem; color: #475569;">ASL BARI - Distretto 4 Bari Centro (Dal 15/03/2021)</div>
+      </div>
+
+      <div class="filter-modal-group">
+        <label class="filter-modal-label" for="selectNuovoMedico">Seleziona nuovo medico disponibile</label>
+        <select class="filter-modal-select" id="selectNuovoMedico">
+          <option value="">-- Seleziona un medico per effettuare il cambio --</option>
+          <option value="Dott.ssa Laura Romano - Via Sparano, 80 (Bari Centro) - 85 posti disp.">Dott.ssa Laura Romano -
+            Via Sparano, 80 (Bari Centro) - 85 posti disp.</option>
+          <option value="Dott. Giovanni Bianchi - C.so Cavour, 112 (Bari Centro) - 40 posti disp.">Dott. Giovanni
+            Bianchi - C.so Cavour, 112 (Bari Centro) - 40 posti disp.</option>
+          <option value="Dott.ssa Angela Cassano - Via Putignani, 45 (Bari Centro) - 110 posti disp.">Dott.ssa Angela
+            Cassano - Via Putignani, 45 (Bari Centro) - 110 posti disp.</option>
+          <option value="Dott. Roberto Ferri - Via Calefati, 98 (Bari Centro) - 25 posti disp.">Dott. Roberto Ferri -
+            Via Calefati, 98 (Bari Centro) - 25 posti disp.</option>
+        </select>
+      </div>
+
+      <div
+        style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-bottom: 20px; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 10px 14px; border-radius: 6px;">
+        <strong>Nota informativa:</strong> La conferma della nuova scelta comporterà automaticamente la contestuale
+        revoca dell'attuale medico di famiglia, senza necessità di recarsi allo sportello dell'ASL.
+      </div>
+
+      <div class="filter-modal-actions">
+        <button type="button" class="btn-filter-outline" onclick="closeScegliRevocaModal()">Chiudi</button>
+        <button type="button" class="btn-filter-apply" onclick="confirmScegliRevocaMedico()">Conferma nuova
+          scelta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================
+       MODAL: CHIEDI NUOVA ESENZIONE CON AUTOCERTIFICAZIONE
+       ================================================================== -->
+  <div class="wireframe-modal-overlay" id="modalChiediEsenzioneOverlay" role="dialog" aria-modal="true"
+    aria-labelledby="chiediEsenzioneModalTitle" onclick="handleChiediEsenzioneBackdropClick(event)">
+    <div class="filter-modal-card" style="max-width: 600px;" onclick="event.stopPropagation()">
+      <button class="filter-modal-close" type="button" onclick="closeChiediEsenzioneModal()"
+        aria-label="Chiudi finestra">&times;</button>
+
+      <h2 class="filter-modal-title" id="chiediEsenzioneModalTitle">Nuova esenzione con autocertificazione</h2>
+      <p class="filter-modal-subtitle">
+        Invia una richiesta di esenzione ticket sanitario tramite autocertificazione del reddito o condizione
+        lavorativa.
+      </p>
+
+      <div class="filter-modal-divider"></div>
+
+      <form id="formAutocertificazioneEsenzione"
+        onsubmit="event.preventDefault(); submitAutocertificazioneEsenzione();">
+        <div class="filter-modal-group">
+          <label class="filter-modal-label" for="selectCodiceEsenzione">Codice e tipologia di esenzione</label>
+          <select class="filter-modal-select" id="selectCodiceEsenzione" required>
+            <option value="">-- Seleziona il codice di esenzione --</option>
+            <option value="E01">E01 - Cittadini di età inferiore a 6 anni o superiore a 65 anni con reddito familiare
+              &lt; 36.151,98 €</option>
+            <option value="E02">E02 - Disoccupati e familiari a carico con reddito familiare &lt; 8.263,31 €</option>
+            <option value="E03">E03 - Titolari di assegno sociale e familiari a carico</option>
+            <option value="E04">E04 - Titolari di pensione al minimo di età &gt; 60 anni con reddito familiare &lt;
+              8.263,31 €</option>
+          </select>
+        </div>
+
+        <div class="filter-modal-group">
+          <label class="filter-modal-label" for="annoValiditaEsenzione">Anno di riferimento dichiarazione</label>
+          <input type="text" class="form-input-wireframe" id="annoValiditaEsenzione" value="2026" readonly
+            style="background:#F1F5F9; color:#475569;">
+        </div>
+
+        <div
+          style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.86rem; color: #78350F; line-height: 1.45;">
+          <strong>Dichiarazione di responsabilità:</strong> Ai sensi del D.P.R. 445/2000, le dichiarazioni mendaci, la
+          falsità negli atti e l'uso di atti falsi sono puniti dal codice penale e dalle leggi speciali in materia.
+        </div>
+
+        <div class="consent-row-wireframe" style="margin-bottom: 20px; font-size: 0.92rem;">
+          <input type="checkbox" id="checkAutocertificazione" required
+            style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ps-wireframe-red); cursor: pointer;">
+          <label for="checkAutocertificazione" style="cursor: pointer; color: var(--ps-text-main); font-weight: 600;">
+            Dichiaro sotto la mia responsabilità di possedere i requisiti di reddito e stato lavorativo per il codice
+            selezionato.
+          </label>
+        </div>
+
+        <div class="filter-modal-actions">
+          <button type="button" class="btn-filter-outline" onclick="closeChiediEsenzioneModal()">Chiudi</button>
+          <button type="submit" class="btn-filter-apply">Invia autocertificazione</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================
+       MODAL: REVOCA ESENZIONE
+       ================================================================== -->
+  <div class="wireframe-modal-overlay" id="modalRevocaEsenzioneOverlay" role="dialog" aria-modal="true"
+    aria-labelledby="revocaEsenzioneModalTitle" onclick="handleRevocaEsenzioneBackdropClick(event)">
+    <div class="filter-modal-card" style="max-width: 520px;" onclick="event.stopPropagation()">
+      <button class="filter-modal-close" type="button" onclick="closeRevocaEsenzioneModal()"
+        aria-label="Chiudi finestra">&times;</button>
+
+      <h2 class="filter-modal-title" id="revocaEsenzioneModalTitle">Revoca esenzione</h2>
+      <div class="filter-modal-divider"></div>
+
+      <div style="text-align: center; padding: 20px 10px;">
+        <div
+          style="width: 56px; height: 56px; border-radius: 50%; background: #EFF6FF; color: #2563EB; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--ps-text-main); margin-bottom: 8px;">Nessuna
+          esenzione da revocare</h3>
+        <p style="font-size: 0.95rem; color: #475569; line-height: 1.5; margin: 0;">
+          Al momento non sono presenti esenzioni ticket attive associate al tuo profilo sanitario. È possibile revocare
+          solo esenzioni precedentemente riconosciute o autocertificate.
+        </p>
+      </div>
+
+      <div class="filter-modal-actions" style="justify-content: center;">
+        <button type="button" class="btn-filter-apply" style="min-width: 130px;"
+          onclick="closeRevocaEsenzioneModal()">Ho capito</button>
+      </div>
     </div>
   </div>
 
