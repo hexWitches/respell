@@ -14,7 +14,7 @@ By making the booking flow clearer, more predictable, and easily reversible, the
 The full redesign process is documented and available in the [`/documentation`](./documentation) folder.
 
 ## Prototype
-Explore the interactive prototype [here](https://hexWitches.github.io/respell).
+Explore the interactive prototype [here](https://hexwitches.github.io/respell/).
 
 ## Team members
 * [Miriana Pinto](https://github.com/mir-pin) 
