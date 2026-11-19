@@ -442,7 +442,7 @@ function updatePageHeader(screenId) {
   }
 }
 
-// Stepper Progress: Dark Navy active, completed has circle checkmark icon
+// Stepper Progress: Dark Navy active, completed has circle checkmark icon, and blue line advances
 function updateStepperProgress(currentStepNum) {
   for (let i = 1; i <= 6; i++) {
     const stepEl = document.getElementById(`stepperStep${i}`);
@@ -452,17 +452,25 @@ function updateStepperProgress(currentStepNum) {
     stepEl.classList.remove('active', 'completed');
 
     if (i < currentStepNum) {
-      // Passo completato: colore differente + aggiunta icona SVG cerchio con spunta
+      // Passo completato: colore scuro + icona SVG cerchio con spunta (Matching media_1795124032407_6155f761.png)
       stepEl.classList.add('completed');
       stepEl.innerHTML = `<span>${baseName}</span> <svg class="stepper-check-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="16 9 10 15 7 12"></polyline></svg>`;
     } else if (i === currentStepNum) {
-      // Passo corrente: Dark Navy solido con testo bianco
+      // Passo corrente: Dark Navy in grassetto
       stepEl.classList.add('active');
       stepEl.innerText = baseName;
     } else {
       // Passi futuri: colore base neutro
       stepEl.innerText = baseName;
     }
+  }
+
+  // Avanzamento linea di progresso blu navy (Matching media_1795124032407_6155f761.png)
+  const fillEl = document.getElementById('stepperProgressFill');
+  if (fillEl) {
+    const validStep = Math.max(1, Math.min(6, currentStepNum));
+    const pct = (validStep / 6) * 100;
+    fillEl.style.width = `${pct}%`;
   }
 }
 
@@ -2520,7 +2528,7 @@ function updateSuccessStep() {
   // Calcolo dinamico termine utile di disdetta (48 ore prima della prenotazione)
   const deadline = calculateCancelDeadline(slot);
   setVal('successCancelDeadlineDate', deadline.dateStr);
-  setVal('successCancelDeadlineTime', `Entro le ore ${deadline.timeStr} (48h prima)`);
+  setVal('successCancelDeadlineTime', `Entro le ore ${deadline.timeStr}`);
   setHtml('successDisdettaFullText', `<strong>${deadline.dateStr} alle ore ${deadline.timeStr}</strong>`);
 
   const bannerText = document.getElementById('successBannerText');

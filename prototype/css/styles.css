@@ -255,11 +255,11 @@ body {
 }
 
 /* ==========================================================================
-   PAGE TOP ZONE (Sfondo Blush #FBF7F6)
+   PAGE TOP ZONE
    ========================================================================== */
 .page-top-zone {
   background-color: var(--ps-bg-top-blush);
-  padding: 24px 0 16px 0;
+  padding: 24px 0 0 0;
   border-bottom: 1px solid var(--ps-border-subtle);
 }
 
@@ -367,7 +367,6 @@ body {
   margin: 14px 0 0 0;
 }
 
-/* Sottotitolo del passo corrente con barra verticale: "| Beneficiario" */
 .step-subtitle-badge {
   display: inline-flex;
   align-items: center;
@@ -386,57 +385,88 @@ body {
 }
 
 /* ==========================================================================
-   STEPPER PROGRESS BAR (Non cliccabile, con spunta sui passi completati)
+   STEPPER PROGRESS BAR
    ========================================================================== */
 .stepper-wireframe-bar {
   display: flex;
-  align-items: stretch;
-  background: var(--ps-surface-white);
-  border: 1px solid var(--ps-border-color);
-  border-radius: 4px;
-  margin-top: 16px;
-  overflow: hidden;
+  flex-direction: column;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  margin-top: 24px;
+  overflow: visible;
   pointer-events: none;
-  /* NON CLICCABILE come da specifica */
   user-select: none;
+  position: relative;
+}
+
+.stepper-steps-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .stepper-tab-item {
   flex: 1;
-  padding: 10px 12px;
+  padding: 8px 4px 14px 4px;
   text-align: center;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--ps-text-muted);
-  background: var(--ps-surface-white);
-  border-right: 1px solid var(--ps-border-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1E293B;
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
-.stepper-tab-item:last-child {
-  border-right: none;
-}
-
-/* Step Attivo: Rettangolo solido blu navy con testo bianco */
 .stepper-tab-item.active {
-  background: var(--ps-wireframe-navy);
-  color: white;
+  background: transparent;
+  color: var(--ps-wireframe-navy);
   font-weight: 700;
 }
 
-/* Step Completati: Sfondo bianco/neutro con testo scuro e icona cerchio spunta */
 .stepper-tab-item.completed {
-  background: var(--ps-surface-white);
-  color: var(--ps-text-main);
+  background: transparent;
+  color: var(--ps-wireframe-navy);
   font-weight: 600;
 }
 
+.stepper-line-track {
+  width: 100%;
+  height: 3.5px;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: -1px;
+}
+
+.stepper-line-fill {
+  height: 100%;
+  width: 16.666%;
+  background: var(--ps-wireframe-navy);
+  border-radius: 2px;
+  transition: width 0.35s ease-in-out;
+}
+
+@media (max-width: 860px) {
+  .stepper-steps-row {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stepper-tab-item {
+    font-size: 0.78rem;
+    padding: 6px 4px 10px 4px;
+  }
+}
+
 /* ==========================================================================
-   PAGE CONTENT ZONE (Sfondo Ice-Blue #F2F5FB)
+   PAGE CONTENT ZONE
    ========================================================================== */
 .page-content-zone {
   background-color: var(--ps-bg-bottom-ice);
@@ -459,7 +489,7 @@ body {
 }
 
 /* ==========================================================================
-   SCREEN 1: PORTALE DELLA SALUTE (HOME) - Wireframe r1_c1
+    PORTALE DELLA SALUTE (HOME) - Wireframe r1_c1
    ========================================================================== */
 .home-hero-box {
   background: var(--ps-surface-white);
@@ -606,7 +636,7 @@ body {
 }
 
 /* ==========================================================================
-   SCREEN 2: FSE DASHBOARD (SENZA SCATOLE DI LETTERE) - Wireframe r1_c2
+   FSE DASHBOARD
    ========================================================================== */
 .fse-two-cards-grid {
   display: grid;
@@ -676,7 +706,7 @@ body {
 }
 
 /* ==========================================================================
-   SCREEN 3: LE MIE PRENOTAZIONI (SENZA BOTTONI FILTRO) - Wireframe r1_c3
+   LE MIE PRENOTAZIONI
    ========================================================================== */
 .prenotazioni-header-row {
   display: flex;
@@ -756,7 +786,7 @@ body {
 }
 
 /* ==========================================================================
-   CHOICE CARDS (Nessuna pre-selezionata) - Wireframe r3_c4
+   CHOICE CARDS
    ========================================================================== */
 .choice-cards-wireframe-grid {
   display: grid;
@@ -778,13 +808,11 @@ body {
   transition: all 0.15s ease;
 }
 
-/* Hover: Grigio/Azzurro tenue #CBD5E1 */
 .wireframe-choice-card:hover:not(.selected) {
   background: var(--ps-wireframe-navy-light);
   border-color: #94A3B8;
 }
 
-/* Selezionata: Dark Navy solido con testo bianco */
 .wireframe-choice-card.selected {
   background: var(--ps-wireframe-navy);
   border-color: var(--ps-wireframe-navy);
@@ -830,7 +858,7 @@ body {
 }
 
 /* ==========================================================================
-   STEP 3: DATI RICETTA & PRESTAZIONI (Wireframe r2_c3)
+   DATI RICETTA & PRESTAZIONI
    ========================================================================== */
 .form-panel-white {
   background: var(--ps-surface-white);
@@ -958,7 +986,7 @@ body {
 }
 
 /* ==========================================================================
-   STEP 4: SCELTA STRUTTURA E DATA (Wireframe r2_c2)
+   SCELTA STRUTTURA E DATA
    ========================================================================== */
 .summary-inline-bar {
   background: var(--ps-surface-white);
@@ -1043,7 +1071,7 @@ body {
 }
 
 /* ==========================================================================
-   STEP 5: INFORMATIVA E CONDIZIONI (Wireframe r2_c1)
+   INFORMATIVA E CONDIZIONI
    ========================================================================== */
 .recap-4col-grid {
   display: grid;
@@ -1090,7 +1118,6 @@ body {
   transition: all 0.2s ease;
 }
 
-/* Evidenziazione in rosso per le checkbox obbligatorie non selezionate: solo bordo rosso, nessun background */
 .consent-row-wireframe.consent-error {
   border: 1.5px solid #D32F2F !important;
   background: transparent !important;
@@ -1110,7 +1137,6 @@ body {
   outline-offset: 1px;
 }
 
-/* Messaggio di errore inline sopra i pulsanti (Matching media_2d90cf8d) */
 .form-error-banner,
 .step5-error-banner {
   display: flex;
@@ -1136,7 +1162,6 @@ body {
   line-height: 1.4;
 }
 
-/* Evidenziazione in rosso per campi input obbligatori non compilati */
 .form-field-input.field-error {
   border: 1.5px solid #D32F2F !important;
   background-color: #FEF2F2 !important;
@@ -1149,7 +1174,6 @@ body {
   font-weight: 600 !important;
 }
 
-/* Evidenziazione in rosso per schede di scelta obbligatorie non selezionate: solo bordo rosso, nessun colore di sfondo rosso */
 .wireframe-choice-card.choice-card-error,
 .prescription-card-wireframe.card-error {
   border: 1.5px solid #D32F2F !important;
@@ -1178,10 +1202,10 @@ body {
 }
 
 /* ==========================================================================
-   STEP 6: RIEPILOGO / CONFERMA ESITO (Wireframe r3_c2)
+   RIEPILOGO / CONFERMA ESITO
    ========================================================================== */
 .success-banner-wireframe {
-  background: var(--ps-wireframe-navy);
+  background: #376e4f;
   border-radius: 8px;
   padding: 20px 28px;
   display: flex;
@@ -1212,7 +1236,7 @@ body {
 }
 
 /* ==========================================================================
-   MODALE PRIVACY GDPR (Wireframe r3_c1)
+   MODALE PRIVACY GDPR
    ========================================================================== */
 .wireframe-modal-overlay {
   display: none;
@@ -1289,7 +1313,7 @@ body {
 }
 
 /* ==========================================================================
-   NAVIGATION BUTTONS BAR IN WIZARD (Matching Screenshots)
+   NAVIGATION BUTTONS BAR IN WIZARD
    ========================================================================== */
 .wizard-nav-bottom-bar {
   display: flex;
@@ -1365,10 +1389,6 @@ body {
     display: none;
   }
 }
-
-/* ==========================================================================
-   NEW ADDITIONS — Matching Reference Screenshots (v2)
-   ========================================================================== */
 
 /* --- Navbar user pill v2 --- */
 .user-session-pill-v2 {
@@ -1470,7 +1490,6 @@ body {
   color: var(--ps-wireframe-red);
 }
 
-/* --- Stepper Checkmark SVG --- */
 .stepper-check-svg {
   margin-left: 4px;
   flex-shrink: 0;
@@ -1496,7 +1515,6 @@ body {
   letter-spacing: -0.5px;
 }
 
-/* --- FSE Cards selected state: dark-rose --- */
 .card-fse-box.selected {
   background: var(--ps-wireframe-rose-block);
   border-color: var(--ps-wireframe-rose-block);
@@ -1515,17 +1533,14 @@ body {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Documenti card: title stays red on white */
 .fse-bigcard-title--red {
   color: var(--ps-wireframe-red);
 }
 
-/* When prenotazioni is unselected, its title is red too */
 .card-fse-box:not(.selected) .fse-bigcard-title {
   color: var(--ps-wireframe-red);
 }
 
-/* Document cards in Area Personale carousel */
 .card-doc-item {
   min-height: 235px;
   flex: 0 0 330px;
@@ -1614,7 +1629,7 @@ body {
   background: var(--ps-bg-top-blush);
 }
 
-/* --- Bookings screen (Image 6) --- */
+/* --- Bookings screen --- */
 .bookings-subtitle {
   font-size: 0.95rem;
   color: var(--ps-text-main);
@@ -1839,7 +1854,7 @@ body {
   margin-bottom: 8px;
 }
 
-/* --- Step 4: Slots redesign (Image 1) --- */
+/* --- Step 4: Slots redesign --- */
 .ricette-summary-bar {
   background: white;
   border: 1px solid var(--ps-border-color);
@@ -2100,7 +2115,7 @@ body {
   letter-spacing: normal;
 }
 
-/* --- Step 5: Recap/Conferma (Image 8) --- */
+/* --- Step 5: Recap/Conferma --- */
 .recap-details-grid {
   display: grid;
   grid-template-columns: 140px 1fr 140px 1fr;
@@ -2160,7 +2175,7 @@ body {
   margin-bottom: 2px;
 }
 
-/* --- Step 6: Success/Riepilogo (Image 2) --- */
+/* --- Step 6: Success/Riepilogo --- */
 .success-booking-card {
   background: white;
   border: 1px solid var(--ps-border-color);
@@ -2209,7 +2224,6 @@ body {
 
 .success-deadline-row {
   border-top: 1px solid var(--ps-border-subtle);
-  background-color: #F8FAFC;
 }
 
 .success-deadline-value {
@@ -2218,7 +2232,6 @@ body {
 
 .success-disdetta-reminder {
   background: #FFFBEB;
-  border: 1.5px solid #FCD34D;
   border-radius: 8px;
   padding: 20px 28px;
   margin: 0 auto 28px auto;
@@ -2325,7 +2338,7 @@ body {
 
 
 /* ==========================================================================
-   BRAND, HEADER V2, USER PILL & HOMEPAGE (Matching media_1794782458951_fc4d4c90.png)
+   BRAND, HEADER V2, USER PILL & HOMEPAGE
    ========================================================================== */
 .brand-tree-icon {
   flex-shrink: 0;
@@ -2574,7 +2587,7 @@ body {
 }
 
 /* ==========================================================================
-   HOMEPAGE (PORTALE DELLA SALUTE) - Matching media_1794782458951_fc4d4c90.png
+   HOMEPAGE (PORTALE DELLA SALUTE)
    ========================================================================== */
 .home-title-block {
   margin: 24px 0 16px 0;
@@ -2803,9 +2816,6 @@ body {
 }
 
 
-/* ==========================================================================
-   BRAND, HEADER V2, USER PILL & HOMEPAGE (Matching media_1794782458951_fc4d4c90.png)
-   ========================================================================== */
 .brand-tree-icon {
   flex-shrink: 0;
 }
@@ -3052,9 +3062,7 @@ body {
   color: var(--ps-wireframe-btn-blue);
 }
 
-/* ==========================================================================
-   HOMEPAGE (PORTALE DELLA SALUTE) - Matching media_1794782458951_fc4d4c90.png
-   ========================================================================== */
+
 .home-title-block {
   margin: 24px 0 16px 0;
 }
@@ -3198,9 +3206,7 @@ body {
   line-height: 1.35;
 }
 
-/* ==========================================================================
-   LOGIN SCREEN (ACCESSO FSE)
-   ========================================================================== */
+
 .login-screen-wrap {
   max-width: 860px;
   margin: 0 auto;

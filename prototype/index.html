@@ -191,14 +191,19 @@
         <button id="btnTornaIndietro" class="btn-torna-indietro" onclick="tornaIndietro()">Torna indietro</button>
       </div>
 
-      <!-- Stepper Orizzontale a Segmenti Rettangolari (Non cliccabile) -->
+      <!-- Stepper Orizzontale Con Barra di Progresso Blu (Matching media_1795124032407_6155f761.png) -->
       <nav class="stepper-wireframe-bar" id="wizardStepper" style="display: none;" aria-label="Passi di prenotazione">
-        <div class="stepper-tab-item active" id="stepperStep1" data-base-name="1. Accedi">1. Accedi</div>
-        <div class="stepper-tab-item" id="stepperStep2" data-base-name="2. Tipo Prenotazione">2. Tipo Prenotazione</div>
-        <div class="stepper-tab-item" id="stepperStep3" data-base-name="3. Inserimento Dati">3. Inserimento Dati</div>
-        <div class="stepper-tab-item" id="stepperStep4" data-base-name="4. Data e struttura">4. Data e struttura</div>
-        <div class="stepper-tab-item" id="stepperStep5" data-base-name="5. Conferma">5. Conferma</div>
-        <div class="stepper-tab-item" id="stepperStep6" data-base-name="6. Riepilogo">6. Riepilogo</div>
+        <div class="stepper-steps-row">
+          <div class="stepper-tab-item active" id="stepperStep1" data-base-name="1. Accedi">1. Accedi</div>
+          <div class="stepper-tab-item" id="stepperStep2" data-base-name="2. Tipo Prenotazione">2. Tipo Prenotazione</div>
+          <div class="stepper-tab-item" id="stepperStep3" data-base-name="3. Inserimento Dati">3. Inserimento Dati</div>
+          <div class="stepper-tab-item" id="stepperStep4" data-base-name="4. Data e struttura">4. Data e struttura</div>
+          <div class="stepper-tab-item" id="stepperStep5" data-base-name="5. Conferma">5. Conferma</div>
+          <div class="stepper-tab-item" id="stepperStep6" data-base-name="6. Riepilogo">6. Riepilogo</div>
+        </div>
+        <div class="stepper-line-track" aria-hidden="true">
+          <div class="stepper-line-fill" id="stepperProgressFill"></div>
+        </div>
       </nav>
     </div>
   </div>
@@ -1890,7 +1895,7 @@
             </div>
             <div>
               <span class="success-booking-label">Termine orario disdetta</span>
-              <span class="success-booking-value" id="successCancelDeadlineTime">Entro le ore 07:55 (48h prima)</span>
+              <span class="success-booking-value" id="successCancelDeadlineTime">Entro le ore 07:55</span>
             </div>
           </div>
           <div class="success-booking-actions">
@@ -1928,10 +1933,9 @@
             <div class="success-disdetta-title">Promemoria termine utile per la disdetta</div>
             <div class="success-disdetta-text">
               In caso di impossibilità a presentarti, ricordati di disdire o modificare la prenotazione <strong>almeno
-                48 ore prima</strong> (entro il <span id="successDisdettaFullText"><strong>18/11/2026 alle ore
-                  07:55</strong></span>) per consentire ad altri pazienti di usufruire della prestazione.
+                48 ore prima</strong> per consentire ad altri pazienti di usufruire della prestazione.
               <span class="success-disdetta-warning">
-                La mancata disdetta entro 48 ore comporta l'applicazione della sanzione prevista dalla legge regionale
+                La mancata disdetta comporta l'applicazione della sanzione prevista dalla legge regionale
                 (malus ticket), anche in presenza di esenzione.
               </span>
             </div>
@@ -2072,7 +2076,7 @@
 
 
   <!-- ==================================================================
-           MODAL: FILTRA PRENOTAZIONI (Matching media_1795000444728_8ff6d12f)
+           MODAL: FILTRA PRENOTAZIONI
            ================================================================== -->
   <div class="wireframe-modal-overlay" id="bookingFilterModalOverlay" role="dialog" aria-modal="true"
     aria-labelledby="filterModalTitle" onclick="handleFilterBackdropClick(event)">
